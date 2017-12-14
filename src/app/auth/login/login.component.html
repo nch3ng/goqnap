@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+      <div class="offset-md-2 col-md-6">
+        <h1>Sign In</h1>
+        <h4>Not a member? Please <a [routerLink]="['/register']">register</a> instead.</h4>
+      </div>
+    </div>
+    
+    <div class="row">
+        <div class="offset-md-2 col-md-6">
+            <div class="error-message" *ngIf="error">{{message}}</div>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control form-control-lg" [(ngModel)]="user.email" id="email" aria-describedby="password" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control form-control-lg" [(ngModel)]="user.password" id="password" aria-describedby="password" placeholder="Enter password">
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox"> Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary" (click)="login(user)">Submit</button>
+        </div>
+      </div>
+  </div>

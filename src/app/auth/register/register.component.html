@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="row">
+      <div class="offset-md-2 col-md-6">
+        <h1>Register</h1>
+        <h4>Already a member? Please <a [routerLink]="['/login']">sign in</a> instead.</h4>
+      </div>
+    </div>
+    <div class="row">
+        <div class="offset-md-2 col-md-6">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="fullname" class="form-control form-control-lg" [(ngModel)]="user.name" name="name" id="name" aria-describedby="name" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control form-control-lg" id="email" [(ngModel)]="user.email" aria-describedby="password" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control form-control-lg" id="password" [(ngModel)]="user.password" aria-describedby="password" placeholder="Enter password">
+            </div>
+            <button type="submit" (click)="register(user)" class="btn btn-lg btn-primary">Submit</button>
+        </div>
+      </div>
+  </div>
