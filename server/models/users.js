@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
-var config = require("../config/config");
+
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config')[env];
 
 var Schema = mongoose.Schema;
 

@@ -1,11 +1,12 @@
 var jwt = require('jsonwebtoken');
-var config = require("../../../config/config");
+const env = process.env.NODE_ENV || 'development';
+const config = require('../../../config')[env];
 
 module.exports = {
 
   verifyToken: ( (req, res, next) => {
       let token = req.body.token || req.query.token || req.headers['x-access-token'];
-      console.log(token);
+      //console.log(token);
       if( token ) {
 
           jwt.verify(token, config.secret, (err, decoded) => {

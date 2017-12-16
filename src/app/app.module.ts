@@ -16,14 +16,7 @@ import { AuthGuardService as AuthGuard } from './service/auth.guard.service';
 import { JwtHelper } from 'angular2-jwt';
 
 import { CustomFormsModule } from 'ng2-validation'
-
-
-const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent }
-];
+import { AppRouting } from './app.routes.module';
 
 @NgModule({
   declarations: [
@@ -35,13 +28,10 @@ const routes: Routes = [
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(
-      routes,
-      { enableTracing: false } // <-- debugging purposes only
-    ),
     HttpModule,
     FormsModule,
-    CustomFormsModule
+    CustomFormsModule,
+    AppRouting  //Routes
   ],
   providers: [AuthService, AuthGuard, JwtHelper],
   bootstrap: [AppComponent]

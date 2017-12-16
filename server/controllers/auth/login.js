@@ -1,5 +1,7 @@
 User = require("../../models/users");
-var config = require("../../config/config"); 
+const env = process.env.NODE_ENV || 'development';
+const config = require('../../config')[env];
+
 var jwt = require('jsonwebtoken');
 module.exports = function(req, res) {
   var reqUser = req.body;
