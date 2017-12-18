@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../service/auth.service';
-import { User } from '../model/user';
+import { AuthService } from '../../service/auth.service';
+import { User } from '../../model/user';
 import { Subscription } from 'rxjs/Subscription';
 import { Router } from '@angular/router';
 
@@ -19,16 +19,9 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(this.user);
+    //console.log(this.user);
     //example of verification
     this.authService.verify().subscribe( (res) => this.message = res['message']);
-  }
-
-  logout() {
-    this.authService.logout();
-    this.user = null;
-    this.message = "Logged out";
-    this.router.navigate(['/']);
   }
 
 }

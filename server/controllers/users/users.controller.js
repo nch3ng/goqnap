@@ -1,9 +1,18 @@
 var express = require('express')
-var router = express.Router();
-
+var users_router = express.Router();
+var user_router = express.Router();
 // define the home page route
-router.get('/', function (req, res) {
+users_router.get('/', function (req, res) {
   res.send('users list')
 })
 
-module.exports = router 
+
+
+
+user_router.get('/:userId', function (req, res) {
+  res.send('get user: '+ req.params.userId);
+})
+module.exports = {
+  users: users_router,
+  user: user_router
+}

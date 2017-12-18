@@ -1,0 +1,26 @@
+<nav>
+  <div class='nav-header'>
+    <div class='id-badge'>
+      <div class='avatar'>
+          <a [routerLink]="['/profile']">NC</a>NC
+      </div>
+      <h5 class="headerGreeting f-c">Nate Cheng</h5>
+    </div>
+  </div>
+  <div class='nav-menu'>
+    <div class='nm-top mb-2'>
+      <h4 class="m-0">
+          <a [routerLink]="['/dashboard']" routerLinkActive="active" class="nav-link f-jcv">Dashboard</a></h4>
+      <h4 class="m-0"><a class="nav-link f-jcv">Pastor</a></h4>
+      <h4 class="m-0"><a [routerLink]="['/media']" routerLinkActive="active" class="nav-link f-jcv">Media</a></h4>
+      <h4 class="m-0"><a [routerLink]="['/events']" routerLinkActive="active" class="nav-link f-jcv">Events</a></h4>
+      <h4 class="m-0"><a [routerLink]="['/users']" routerLinkActive="active" class="nav-link f-jcv">Users</a></h4>
+      <h4 class="m-0">
+          <a [routerLink]="['/profile']" routerLinkActive="active" class="nav-link f-jcv">Profile</a>
+      </h4>
+    </div>
+    <div class='nm-bottom'>
+      <ul><li class="nav-link"><a (click)="fireLogout()">Log Out</a></li></ul>
+    </div>
+  </div>
+</nav>

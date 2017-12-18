@@ -1,6 +1,7 @@
 User = require("../../models/users");
 const env = process.env.NODE_ENV || 'development';
 const config = require('../../config')[env];
+logger = require('../../logger');
 
 var jwt = require('jsonwebtoken');
 module.exports = function(req, res) {
@@ -36,6 +37,7 @@ module.exports = function(req, res) {
     }, config.secret, {
       expiresIn : 60*60*config.expiry
     });
+    logger.debug(token);
     let content = {
       user: user,
       success: true,

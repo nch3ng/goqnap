@@ -12,7 +12,6 @@ var auth = require("./controllers/auth/middleware/auth");
 
 var registerCtrl = require("./controllers/auth/register");
 var loginCtrl = require("./controllers/auth/login");
-var userCtrl = require("./controllers/users/user.controller");
 var usersCtrl = require("./controllers/users/users.controller");
 
 router.use(function timeLog (req, res, next) {
@@ -31,7 +30,7 @@ router.get('/check-state', auth.verifyToken, (req, res) => {
   res.send(content);
 });
 
-router.use('/user', auth.verifyToken, userCtrl);
-router.use('/users', auth.verifyToken, usersCtrl);
+router.use('/user', auth.verifyToken, usersCtrl.user);
+router.use('/users', auth.verifyToken, usersCtrl.users);
 
 module.exports = router;

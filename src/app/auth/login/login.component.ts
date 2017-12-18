@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
       if(res['success'] == true) {
         this.error=false;
         this.authService.setUser(res['user']);
-        this.router.navigate(['/profile']);
+        this.router.navigate(['/']);
       } else {
         this.error=true;
         this.message = res['message'];

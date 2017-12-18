@@ -57,8 +57,7 @@ export class AuthService {
     let headers = new Headers({ 'x-access-token': token });
     let options = new RequestOptions({ headers: headers });*/
     var options = this.constructHeader();
-    return this.http.get(`${this.base_url}/check-state`, options).map( res => this.parseRes(res) );
-    
+    return this.http.get(`${this.base_url}/check-state`, options).map( res => this.parseRes(res));
   }
 
   isAuthenticated(): boolean {
@@ -75,12 +74,8 @@ export class AuthService {
     } else
       return !this.jwtHelper.isTokenExpired(token);
   }
-    
 
   setToken(res){
-    // console.log('set token');
-    // console.log(res);
-    // console.log("==========");
     let body = JSON.parse(res['_body']);
     if( body['success'] == true ){
       this.token = body['token'];

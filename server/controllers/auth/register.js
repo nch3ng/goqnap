@@ -13,7 +13,7 @@ module.exports = function(req, res) {
     user.save(function(err) {
       var token;
       token = user.generateJwt();
-      console.log();
+      //console.log(token);
       res.status(200);
       res.json({
         "user": user,
