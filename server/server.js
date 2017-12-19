@@ -42,7 +42,6 @@ app.use(['/login', '/register'], function(req, res, next) {
 });
 
 var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
 
 //app.use(express.static(__dirname + '../dist'));
 //app.get("/register", express.static(path.join(__dirname, '../dist/register')));
@@ -50,12 +49,14 @@ console.log("Listen: " + port);
 httpServer.listen(port);
 
 if (config.ssl_enable){
-
+  
   var credentials = {
     key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
     cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),
     ca: fs.readFileSync("/root/twca/uca.cer", "utf8")
   };
+
+  var httpsServer = https.createServer(credentials, app);
   httpsServer.listen(8089);
 
 }
