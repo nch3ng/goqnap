@@ -1,6 +1,5 @@
 var express = require('express')
 var courses_router = express.Router();
-
 var Course = require("../../models/courses");
 
 courses_router.get('/', function (req, res) {
