@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
@@ -24,18 +28,34 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(morgan('combined'));
 
 var api = require('./api');
+var goqnap = express.static('public');
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', api);
+app.use('/', goqnap);
 var static = express.static(path.join(__dirname, '../dist'));
 app.use(static);
-app.use(['/', '/login', '/register'], function(req, res, next) {
+app.use(['/login', '/register'], function(req, res, next) {
   // Just send the index.html for other files to support HTML5Mode
   res.sendFile('/index.html', { root: path.join(__dirname, '../dist') });
 });
 
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
 //app.use(express.static(__dirname + '../dist'));
 //app.get("/register", express.static(path.join(__dirname, '../dist/register')));
 console.log("Listen: " + port);
-app.listen(port);
+httpServer.listen(port);
+
+if (config.ssl_enable){
+
+  var credentials = {
+    key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
+    cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),
+    ca: fs.readFileSync("/root/twca/uca.cer", "utf8")
+  };
+  httpsServer.listen(8089);
+
+}

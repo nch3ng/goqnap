@@ -5,6 +5,8 @@
 /tmp
 /out-tsc
 
+# static
+/public
 
 # dependencies
 /node_modules
