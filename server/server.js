@@ -6,6 +6,7 @@ var https = require('https');
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 var path = require('path');
 var app = express();
 var morgan = require('morgan');
@@ -24,6 +25,7 @@ require('./config/passport.js');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(cors());
 
 app.use(morgan('combined'));
 
@@ -45,11 +47,11 @@ var httpServer = http.createServer(app);
 
 //app.use(express.static(__dirname + '../dist'));
 //app.get("/register", express.static(path.join(__dirname, '../dist/register')));
-console.log("Listen: " + port);
+console.log("CORS-enabled for all origins.  Listen: " + port);
 httpServer.listen(port);
 
 if (config.ssl_enable){
-  
+  var ssl_port = config.ssl_port || 9000;
   var credentials = {
     key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
     cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),
@@ -57,6 +59,7 @@ if (config.ssl_enable){
   };
 
   var httpsServer = https.createServer(credentials, app);
-  httpsServer.listen(8089);
+  console.log("CORS-enabled for all origins.  Listen: " + ssl_port);
+  httpsServer.listen(ssl_port);
 
 }
