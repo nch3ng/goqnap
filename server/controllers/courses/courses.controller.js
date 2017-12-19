@@ -9,8 +9,9 @@ courses_router.get('/', function (req, res) {
   Course.find({}, function(err, courses){
     this.courses = courses;
     //console.log(courses);
+    res.json(this.courses);
   });
-  res.json(this.courses);
+  
 });
 module.exports = {
   courses: courses_router
