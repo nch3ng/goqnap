@@ -13,6 +13,7 @@ var auth = require("./controllers/auth/middleware/auth");
 var registerCtrl = require("./controllers/auth/register");
 var loginCtrl = require("./controllers/auth/login");
 var usersCtrl = require("./controllers/users/users.controller");
+var coursesCtrl = require("./controllers/courses/courses.controller");
 
 router.use(function timeLog (req, res, next) {
   console.log('Time: ', Date.now())
@@ -32,5 +33,6 @@ router.get('/check-state', auth.verifyToken, (req, res) => {
 
 router.use('/user', auth.verifyToken, usersCtrl.user);
 router.use('/users', auth.verifyToken, usersCtrl.users);
+router.use('/courses', coursesCtrl.courses);
 
 module.exports = router;
