@@ -13,7 +13,7 @@
     "production" : {
       "key": "~/.ssh/google_cloud",
       "user" : "deploy",
-      "host" : ["1blog.qnap.com"],
+      "host" : ["blog.qnap.com"],
       "ref"  : "origin/master",
       "repo" : "git@github.com:qqnc/qnapusa.git",
       "path" : "/var/www/staging",
