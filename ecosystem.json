@@ -1,0 +1,30 @@
+{
+  "apps" : [{
+    "name"      : "management",
+    "script"    : "/var/www/staging/source/server/server.js",
+    "env": {
+      "COMMON_VARIABLE": "true"
+    },
+    "env_production" : {
+      "NODE_ENV": "production"
+    }
+  }],
+  "deploy" : {
+    "production" : {
+      "key": "~/.ssh/google_cloud",
+      "user" : "deploy",
+      "host" : ["1blog.qnap.com"],
+      "ref"  : "origin/master",
+      "repo" : "git@github.com:qqnc/qnapusa.git",
+      "path" : "/var/www/staging",
+      "pre-setup": "",
+      "post-setup": "npm install --unsafe-perm",
+      "pre-deploy-local" : "echo 'This is a local executed command'",
+      "pre-deploy" : "npm run build:server;npm run build:web;",
+      "post-deploy" : "sudo cp /natecheng/.env ./;sudo pm2 startOrRestart ecosystem.json --env production;",
+      "env"  : {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

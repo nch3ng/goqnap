@@ -5,12 +5,14 @@ var Course = require("../../models/courses");
 courses_router.get('/', function (req, res) {
   var courses = [];
   console.log("get courses");
-  Course.find({}, function(err, courses){
-    this.courses = courses;
-    //console.log(courses);
-    res.json(this.courses);
-  });
-  
+  let promise = Course.find({}).exec();
+
+  promise.then(
+    (courses)=>{
+      this.courses = courses;
+      res.json(this.courses);
+    }).catch(error=>{
+    })
 });
 module.exports = {
   courses: courses_router
