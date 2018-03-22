@@ -21,7 +21,7 @@
       "post-setup": "npm install --unsafe-perm",
       "pre-deploy-local" : "echo 'This is a local executed command'",
       "pre-deploy" : "",
-      "post-deploy" : "sudo pm2 startOrRestart ecosystem.json --env production;sudo cp ../../qnapusa/public/ . -a",
+      "post-deploy" : "sudo pm2 startOrRestart ecosystem.json --env production;sudo cp ../../qnapusa/public/ . -a; cp ~/.env ./",
       "env"  : {
         "NODE_ENV": "production"
       }
