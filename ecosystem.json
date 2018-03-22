@@ -11,17 +11,17 @@
   }],
   "deploy" : {
     "production" : {
-      "key": "~/.ssh/google_cloud",
-      "user" : "deploy",
+      "key": "/c/Users/chche/.ssh/google_cloud_openSSH",
+      "user" : "natecheng",
       "host" : ["blog.qnap.com"],
       "ref"  : "origin/master",
-      "repo" : "git@github.com:qqnc/qnapusa.git",
+      "repo" : "https://github.com/qqnc/goqnap.git",
       "path" : "/var/www/staging",
       "pre-setup": "",
       "post-setup": "npm install --unsafe-perm",
       "pre-deploy-local" : "echo 'This is a local executed command'",
       "pre-deploy" : "npm run build:server;npm run build:web;",
-      "post-deploy" : "sudo cp /natecheng/.env ./;sudo pm2 startOrRestart ecosystem.json --env production;",
+      "post-deploy" : "sudo pm2 startOrRestart ecosystem.json --env production;",
       "env"  : {
         "NODE_ENV": "production"
       }
