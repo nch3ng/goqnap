@@ -1,6 +1,6 @@
 {
   "apps" : [{
-    "name"      : "management",
+    "name"      : "goqnapcom",
     "script"    : "/var/www/staging/source/server/server.js",
     "env": {
       "COMMON_VARIABLE": "true"
