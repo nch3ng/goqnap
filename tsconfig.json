@@ -4,6 +4,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "allowJs": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,5 +16,7 @@
       "es2017",
       "dom"
     ]
-  }
+    
+  },
+  "exclude":["src/"] 
 }
