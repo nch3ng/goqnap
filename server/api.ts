@@ -9,14 +9,12 @@ const loginCtrl = require('./controllers/auth/login');
 const usersCtrl = require('./controllers/users/users.controller');
 const coursesCtrl = require('./controllers/courses/courses.controller');
 const categoriesCtrl = require('./controllers/courses/categories.controller');
-import * as migrate from './controllers/migrate.controller';
 
 router.use(function timeLog (req, res, next) {
   console.log('Time: ', Date.now());
   next();
 });
 
-router.get('/migrate', migrate);
 router.post('/register', registerCtrl);
 router.post('/login', loginCtrl);
 router.get('/check-state', auth.verifyToken, (req, res) => {

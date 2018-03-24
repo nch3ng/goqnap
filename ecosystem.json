@@ -1,7 +1,7 @@
 {
   "apps" : [{
     "name"      : "goqnapcom",
-    "script"    : "/var/www/staging/source/server/server.ts",
+    "script"    : "server/server.ts",
     "env": {
       "COMMON_VARIABLE": "true"
     },
