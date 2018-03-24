@@ -11,7 +11,7 @@
   }],
   "deploy" : {
     "production" : {
-      "key": "/c/Users/chche/.ssh/google_cloud.ppk",
+      "key": "/c/Users/chche/.ssh/google_cloud_openSSH",
       "user" : "natecheng",
       "host" : ["blog.qnap.com"],
       "ref"  : "origin/master",
