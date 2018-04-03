@@ -1,7 +1,6 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+import * as mongoose from 'mongoose';
 
-var courseSchema = new mongoose.Schema({
+const courseSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -25,9 +24,23 @@ var courseSchema = new mongoose.Schema({
   category: {
     type: String,
     require: true
+  },
+  watched: {
+    type: Number,
+    default: 0
+  },
+  rank: {
+    type: Number,
+    default: 0
+  },
+  createAt: {
+    type: Date
+  },
+  publishedDate: {
+    type: Date
   }
 });
 
-var Course = mongoose.model('Course', courseSchema);
+const Course = mongoose.model('Course', courseSchema);
 
-module.exports = Course;
+export default Course;

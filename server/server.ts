@@ -39,10 +39,10 @@ app.use('/api', api);
 app.use('/', goqnap);
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);
-app.use(['/login', '/register'], function(req, res, next) {
-  // Just send the index.html for other files to support HTML5Mode
-  res.sendFile('/index.html', { root: path.join(__dirname, '../dist') });
-});
+// app.use(['/login', '/register'], function(req, res, next) {
+//   // Just send the index.html for other files to support HTML5Mode
+//   res.sendFile('/index.html', { root: path.join(__dirname, '../dist') });
+// });
 
 const httpServer = http.createServer(app);
 
