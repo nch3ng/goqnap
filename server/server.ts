@@ -54,9 +54,9 @@ httpServer.listen(port);
 if (config.ssl_enable) {
   const ssl_port = config.ssl_port || 9000;
   const credentials = {
-    key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
-    cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),
-    ca: fs.readFileSync('/root/twca/uca.cer", "utf8')
+    key: fs.readFileSync('/home/deploy/twca/qnap_com.key', 'utf8'),
+    cert: fs.readFileSync('/home/deploy/twca/qnap_com.cer', 'utf8'),
+    ca: fs.readFileSync('/home/deploy/twca/uca.cer", "utf8')
   };
 
   const httpsServer = https.createServer(credentials, app);
