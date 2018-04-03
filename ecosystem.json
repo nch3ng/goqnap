@@ -18,7 +18,7 @@
       "repo" : "https://github.com/qqnc/goqnap.git",
       "path" : "/var/www/staging",
       "pre-setup": "sudo rm -rf /var/www/staging/source",
-      "post-setup": "npm install --unsafe-perm",
+      "post-setup": "sudo npm install --unsafe-perm",
       "pre-deploy-local" : "echo 'This is a local executed command'",
       "pre-deploy" : "",
       "post-deploy" : "sudo pm2 startOrRestart ecosystem.json --env production;sudo cp ../../qnapusa/public/ . -a; cp ~/.env ./",
