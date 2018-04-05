@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema({
-  name: String
+  name: String,
+  level: Number
 });
 
 const Category = mongoose.model('Category', categorySchema);

@@ -7,19 +7,31 @@ import Category from '../../models/categories';
 import Course from '../../models/courses';
 
 categories_router.get('/' , function (req, res) {
-  console.log(req.body);
-  Category.find({}, (err, r_categories) => {
-     res.json(r_categories);
-  });
+  const promise = Category.find({}).sort('level').exec();
+
+  promise.then(
+    (categories) => {
+      res.status(200).json(categories);
+    }
+  ).catch(
+    (err) => {
+      res.status(500);
+    }
+  );
 });
 
 category_router.get('/:category_name/allCourses' , function (req, res) {
-  Course.find({'category': req.params.category_name}, function (err, courses) {
-    if (err) {
-      return res.status(500).json({});
+  const promise = Course.find({'category': req.params.category_name}).exec();
+
+  promise.then(
+    (courses) => {
+      res.status(200).json(courses);
     }
-    res.json(courses);
-  });
+  ).catch(
+    (err) => {
+      res.status(500);
+    }
+  );
 });
 
 module.exports = {
