@@ -9,7 +9,8 @@
     "test": "mocha",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "start:dev": "nodemon --exec ./node_modules/.bin/ts-node -- ./server/server.ts"
+    "start:dev": "nodemon --exec ./node_modules/.bin/ts-node -- ./server/server.ts",
+    "deploy:production": "pm2 deploy production setup; pm2 deploy production"
   },
   "private": true,
   "dependencies": {
