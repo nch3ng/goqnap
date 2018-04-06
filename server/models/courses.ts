@@ -38,6 +38,26 @@ const courseSchema = new mongoose.Schema({
   },
   publishedDate: {
     type: Date
+  },
+  like: {
+    type: Number,
+    default: 0
+  },
+  dislike: {
+    type: Number,
+    default: 0
+  },
+  favoriteCount: {
+    type: Number,
+    default: 0
+  },
+  duration: {
+    type: String,
+    default: ''
+  },
+  commentCount: {
+    type: Number,
+    default: 0
   }
 });
 

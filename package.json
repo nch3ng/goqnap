@@ -26,8 +26,10 @@
     "@angular/router": "^5.1.1",
     "@auth0/angular-jwt": "^1.0.0-beta.9",
     "@joegesualdo/youtube-video-info-node": "0.0.2",
+    "@joegesualdo/youtube-video-scraper-node": "0.0.3",
     "angular-jwt": "^0.1.9",
     "angular2-jwt": "^0.2.3",
+    "angular2-moment": "^1.8.0",
     "body-parser": "^1.18.2",
     "bootstrap": "^3.3.7",
     "cookie-parser": "^1.4.3",
@@ -48,6 +50,7 @@
     "serve-favicon": "^2.4.5",
     "winston": "^2.4.0",
     "youtube-info": "^1.2.0",
+    "youtube-node": "^1.3.2",
     "youtube.get-video-info": "^1.0.1",
     "zone.js": "^0.8.14"
   },
