@@ -5,7 +5,7 @@ import * as express from 'express';
 const courses_router = express.Router();
 import Course from '../../models/courses';
 
-// import YoutubeVideoInfo from '@joegesualdo/youtube-video-info-node';
+import YoutubeVideoInfo from '@joegesualdo/youtube-video-info-node';
 
 
 courses_router.get('/', function (req, res) {
@@ -44,6 +44,35 @@ courses_router.get('/', function (req, res) {
     }).catch(error => {
   });
 });
+
+
+courses_router.get('/:courseId/youtubeinfo', function (req, res) {
+  new YoutubeVideoInfo(req.params.courseId)
+  .then(instance => {
+    instance.getInfo()
+    .then(info => {
+      // console.log(info);
+      const promise = Course.findOneAndUpdate(
+        { youtube_ref: req.params.courseId },
+        { $set: {watched: info['viewCount']}},
+        { new: true}).exec();
+
+      promise.then(
+        (course) => {
+          res.json(course);
+        }
+      ).catch(
+        (err) => {
+          res.status(500).json(err);
+        }
+      );
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  });
+});
+
 module.exports = {
   courses: courses_router
 };
