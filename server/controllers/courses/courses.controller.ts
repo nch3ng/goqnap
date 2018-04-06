@@ -48,16 +48,13 @@ courses_router.get('/', function (req, res) {
 courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
   const youTube = new YouTube();
 
-  youTube.setKey('AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic');
+  youTube.setKey(process.env.YOUTUBE_KEY);
 
   youTube.getById(req.params.youtubeRef, function(error, info) {
     if (error) {
       res.status(500).json(error);
     } else {
       const item = info.items[0];
-      // console.log(item.contentDetails);
-      // console.log(item.contentDetails.statistics);
-      // console.log(JSON.stringify(result, null, 2));
       const promise = Course.findOneAndUpdate(
               { youtube_ref: req.params.youtubeRef },
               { $set: {
@@ -86,7 +83,7 @@ courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
 courses_router.get('/:youtubeRef/youtubemeta', function (req, res) {
   const youTube = new YouTube();
 
-  youTube.setKey('AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic');
+  youTube.setKey(process.env.YOUTUBE_KEY);
 
   youTube.getById(req.params.youtubeRef, function(error, result) {
     if (error) {
