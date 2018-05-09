@@ -20,7 +20,7 @@ categories_router.get('/' , function (req, res) {
   );
 });
 
-category_router.get('/:category_name/allCourses' , function (req, res) {
+category_router.get('/:category_name/courses' , function (req, res) {
   const promise = Course.find({'category': req.params.category_name}).exec();
 
   promise.then(

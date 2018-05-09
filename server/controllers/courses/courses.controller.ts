@@ -44,6 +44,19 @@ courses_router.get('/', function (req, res) {
   });
 });
 
+courses_router.get('/category/:name/courses', function (req, res) {
+  const promise = Course.find({'category': req.params.name}).exec();
+
+  promise.then(
+    (courses) => {
+      res.status(200).json(courses);
+    }
+  ).catch(
+    (err) => {
+      res.status(500);
+    }
+  );
+});
 
 courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
   const youTube = new YouTube();

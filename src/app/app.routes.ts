@@ -33,7 +33,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent}
 ];
 
-export const AppRouting = RouterModule.forRoot(routes, { 
+export const AppRouting = RouterModule.forRoot(routes, {
   useHash: true,
   enableTracing: true
 });
