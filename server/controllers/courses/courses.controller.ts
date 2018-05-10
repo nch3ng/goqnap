@@ -108,6 +108,49 @@ courses_router.get('/:youtubeRef/youtubemeta', function (req, res) {
   });
 });
 
+courses_router.get('/search', function (req, res) {
+  const queryStr = req.query['query'];
+  console.log('search ' + queryStr);
+  if (queryStr) {
+    const promise = Course.find({$text: {$search: queryStr}}).exec();
+    promise.then(
+      (courses) => {
+        // console.log(courses);
+        res.json(courses);
+      }
+    ).catch(
+      (err) => {
+        res.status(500).json(err);
+      }
+    );
+  } else {
+    res.status(500).json({
+      message: 'Please enter a query string.'
+    });
+  }
+});
+
+// courses_router.get('/:category/search', function (req, res) {
+//   const queryStr = req.query['query'];
+//   console.log('search ' + queryStr);
+//   if (queryStr) {
+//     const promise = Course.find({$text: {$search: queryStr}}).exec();
+//     promise.then(
+//       (courses) => {
+//         // console.log(courses);
+//         res.json(courses);
+//       }
+//     ).catch(
+//       (err) => {
+//         res.status(500).json(err);
+//       }
+//     );
+//   } else {
+//     res.status(500).json({
+//       message: 'Please enter a query string.'
+//     });
+//   }
+// });
 
 module.exports = {
   courses: courses_router
