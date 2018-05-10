@@ -124,9 +124,7 @@ courses_router.get('/search', function (req, res) {
       }
     );
   } else {
-    res.status(500).json({
-      message: 'Please enter a query string.'
-    });
+    res.status(200).json([]);
   }
 });
 
