@@ -19,7 +19,7 @@ module.exports = {
     //mongodb: "mongodb://qnapadmin:qnap168qnap168@ds149934.mlab.com:49934/qnapusaauth",
     //DBConnectionUrl: "mongodb://" + process.env.DB_USERNAME + ":" + process.env.DB_PASSSWORD+ "@" + process.env.DB_ADDRESS + "/" + process.env.DB_PRODUCTION
     expiry: 24,
-    ssl_enable:true,
+    ssl_enable: true,
     ssl_port: process.env.SSL_PORT
   }
   

@@ -68,6 +68,7 @@ courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
       res.status(500).json(error);
     } else {
       const item = info.items[0];
+      console.log(item);
       const promise = Course.findOneAndUpdate(
               { youtube_ref: req.params.youtubeRef },
               { $set: {
@@ -110,7 +111,7 @@ courses_router.get('/:youtubeRef/youtubemeta', function (req, res) {
 
 courses_router.get('/search', function (req, res) {
   const queryStr = req.query['query'];
-  console.log('search ' + queryStr);
+  // console.log('search ' + queryStr);
   if (queryStr) {
     const promise = Course.find({$text: {$search: queryStr}}).exec();
     promise.then(
@@ -127,7 +128,70 @@ courses_router.get('/search', function (req, res) {
     res.status(200).json([]);
   }
 });
+courses_router.post('/', (req, res) => {
+  // console.log(req.body);
+  const course = new Course();
+  Object.assign(course, req.body);
+  // console.log(course);
+  course.save(function (err) {
+    if (err) {
+      res.status(500).json(
+        {
+          success: false,
+          message: 'Create a course failed',
+          reason: err
+        }
+      );
+    }
 
+    const youTube = new YouTube();
+
+    youTube.setKey(process.env.YOUTUBE_KEY);
+
+    youTube.getById(course.youtube_ref, function(error, info) {
+      if (error) {
+        res.status(500).json({
+                success: false,
+                message: 'Create a course failed',
+                reason: error
+        });
+      } else {
+        const item = info.items[0];
+        const promise = Course.findOneAndUpdate(
+                { youtube_ref: course.youtube_ref },
+                { $set: {
+                    duration: item.contentDetails.duration,
+                    like: item.statistics.likeCount,
+                    dislike: item.statistics.dislikeCount,
+                    watched: item.statistics.viewCount,
+                    favoriteCount: item.statistics.favoriteCount,
+                    commentCount: item.statistics.commentCount,
+                    publishedDate: item.snippet.publishedAt
+                  }
+                },
+                { new: true}).exec();
+        promise.then(
+          (rCourse) => {
+            res.status(200).json({
+              success: true,
+              message: 'Create a course successfully',
+              course: rCourse
+            });
+          }
+        ).catch(
+          (rError) => {
+            res.status(500).json({
+              success: false,
+              message: 'Create a course failed',
+              reason: rError
+            });
+          }
+        );
+      }
+    });
+    // saved!
+  });
+});
 // courses_router.get('/:category/search', function (req, res) {
 //   const queryStr = req.query['query'];
 //   console.log('search ' + queryStr);

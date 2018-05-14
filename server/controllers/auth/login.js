@@ -37,7 +37,6 @@ module.exports = function(req, res) {
     }, config.secret, {
       expiresIn : 60*60*config.expiry
     });
-    logger.debug(token);
     let content = {
       user: user,
       success: true,
