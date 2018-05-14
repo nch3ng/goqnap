@@ -4,6 +4,7 @@
 import * as express from 'express';
 const courses_router = express.Router();
 import Course from '../../models/courses';
+import * as auth from '../auth/middleware/auth';
 
 import * as YouTube from 'youtube-node';
 
@@ -128,7 +129,7 @@ courses_router.get('/search', function (req, res) {
     res.status(200).json([]);
   }
 });
-courses_router.post('/', (req, res) => {
+courses_router.post('/', auth.verifyToken, (req, res) => {
   // console.log(req.body);
   const course = new Course();
   Object.assign(course, req.body);
@@ -192,6 +193,25 @@ courses_router.post('/', (req, res) => {
     // saved!
   });
 });
+
+courses_router.delete('/:courseId', auth.verifyToken, (req, res) => {
+  const promise = Course.findOneAndRemove({ _id: req.params.courseId}).exec();
+
+  promise.then(
+    (user) => {
+      res.status(200).json(user);
+    },
+    (err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Delete a course failed',
+        reason: err
+      });
+      throw err;
+    }
+  );
+});
+
 // courses_router.get('/:category/search', function (req, res) {
 //   const queryStr = req.query['query'];
 //   console.log('search ' + queryStr);
