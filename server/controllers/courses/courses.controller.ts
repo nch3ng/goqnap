@@ -46,7 +46,7 @@ courses_router.get('/', function (req, res) {
 });
 courses_router.get('/:courseId', function (req, res) {
   console.log('Get course: ' + req.params.courseId);
-  const promise = Course.find({_id: req.params.courseId}).exec();
+  const promise = Course.findOne({_id: req.params.courseId}).exec();
 
   promise.then(
     (course) => {
