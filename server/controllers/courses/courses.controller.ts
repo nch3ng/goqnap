@@ -52,6 +52,10 @@ courses_router.get('/:courseId', function (req, res) {
     (course) => {
       res.json(course);
     }).catch(error => {
+      res.status(500).json({
+        success: false,
+        message: 'failed'
+      });
   });
 });
 
