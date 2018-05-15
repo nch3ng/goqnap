@@ -44,6 +44,16 @@ courses_router.get('/', function (req, res) {
     }).catch(error => {
   });
 });
+courses_router.get('/:courseId', function (req, res) {
+  console.log('Get course: ' + req.params.courseId);
+  const promise = Course.find({_id: req.params.courseId}).exec();
+
+  promise.then(
+    (course) => {
+      res.json(course);
+    }).catch(error => {
+  });
+});
 
 courses_router.get('/category/:name/courses', function (req, res) {
   const promise = Course.find({'category': req.params.name}).exec();
