@@ -220,10 +220,11 @@ courses_router.put('/', auth.verifyToken, (req, res) => {
     code_name: course.code_name,
     keywords: course.keywords,
     desc: course.desc,
-    youtube_ref: course.youtube_ref }}, { new: true}).exec();
+    youtube_ref: course.youtube_ref,
+    category: course.category }}, { new: true}).exec();
 
   course_promise.then((updated_course) => {
-    console.log(updated_course);
+    // console.log(updated_course);
 
     const youTube = new YouTube();
 
