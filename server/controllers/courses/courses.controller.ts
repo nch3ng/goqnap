@@ -105,7 +105,7 @@ courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
       res.status(500).json(error);
     } else {
       const item = info.items[0];
-      console.log(item);
+      // console.log(item);
       const promise = Course.findOneAndUpdate(
               { youtube_ref: req.params.youtubeRef },
               { $set: {
@@ -209,6 +209,78 @@ courses_router.post('/', auth.verifyToken, (req, res) => {
   });
 });
 
+courses_router.put('/', auth.verifyToken, (req, res) => {
+  const course = new Course();
+  Object.assign(course, req.body);
+
+  // console.log(course);
+  // console.log(req.body);
+  const course_promise = Course.findOneAndUpdate({_id: course._id}, {$set: {
+    title: course.title,
+    code_name: course.code_name,
+    keywords: course.keywords,
+    desc: course.desc,
+    youtube_ref: course.youtube_ref }}, { new: true}).exec();
+
+  course_promise.then((updated_course) => {
+    console.log(updated_course);
+
+    const youTube = new YouTube();
+
+    youTube.setKey(process.env.YOUTUBE_KEY);
+
+    youTube.getById(updated_course.youtube_ref, function(error, info) {
+      if (error) {
+        res.status(500).json({
+                success: false,
+                message: 'The youtube reference does not exist.',
+                reason: error
+        });
+      } else {
+        const item = info.items[0];
+        const promise = Course.findOneAndUpdate(
+                { youtube_ref: updated_course.youtube_ref },
+                { $set: {
+                    duration: item.contentDetails.duration,
+                    like: item.statistics.likeCount,
+                    dislike: item.statistics.dislikeCount,
+                    watched: item.statistics.viewCount,
+                    favoriteCount: item.statistics.favoriteCount,
+                    commentCount: item.statistics.commentCount,
+                    publishedDate: item.snippet.publishedAt
+                  }
+                },
+                { new: true}).exec();
+        promise.then(
+          (rCourse) => {
+            res.status(200).json({
+              success: true,
+              message: 'Create a course successfully',
+              course: rCourse
+            });
+          }
+        ).catch(
+          (rError) => {
+            res.status(500).json({
+              success: false,
+              message: 'Can not update video with youtube information',
+              reason: rError
+            });
+          }
+        );
+      }
+    });
+  }).catch(
+    (err) => {
+      res.status(500).json({
+        success: false,
+        message: 'Cannot find the course to update',
+        reason: err
+      });
+    }
+  );
+    // saved!
+});
 courses_router.delete('/:courseId', auth.verifyToken, (req, res) => {
   const promise = Course.findOneAndRemove({ _id: req.params.courseId}).exec();
 
