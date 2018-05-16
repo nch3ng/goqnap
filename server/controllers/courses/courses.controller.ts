@@ -130,10 +130,8 @@ courses_router.get('/search', function (req, res) {
   }
 });
 courses_router.post('/', auth.verifyToken, (req, res) => {
-  // console.log(req.body);
   const course = new Course();
   Object.assign(course, req.body);
-  // console.log(course);
   course.save(function (err) {
     if (err) {
       res.status(500).json(
@@ -153,7 +151,7 @@ courses_router.post('/', auth.verifyToken, (req, res) => {
       if (error) {
         res.status(500).json({
                 success: false,
-                message: 'Create a course failed',
+                message: 'The youtube reference does not exist.',
                 reason: error
         });
       } else {
@@ -183,7 +181,7 @@ courses_router.post('/', auth.verifyToken, (req, res) => {
           (rError) => {
             res.status(500).json({
               success: false,
-              message: 'Create a course failed',
+              message: 'Can not update video with youtube information',
               reason: rError
             });
           }
