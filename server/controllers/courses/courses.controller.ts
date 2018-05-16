@@ -45,6 +45,42 @@ courses_router.get('/', function (req, res) {
   });
 });
 
+// Must place before get coure by courseId
+courses_router.get('/search', function (req, res) {
+  const queryStr = req.query['query'];
+  // console.log('search ' + queryStr);
+  if (queryStr) {
+    const promise = Course.find({$text: {$search: queryStr}}).exec();
+    promise.then(
+      (courses) => {
+        // console.log(courses);
+        res.json(courses);
+      }
+    ).catch(
+      (err) => {
+        res.status(200).json([]);
+      }
+    );
+  } else {
+    res.status(200).json([]);
+  }
+});
+
+courses_router.get('/:courseId', function (req, res) {
+  console.log('Get course: ' + req.params.courseId);
+  const promise = Course.findOne({_id: req.params.courseId}).exec();
+
+  promise.then(
+    (course) => {
+      res.json(course);
+    }).catch(error => {
+      res.status(500).json({
+        success: false,
+        message: 'failed'
+      });
+  });
+});
+
 courses_router.get('/category/:name/courses', function (req, res) {
   const promise = Course.find({'category': req.params.name}).exec();
 
@@ -110,25 +146,6 @@ courses_router.get('/:youtubeRef/youtubemeta', function (req, res) {
   });
 });
 
-courses_router.get('/search', function (req, res) {
-  const queryStr = req.query['query'];
-  // console.log('search ' + queryStr);
-  if (queryStr) {
-    const promise = Course.find({$text: {$search: queryStr}}).exec();
-    promise.then(
-      (courses) => {
-        // console.log(courses);
-        res.json(courses);
-      }
-    ).catch(
-      (err) => {
-        res.status(500).json(err);
-      }
-    );
-  } else {
-    res.status(200).json([]);
-  }
-});
 courses_router.post('/', auth.verifyToken, (req, res) => {
   const course = new Course();
   Object.assign(course, req.body);
