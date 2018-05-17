@@ -8,6 +8,7 @@
   "routes": {
     "entryFile": "./server/server.ts",
     "routesDir": "./server/routes",
-    "outputDirectory": "./server/swagger"
+    "outputDirectory": "./server/swagger",
+    "authenticationModule": "./server/controllers/auth/middleware/authentication.ts"
   }
 }

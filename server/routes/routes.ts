@@ -12,15 +12,42 @@ const models: TsoaRoute.Models = {
       "keywords": { "dataType": "string", "required": true },
       "youtube_ref": { "dataType": "string", "required": true },
       "category": { "dataType": "string", "required": true },
-      "watched": { "dataType": "double", "required": true },
-      "rank": { "dataType": "double", "required": true },
-      "createAt": { "dataType": "datetime", "required": true },
-      "publishedDate": { "dataType": "datetime", "required": true },
-      "like": { "dataType": "double", "required": true },
-      "dislike": { "dataType": "double", "required": true },
-      "favoriteCount": { "dataType": "double", "required": true },
-      "duration": { "dataType": "string", "required": true },
-      "commentCount": { "dataType": "double", "required": true },
+      "watched": { "dataType": "double" },
+      "rank": { "dataType": "double" },
+      "createAt": { "dataType": "datetime" },
+      "publishedDate": { "dataType": "datetime" },
+      "like": { "dataType": "double" },
+      "dislike": { "dataType": "double" },
+      "favoriteCount": { "dataType": "double" },
+      "duration": { "dataType": "string" },
+      "commentCount": { "dataType": "double" },
+    },
+  },
+  "UserCourseResponse": {
+    "properties": {
+      "success": { "dataType": "boolean", "required": true },
+      "message": { "dataType": "string", "required": true },
+      "course": { "ref": "Course", "required": true },
+    },
+  },
+  "UserCourseRequest": {
+    "properties": {
+      "_id": { "dataType": "string" },
+      "title": { "dataType": "string", "required": true },
+      "code_name": { "dataType": "string", "required": true },
+      "desc": { "dataType": "string", "required": true },
+      "keywords": { "dataType": "string", "required": true },
+      "youtube_ref": { "dataType": "string", "required": true },
+      "category": { "dataType": "string", "required": true },
+      "watched": { "dataType": "double" },
+      "rank": { "dataType": "double" },
+      "createAt": { "dataType": "datetime" },
+      "publishedDate": { "dataType": "datetime" },
+      "like": { "dataType": "double" },
+      "dislike": { "dataType": "double" },
+      "favoriteCount": { "dataType": "double" },
+      "duration": { "dataType": "string" },
+      "commentCount": { "dataType": "double" },
     },
   },
 };
@@ -101,6 +128,26 @@ export function RegisterRoutes(app: any) {
 
 
       const promise = controller.getYoutubeInfo.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/courses',
+    function(request: any, response: any, next: any) {
+      const args = {
+        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
+        authorization: { "in": "header", "name": "Authorization", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CoursesController();
+
+
+      const promise = controller.addCourse.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
 

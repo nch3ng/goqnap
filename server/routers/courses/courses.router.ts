@@ -4,10 +4,12 @@ import { Get, Route, Request } from 'tsoa';
 import * as express from 'express';
 const courses_router = express.Router();
 import CourseDB from '../../models/schemas/courses';
-import * as auth from '../../controllers/auth/middleware/auth';
+
 import { CoursesController } from '../../controllers/courses/courses.controller';
 import * as YouTube from 'youtube-node';
 import { Course } from './../../models/course.model';
+
+const auth = require('../../controllers/auth/middleware/auth');
 
 courses_router.get('/', function (req, res) {
 
@@ -65,7 +67,7 @@ courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
     }).catch(error => res.status(500).json(error));
 });
 
-courses_router.post('/', auth.verifyToken, (req, res) => {
+courses_router.post('/', auth.verify, (req, res) => {
   const course = new CourseDB();
   Object.assign(course, req.body);
   course.save(function (err) {

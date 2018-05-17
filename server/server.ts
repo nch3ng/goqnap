@@ -23,8 +23,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('./config')[env];
 const port = config.port || 3000;
 
-require('./models/db.js');
-require('./config/passport.js');
+require('./models/db');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));

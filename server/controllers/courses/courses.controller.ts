@@ -1,4 +1,4 @@
-import { Route, Get, Query, Controller, Body, Post, Header } from 'tsoa';
+import { Route, Get, Query, Controller, Body, Post, Header, Security } from 'tsoa';
 import { Course, UserCourseRequest, UserCourseResponse } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
@@ -118,8 +118,10 @@ export class CoursesController extends Controller {
       });
     });
   }
+
+  @Security('jwt')
   @Post()
-  public addCourse(@Body() requestBody: UserCourseRequest, @Header('Authorization') authorization: string): Promise<UserCourseResponse> {
+  public addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
