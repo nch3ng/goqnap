@@ -3,8 +3,9 @@ import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from
 import { CoursesController } from './../controllers/courses/courses.controller';
 
 const models: TsoaRoute.Models = {
-  "CourseModel": {
+  "Course": {
     "properties": {
+      "_id": { "dataType": "string", "required": true },
       "title": { "dataType": "string", "required": true },
       "code_name": { "dataType": "string", "required": true },
       "desc": { "dataType": "string", "required": true },
@@ -62,6 +63,44 @@ export function RegisterRoutes(app: any) {
 
 
       const promise = controller.getCourse.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/courses/search',
+    function(request: any, response: any, next: any) {
+      const args = {
+        query: { "in": "query", "name": "query", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CoursesController();
+
+
+      const promise = controller.search.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/courses/:youtubeRef/youtubeinfo',
+    function(request: any, response: any, next: any) {
+      const args = {
+        youtubeRef: { "in": "path", "name": "youtubeRef", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CoursesController();
+
+
+      const promise = controller.getYoutubeInfo.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
 

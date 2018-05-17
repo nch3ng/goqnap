@@ -34,26 +34,18 @@ courses_router.get('/', function (req, res) {
 // Must place before get coure by courseId
 courses_router.get('/search', function (req, res) {
   const queryStr = req.query['query'];
-  // console.log('search ' + queryStr);
-  if (queryStr) {
-    const promise = CourseDB.find({$text: {$search: queryStr}}).exec();
-    promise.then(
-      (courses) => {
-        // console.log(courses);
-        res.json(courses);
-      }
-    ).catch(
-      (err) => {
-        res.status(200).json([]);
-      }
-    );
-  } else {
-    res.status(200).json([]);
-  }
+  new CoursesController().search(queryStr).then(
+    (res_courses: Course []) => {
+      res.json(res_courses);
+    }
+  ).catch(
+    (error) => {
+      res.status(500).json(error);
+    });
 });
 
 courses_router.get('/:courseId', function (req, res) {
-  console.log('Get course: ' + req.params.courseId);
+  // console.log('Get course: ' + req.params.courseId);
   const course = new CoursesController();
   course.getCourse(req.params.courseId).then(
     (res_course) => {
@@ -66,69 +58,11 @@ courses_router.get('/:courseId', function (req, res) {
   });
 });
 
-courses_router.get('/category/:name/courses', function (req, res) {
-  const promise = CourseDB.find({'category': req.params.name}).exec();
-
-  promise.then(
-    (courses) => {
-      res.status(200).json(courses);
-    }
-  ).catch(
-    (err) => {
-      res.status(500);
-    }
-  );
-});
-
 courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
-  const youTube = new YouTube();
-
-  youTube.setKey(process.env.YOUTUBE_KEY);
-
-  youTube.getById(req.params.youtubeRef, function(error, info) {
-    if (error) {
-      res.status(500).json(error);
-    } else {
-      const item = info.items[0];
-      // console.log(item);
-      const promise = CourseDB.findOneAndUpdate(
-              { youtube_ref: req.params.youtubeRef },
-              { $set: {
-                  duration: item.contentDetails.duration,
-                  like: item.statistics.likeCount,
-                  dislike: item.statistics.dislikeCount,
-                  watched: item.statistics.viewCount,
-                  favoriteCount: item.statistics.favoriteCount,
-                  commentCount: item.statistics.commentCount
-                }
-              },
-              { new: true}).exec();
-      promise.then(
-        (course) => {
-          res.json(course);
-        }
-      ).catch(
-        (err) => {
-          res.status(500).json(err);
-        }
-      );
-    }
-  });
-});
-
-courses_router.get('/:youtubeRef/youtubemeta', function (req, res) {
-  const youTube = new YouTube();
-
-  youTube.setKey(process.env.YOUTUBE_KEY);
-
-  youTube.getById(req.params.youtubeRef, function(error, result) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(JSON.stringify(result, null, 2));
-      res.status(200).json(result);
-    }
-  });
+  new CoursesController().getYoutubeInfo(req.params.youtubeRef).then(
+    (course: Course) => {
+      res.json(course);
+    }).catch(error => res.status(500).json(error));
 });
 
 courses_router.post('/', auth.verifyToken, (req, res) => {
@@ -284,28 +218,6 @@ courses_router.delete('/:courseId', auth.verifyToken, (req, res) => {
     }
   );
 });
-
-// courses_router.get('/:category/search', function (req, res) {
-//   const queryStr = req.query['query'];
-//   console.log('search ' + queryStr);
-//   if (queryStr) {
-//     const promise = Course.find({$text: {$search: queryStr}}).exec();
-//     promise.then(
-//       (courses) => {
-//         // console.log(courses);
-//         res.json(courses);
-//       }
-//     ).catch(
-//       (err) => {
-//         res.status(500).json(err);
-//       }
-//     );
-//   } else {
-//     res.status(500).json({
-//       message: 'Please enter a query string.'
-//     });
-//   }
-// });
 
 module.exports = {
   courses: courses_router
