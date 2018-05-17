@@ -1,45 +1,39 @@
-import { Route, Get, Query } from 'tsoa';
-import { CourseModel } from '../../models/course.model';
-import Course from '../../models/schemas/courses';
+import { Route, Get, Query, Controller } from 'tsoa';
+import { Course } from '../../models/course.model';
+import CourseDB from '../../models/schemas/courses';
 
 @Route('courses')
-export class CoursesController {
+export class CoursesController extends Controller {
   desc = true;
   orderBy = null;
   limit = 0;
 
   @Get()
-  public getCourses(@Query() args?: Object): Promise<CourseModel []> {
-    if (args) {
-      console.log(args);
-      if (args['orderBy'] && args['orderBy'].split(':')[0]) {
-        this.orderBy = args['orderBy'].split(':')[0];
+  public getCourses(@Query() limit?: number, @Query() orderBy?: string): Promise<Course []> {
 
-        if (args['orderBy'].split(':')[1] && args['orderBy'].split(':')[1] === 'desc') {
-          this.desc = true;
-        } else {
-          this.desc = false;
-        }
-      }
-
-      if (args['limit']) {
-        this.limit = +args['limit'];
+    if (orderBy && orderBy.split(':')[0]) {
+      this.orderBy = orderBy.split(':')[0];
+      if (orderBy.split(':')[1] && orderBy.split(':')[1] === 'desc') {
+        this.desc = true;
+      } else {
+        this.desc = false;
       }
     }
-    return new Promise<CourseModel []>((resolve, reject) => {
+    this.limit = limit;
+    return new Promise<Course []>((resolve, reject) => {
 
       let sort;
       this.desc === true ? sort = '-' + this.orderBy : sort = this.orderBy;
 
       let promise;
       if (this.limit === 0) {
-        promise = Course.find({}).sort(sort).exec();
+        promise = CourseDB.find({}).sort(sort).exec();
       } else {
-        promise = Course.find({}).sort(sort).limit(this.limit).exec();
+        promise = CourseDB.find({}).sort(sort).limit(this.limit).exec();
       }
 
       promise.then(
-        (courses: CourseModel []) => {
+        (courses: Course []) => {
           resolve(courses);
         }
       ).catch((error) => {
@@ -49,11 +43,11 @@ export class CoursesController {
   }
 
   @Get('{id}')
-  public getCourse(id: string): Promise<CourseModel> {
-    return new Promise<CourseModel>((resolve, reject) => {
-      const promise = Course.findOne({_id: id}).exec();
+  public getCourse(id: string): Promise<Course> {
+    return new Promise<Course>((resolve, reject) => {
+      const promise = CourseDB.findOne({_id: id}).exec();
       promise.then(
-        (course: CourseModel) => {
+        (course: Course) => {
           resolve(course);
         }
       ).catch(

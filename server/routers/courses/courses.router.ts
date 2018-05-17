@@ -1,41 +1,26 @@
 /*jslint node: true */
-'use strict';
 
 import { Get, Route, Request } from 'tsoa';
 import * as express from 'express';
 const courses_router = express.Router();
-import Course from '../../models/schemas/courses';
-import * as auth from '../auth/middleware/auth';
-import { CoursesController } from './courses.controller';
-
+import CourseDB from '../../models/schemas/courses';
+import * as auth from '../../controllers/auth/middleware/auth';
+import { CoursesController } from '../../controllers/courses/courses.controller';
 import * as YouTube from 'youtube-node';
-import { CourseModel } from '../../models/course.model';
+import { Course } from './../../models/course.model';
 
 courses_router.get('/', function (req, res) {
 
-  // console.log(req.query['orderBy']);
-  let orderBy;
-  let desc = false;
   let limit = 0;
-  const args = {};
-  if (req.query['orderBy']) {
-    orderBy = req.query['orderBy'].split(':')[0];
-    if (req.query['orderBy'].split(':')[1] && req.query['orderBy'].split(':')[1] === 'desc') {
-      desc = true;
-      args['orderBy'] = req.query['orderBy'];
-    }
-    // console.log(req.query['orderBy'].split(':')[1]);
-  }
 
   if (req.query['limit']) {
     limit = +req.query['limit'];
   }
 
-  args['limit'] = limit;
 
   const courseCtrl = new CoursesController();
-  courseCtrl.getCourses(args).then(
-    (res_courses: CourseModel []) => {
+  courseCtrl.getCourses(limit, req.query['orderBy']).then(
+    (res_courses) => {
       console.log('Test controller.');
       res.json(res_courses);
     }
@@ -51,7 +36,7 @@ courses_router.get('/search', function (req, res) {
   const queryStr = req.query['query'];
   // console.log('search ' + queryStr);
   if (queryStr) {
-    const promise = Course.find({$text: {$search: queryStr}}).exec();
+    const promise = CourseDB.find({$text: {$search: queryStr}}).exec();
     promise.then(
       (courses) => {
         // console.log(courses);
@@ -82,7 +67,7 @@ courses_router.get('/:courseId', function (req, res) {
 });
 
 courses_router.get('/category/:name/courses', function (req, res) {
-  const promise = Course.find({'category': req.params.name}).exec();
+  const promise = CourseDB.find({'category': req.params.name}).exec();
 
   promise.then(
     (courses) => {
@@ -106,7 +91,7 @@ courses_router.get('/:youtubeRef/youtubeinfo', function (req, res) {
     } else {
       const item = info.items[0];
       // console.log(item);
-      const promise = Course.findOneAndUpdate(
+      const promise = CourseDB.findOneAndUpdate(
               { youtube_ref: req.params.youtubeRef },
               { $set: {
                   duration: item.contentDetails.duration,
@@ -147,7 +132,7 @@ courses_router.get('/:youtubeRef/youtubemeta', function (req, res) {
 });
 
 courses_router.post('/', auth.verifyToken, (req, res) => {
-  const course = new Course();
+  const course = new CourseDB();
   Object.assign(course, req.body);
   course.save(function (err) {
     if (err) {
@@ -173,7 +158,7 @@ courses_router.post('/', auth.verifyToken, (req, res) => {
         });
       } else {
         const item = info.items[0];
-        const promise = Course.findOneAndUpdate(
+        const promise = CourseDB.findOneAndUpdate(
                 { youtube_ref: course.youtube_ref },
                 { $set: {
                     duration: item.contentDetails.duration,
@@ -215,7 +200,7 @@ courses_router.put('/', auth.verifyToken, (req, res) => {
 
   // console.log(course);
   // console.log(req.body);
-  const course_promise = Course.findOneAndUpdate({_id: course._id}, {$set: {
+  const course_promise = CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
     title: course.title,
     code_name: course.code_name,
     keywords: course.keywords,
@@ -239,7 +224,7 @@ courses_router.put('/', auth.verifyToken, (req, res) => {
         });
       } else {
         const item = info.items[0];
-        const promise = Course.findOneAndUpdate(
+        const promise = CourseDB.findOneAndUpdate(
                 { youtube_ref: updated_course.youtube_ref },
                 { $set: {
                     duration: item.contentDetails.duration,
@@ -283,7 +268,7 @@ courses_router.put('/', auth.verifyToken, (req, res) => {
     // saved!
 });
 courses_router.delete('/:courseId', auth.verifyToken, (req, res) => {
-  const promise = Course.findOneAndRemove({ _id: req.params.courseId}).exec();
+  const promise = CourseDB.findOneAndRemove({ _id: req.params.courseId}).exec();
 
   promise.then(
     (user) => {

@@ -1,4 +1,5 @@
-export class CourseModel {
+export class Course {
+  _id: string;
   title: string;
   code_name: string;
   desc: string;

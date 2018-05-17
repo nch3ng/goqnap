@@ -10,8 +10,6 @@ users_router.get('/', function (req, res) {
 });
 
 
-
-
 user_router.get('/:userId', function (req, res) {
   res.status(200).send('get user: ' + req.params.userId);
 })

@@ -16,6 +16,8 @@ import * as logger from 'morgan';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 
+import './controllers/courses/courses.controller';
+
 const app = express();
 const env = process.env.NODE_ENV || 'development';
 const config = require('./config')[env];

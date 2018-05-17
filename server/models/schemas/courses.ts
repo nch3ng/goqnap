@@ -63,6 +63,6 @@ const courseSchema = new mongoose.Schema({
 
 courseSchema.index({'$**': 'text'});
 
-const Course = mongoose.model('Course', courseSchema);
+const CourseDB = mongoose.model('Course', courseSchema);
 
-export default Course;
+export default CourseDB;
