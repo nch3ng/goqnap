@@ -1,5 +1,5 @@
-import { Route, Get, Query, Controller } from 'tsoa';
-import { Course } from '../../models/course.model';
+import { Route, Get, Query, Controller, Body, Post, Header } from 'tsoa';
+import { Course, UserCourseRequest, UserCourseResponse } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
 
@@ -115,6 +115,24 @@ export class CoursesController extends Controller {
             }
           );
         }
+      });
+    });
+  }
+  @Post()
+  public addCourse(@Body() requestBody: UserCourseRequest, @Header('Authorization') authorization: string): Promise<UserCourseResponse> {
+    return new Promise<UserCourseResponse>((resolve, reject) => {
+      const course = new CourseDB();
+      Object.assign(course, requestBody);
+      course.save(function (error) {
+        if (error) {
+          reject(new UserCourseResponse(false, error, null));
+        }
+
+        this.getYoutubeInfo(course.youtube_ref).then(
+          (res_course: Course) => {
+            resolve(new UserCourseResponse(true, 'Create a course successfully', res_course));
+          }
+        ).catch(error1 => reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null)));
       });
     });
   }
