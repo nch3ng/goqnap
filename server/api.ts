@@ -7,7 +7,7 @@ const auth = require('./controllers/auth/middleware/auth');
 const registerCtrl = require('./controllers/auth/register');
 const loginCtrl = require('./controllers/auth/login');
 const usersCtrl = require('./controllers/users/users.controller');
-const coursesCtrl = require('./controllers/courses/courses.controller');
+const coursesCtrl = require('./controllers/courses/course.controller');
 const categoriesCtrl = require('./controllers/courses/categories.controller');
 
 router.use(function timeLog (req, res, next) {

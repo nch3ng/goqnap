@@ -1,6 +1,6 @@
 /*jslint node: true */
 "use strict";
-var User = require("../../models/users");
+var User = require("../../models/schemas/users");
 module.exports = function (req, res) {
     console.log("Registering user: " + req.body.email);
     var user = new User();

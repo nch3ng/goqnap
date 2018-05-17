@@ -1,4 +1,4 @@
-User = require("../../models/users");
+User = require("../../models/schemas/users");
 const env = process.env.NODE_ENV || 'development';
 const config = require('../../config')[env];
 logger = require('../../logger');

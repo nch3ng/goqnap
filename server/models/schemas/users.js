@@ -3,7 +3,7 @@ var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config')[env];
+const config = require('../../config')[env];
 
 var Schema = mongoose.Schema;
 

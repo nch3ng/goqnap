@@ -3,8 +3,8 @@ import * as express from 'express';
 const categories_router = express.Router();
 const category_router = express.Router();
 
-import Category from '../../models/categories';
-import Course from '../../models/courses';
+import Category from '../../models/schemas/categories';
+import Course from '../../models/schemas/courses';
 
 categories_router.get('/' , function (req, res) {
   const promise = Category.find({}).sort('level').exec();
