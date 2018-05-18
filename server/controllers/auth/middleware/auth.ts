@@ -9,10 +9,9 @@ const auth = {
     // console.log(req.headers);
     // console.log(token);
     if (token) {
-
-        jwt.verify(token, config.secret, (err, decoded) => {
+        jwt.verify(token, config.secret, function(err, decoded) {
           if (err) {
-            res.send({ success: false, message: err });
+            res.send({ success: false, message: 'Authroized failed' });
           } else {
               // all good, continue
             req.decoded = decoded;
