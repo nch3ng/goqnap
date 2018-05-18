@@ -3,6 +3,7 @@ import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from
 import { CoursesController } from './../controllers/courses/courses.controller';
 import { CategoriesController } from './../controllers/courses/categories.controller';
 import { CategoryController } from './../controllers/courses/categories.controller';
+import { AuthController } from './../controllers/auth/login';
 import { expressAuthentication } from './../controllers/auth/middleware/authentication';
 
 const models: TsoaRoute.Models = {
@@ -58,6 +59,26 @@ const models: TsoaRoute.Models = {
       "name": { "dataType": "string", "required": true },
       "img": { "dataType": "string", "required": true },
       "level": { "dataType": "double", "required": true },
+    },
+  },
+  "UserModel": {
+    "properties": {
+      "email": { "dataType": "string", "required": true },
+      "password": { "dataType": "string", "required": true },
+    },
+  },
+  "UserLoginResponse": {
+    "properties": {
+      "success": { "dataType": "boolean", "required": true },
+      "message": { "dataType": "string", "required": true },
+      "token": { "dataType": "string" },
+      "user": { "ref": "UserModel" },
+    },
+  },
+  "UserLoginRequest": {
+    "properties": {
+      "email": { "dataType": "string", "required": true },
+      "password": { "dataType": "string", "required": true },
     },
   },
 };
@@ -237,6 +258,44 @@ export function RegisterRoutes(app: any) {
 
 
       const promise = controller.getCourses.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/login',
+    function(request: any, response: any, next: any) {
+      const args = {
+        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserLoginRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AuthController();
+
+
+      const promise = controller.login.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/check-state',
+    authenticateMiddleware([{ "name": "jwt" }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AuthController();
+
+
+      const promise = controller.checkState.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
 

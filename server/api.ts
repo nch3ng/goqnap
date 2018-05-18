@@ -16,14 +16,14 @@ router.use(function timeLog (req, res, next) {
 });
 
 router.post('/register', registerCtrl);
-router.post('/login', loginCtrl);
-router.get('/check-state', auth.verifyToken, (req, res) => {
-  const content = {
-    success: true,
-    message: 'Successfully logged in'
-  };
-  res.send(content);
-});
+// router.post('/login', loginCtrl);
+// router.get('/check-state', auth.verifyToken, (req, res) => {
+//   const content = {
+//     success: true,
+//     message: 'Successfully logged in'
+//   };
+//   res.send(content);
+// });
 
 router.use('/user', auth.verifyToken, usersRouter.user);
 router.use('/users', auth.verifyToken, usersRouter.users);

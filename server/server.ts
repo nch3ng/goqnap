@@ -19,7 +19,10 @@ import * as passport from 'passport';
 import './controllers/courses/courses.controller';
 import './controllers/courses/categories.controller';
 import './controllers/auth/middleware/authentication';
+import './controllers/auth/login';
+
 import { RegisterRoutes } from './routes/routes';
+import { authErrorHandler } from './helpers/error.handler';
 
 const app = express();
 const env = process.env.NODE_ENV || 'development';
@@ -46,6 +49,8 @@ app.use('/api', api);
 app.use('/', goqnap);
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);
+
+app.use(authErrorHandler);
 // app.use(['/login', '/register'], function(req, res, next) {
 //   // Just send the index.html for other files to support HTML5Mode
 //   res.sendFile('/index.html', { root: path.join(__dirname, '../dist') });
