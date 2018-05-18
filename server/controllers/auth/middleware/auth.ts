@@ -12,7 +12,7 @@ const auth = {
 
         jwt.verify(token, config.secret, (err, decoded) => {
           if (err) {
-            res.json({ success: false, message: err });
+            res.send({ success: false, message: err });
           } else {
               // all good, continue
             req.decoded = decoded;
