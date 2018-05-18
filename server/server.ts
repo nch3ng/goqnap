@@ -36,9 +36,11 @@ app.use(morgan('combined'));
 const api = require('./api');
 const goqnap = express.static('public');
 
+// Auto-generated routes by tsoa
 RegisterRoutes(app);
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
+
 app.use('/api', api);
 app.use('/', goqnap);
 const static_dist = express.static(path.join(__dirname, '../dist'));
