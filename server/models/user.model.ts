@@ -20,10 +20,20 @@ export interface IUserLoginResponse {
 export class AuthResponseError {
   success: boolean;
   message: string;
-  constructor(success: boolean, message: string) {
+  jwt_message?: JWTMessage;
+  constructor(success: boolean, message: string, jwt_message?: JWTMessage) {
     this.success = success;
     this.message = message;
+    if (jwt_message) {
+      this.jwt_message = jwt_message;
+    }
   }
+}
+
+export class JWTMessage {
+  name: string;
+  message: string;
+  expiredAt: Date;
 }
 
 export class UserLoginResponse implements IUserLoginResponse {

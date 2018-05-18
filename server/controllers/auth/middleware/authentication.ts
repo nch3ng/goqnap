@@ -17,7 +17,7 @@ export function expressAuthentication(request: express.Request, securityName: st
       }
       jwt.verify(token, config.secret, (err: any, decoded: any) => {
         if (err) {
-          reject(new AuthResponseError(false, err));
+          reject(new AuthResponseError(false, err.message, err));
         } else {
           // Check if JWT contains all required scopes
           if (scopes) {
