@@ -16,7 +16,6 @@ courses_router.get('/', function (req, res) {
   const courseCtrl = new CoursesController();
   courseCtrl.getCourses(+req.query['limit'], req.query['orderBy'], req.query['category']).then(
     (res_courses) => {
-      console.log('Test controller.');
       res.json(res_courses);
     }
   ).catch(
