@@ -8,7 +8,7 @@ import { expressAuthentication } from './../controllers/auth/middleware/authenti
 const models: TsoaRoute.Models = {
   "Course": {
     "properties": {
-      "_id": { "dataType": "string", "required": true },
+      "_id": { "dataType": "string" },
       "title": { "dataType": "string", "required": true },
       "code_name": { "dataType": "string", "required": true },
       "desc": { "dataType": "string", "required": true },
@@ -63,11 +63,12 @@ const models: TsoaRoute.Models = {
 };
 
 export function RegisterRoutes(app: any) {
-  app.get('/courses',
+  app.get('/api/courses',
     function(request: any, response: any, next: any) {
       const args = {
         limit: { "in": "query", "name": "limit", "dataType": "double" },
         orderBy: { "in": "query", "name": "orderBy", "dataType": "string" },
+        category: { "in": "query", "name": "category", "dataType": "string" },
       };
 
       let validatedArgs: any[] = [];
@@ -83,26 +84,7 @@ export function RegisterRoutes(app: any) {
       const promise = controller.getCourses.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
-  app.get('/courses/:id',
-    function(request: any, response: any, next: any) {
-      const args = {
-        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
-      };
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = getValidatedArgs(args, request);
-      } catch (err) {
-        return next(err);
-      }
-
-      const controller = new CoursesController();
-
-
-      const promise = controller.getCourse.apply(controller, validatedArgs);
-      promiseHandler(controller, promise, response, next);
-    });
-  app.get('/courses/search',
+  app.get('/api/courses/search',
     function(request: any, response: any, next: any) {
       const args = {
         query: { "in": "query", "name": "query", "required": true, "dataType": "string" },
@@ -121,7 +103,26 @@ export function RegisterRoutes(app: any) {
       const promise = controller.search.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
-  app.get('/courses/:youtubeRef/youtubeinfo',
+  app.get('/api/courses/:id',
+    function(request: any, response: any, next: any) {
+      const args = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CoursesController();
+
+
+      const promise = controller.getCourse.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/courses/:youtubeRef/youtubeinfo',
     function(request: any, response: any, next: any) {
       const args = {
         youtubeRef: { "in": "path", "name": "youtubeRef", "required": true, "dataType": "string" },
@@ -140,7 +141,7 @@ export function RegisterRoutes(app: any) {
       const promise = controller.getYoutubeInfo.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
-  app.post('/courses',
+  app.post('/api/courses',
     authenticateMiddleware([{ "name": "jwt" }]),
     function(request: any, response: any, next: any) {
       const args = {
@@ -161,7 +162,7 @@ export function RegisterRoutes(app: any) {
       const promise = controller.addCourse.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
-  app.get('/categories',
+  app.get('/api/categories',
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -179,7 +180,7 @@ export function RegisterRoutes(app: any) {
       const promise = controller.getAll.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
-  app.get('/category/:category/courses',
+  app.get('/api/category/:category/courses',
     function(request: any, response: any, next: any) {
       const args = {
         category: { "in": "path", "name": "category", "required": true, "dataType": "string" },

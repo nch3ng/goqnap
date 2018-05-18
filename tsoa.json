@@ -9,6 +9,7 @@
     "entryFile": "./server/server.ts",
     "routesDir": "./server/routes",
     "outputDirectory": "./server/swagger",
-    "authenticationModule": "./server/controllers/auth/middleware/authentication.ts"
+    "authenticationModule": "./server/controllers/auth/middleware/authentication.ts",
+    "basePath": "/api"
   }
 }

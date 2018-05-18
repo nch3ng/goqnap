@@ -17,7 +17,7 @@ export interface ICourse {
   commentCount?: number;
 }
 export class Course implements ICourse {
-  _id: string;
+  _id?: string;
   title: string;
   code_name: string;
   desc: string;
@@ -35,7 +35,6 @@ export class Course implements ICourse {
   commentCount?: number;
 
   constructor() {
-    this._id = '';
     this.title = 'QNAP Tutorial Video';
     this.code_name = 'QNP000';
     this.desc = 'The description of the QNAP Tutorial Video - ' + this.code_name;

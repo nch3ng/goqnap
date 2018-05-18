@@ -18,6 +18,7 @@ import * as passport from 'passport';
 
 import './controllers/courses/courses.controller';
 import './controllers/courses/categories.controller';
+import { RegisterRoutes } from './routes/routes';
 
 const app = express();
 const env = process.env.NODE_ENV || 'development';
@@ -35,6 +36,7 @@ app.use(morgan('combined'));
 const api = require('./api');
 const goqnap = express.static('public');
 
+RegisterRoutes(app);
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', api);

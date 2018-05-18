@@ -27,8 +27,8 @@ router.get('/check-state', auth.verifyToken, (req, res) => {
 
 router.use('/user', auth.verifyToken, usersRouter.user);
 router.use('/users', auth.verifyToken, usersRouter.users);
-router.use('/courses', coursesRouter.courses);
-router.use('/categories', categoriesCtrl.categories);
-router.use('/category', categoriesCtrl.category);
+// router.use('/courses', coursesRouter.courses);
+// router.use('/categories', categoriesCtrl.categories);
+// router.use('/category', categoriesCtrl.category);
 
 module.exports = router;

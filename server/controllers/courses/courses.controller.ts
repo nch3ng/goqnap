@@ -1,4 +1,4 @@
-import { Route, Get, Query, Controller, Body, Post, Header, Security } from 'tsoa';
+import { Route, Get, Query, Controller, Body, Post, Header, Security, Path } from 'tsoa';
 import { Course, UserCourseRequest, UserCourseResponse } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
@@ -56,20 +56,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Get('{id}')
-  public getCourse(id: string): Promise<Course> {
-    return new Promise<Course>((resolve, reject) => {
-      const promise = CourseDB.findOne({_id: id}).exec();
-      promise.then(
-        (course: Course) => {
-          resolve(course);
-        }
-      ).catch(
-        error => reject(error)
-      );
-    });
-  }
-
+  // Must place this before get by id
   @Get('search')
   public search(@Query() query: string): Promise<Course []> {
     return new Promise<Course []> ((resolve, reject) => {
@@ -90,6 +77,20 @@ export class CoursesController extends Controller {
       } else {
         reject([]);
       }
+    });
+  }
+
+  @Get('{id}')
+  public getCourse(@Path() id: string): Promise<Course> {
+    return new Promise<Course>((resolve, reject) => {
+      const promise = CourseDB.findOne({_id: id}).exec();
+      promise.then(
+        (course: Course) => {
+          resolve(course);
+        }
+      ).catch(
+        error => reject(error)
+      );
     });
   }
 
