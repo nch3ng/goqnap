@@ -1,6 +1,9 @@
 /* tslint:disable */
 import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { CoursesController } from './../controllers/courses/courses.controller';
+import { CategoriesController } from './../controllers/courses/categories.controller';
+import { CategoryController } from './../controllers/courses/categories.controller';
+import { expressAuthentication } from './../controllers/auth/middleware/authentication';
 
 const models: TsoaRoute.Models = {
   "Course": {
@@ -48,6 +51,13 @@ const models: TsoaRoute.Models = {
       "favoriteCount": { "dataType": "double" },
       "duration": { "dataType": "string" },
       "commentCount": { "dataType": "double" },
+    },
+  },
+  "Category": {
+    "properties": {
+      "name": { "dataType": "string", "required": true },
+      "img": { "dataType": "string", "required": true },
+      "level": { "dataType": "double", "required": true },
     },
   },
 };
@@ -131,10 +141,11 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.post('/courses',
+    authenticateMiddleware([{ "name": "jwt" }]),
     function(request: any, response: any, next: any) {
       const args = {
         requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
-        authorization: { "in": "header", "name": "Authorization", "required": true, "dataType": "string" },
+        authorization: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
       };
 
       let validatedArgs: any[] = [];
@@ -150,7 +161,68 @@ export function RegisterRoutes(app: any) {
       const promise = controller.addCourse.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
+  app.get('/categories',
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
 
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CategoriesController();
+
+
+      const promise = controller.getAll.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/category/:category/courses',
+    function(request: any, response: any, next: any) {
+      const args = {
+        category: { "in": "path", "name": "category", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CategoryController();
+
+
+      const promise = controller.getCourses.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+
+  function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
+    return (request: any, response: any, next: any) => {
+      let responded = 0;
+      let success = false;
+      for (const secMethod of security) {
+        expressAuthentication(request, secMethod.name, secMethod.scopes).then((user: any) => {
+          // only need to respond once
+          if (!success) {
+            success = true;
+            responded++;
+            request['user'] = user;
+            next();
+          }
+        })
+          .catch((error: any) => {
+            responded++;
+            if (responded == security.length && !success) {
+              response.status(401);
+              next(error)
+            }
+          })
+      }
+    }
+  }
 
   function promiseHandler(controllerObj: any, promise: any, response: any, next: any) {
     return Promise.resolve(promise)

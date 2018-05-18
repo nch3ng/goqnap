@@ -6,11 +6,13 @@ import * as YouTube from 'youtube-node';
 @Route('courses')
 export class CoursesController extends Controller {
   desc = true;
-  orderBy = null;
+  orderBy = 'publishedDate';
   limit = 0;
+  category = null;
+  dbQuery = {};
 
   @Get()
-  public getCourses(@Query() limit?: number, @Query() orderBy?: string): Promise<Course []> {
+  public getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
 
     if (orderBy && orderBy.split(':')[0]) {
       this.orderBy = orderBy.split(':')[0];
@@ -20,17 +22,28 @@ export class CoursesController extends Controller {
         this.desc = false;
       }
     }
-    this.limit = limit;
+    if (limit) {
+      this.limit = limit;
+    }
+
+    if (category) {
+      this.category = category;
+    }
+
     return new Promise<Course []>((resolve, reject) => {
 
       let sort;
       this.desc === true ? sort = '-' + this.orderBy : sort = this.orderBy;
 
       let promise;
+
+      if (this.category) {
+        this.dbQuery = { category: this.category };
+      }
       if (this.limit === 0) {
-        promise = CourseDB.find({}).sort(sort).exec();
+        promise = CourseDB.find(this.dbQuery).sort(sort).exec();
       } else {
-        promise = CourseDB.find({}).sort(sort).limit(this.limit).exec();
+        promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit).exec();
       }
 
       promise.then(

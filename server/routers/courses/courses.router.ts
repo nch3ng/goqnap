@@ -13,15 +13,8 @@ const auth = require('../../controllers/auth/middleware/auth');
 
 courses_router.get('/', function (req, res) {
 
-  let limit = 0;
-
-  if (req.query['limit']) {
-    limit = +req.query['limit'];
-  }
-
-
   const courseCtrl = new CoursesController();
-  courseCtrl.getCourses(limit, req.query['orderBy']).then(
+  courseCtrl.getCourses(+req.query['limit'], req.query['orderBy'], req.query['category']).then(
     (res_courses) => {
       console.log('Test controller.');
       res.json(res_courses);

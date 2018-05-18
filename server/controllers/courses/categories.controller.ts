@@ -44,7 +44,7 @@ export class CategoryController {
     return this._category;
   }
 
-  @Get('{category_name}/courses')
+  @Get('{category}/courses')
   getCourses(category?: string): Promise<Course []> {
     return new Promise<Course []>((resolve, reject) => {
       if (!category && !this.category) {
