@@ -18,6 +18,7 @@ import * as passport from 'passport';
 
 import './controllers/courses/courses.controller';
 import './controllers/courses/categories.controller';
+import './controllers/auth/middleware/authentication';
 import { RegisterRoutes } from './routes/routes';
 
 const app = express();

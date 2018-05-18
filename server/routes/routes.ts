@@ -162,6 +162,46 @@ export function RegisterRoutes(app: any) {
       const promise = controller.addCourse.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
+  app.put('/api/courses',
+    authenticateMiddleware([{ "name": "jwt" }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CoursesController();
+
+
+      const promise = controller.updateCourse.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.delete('/api/courses/:id',
+    authenticateMiddleware([{ "name": "jwt" }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new CoursesController();
+
+
+      const promise = controller.deleteCourse.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
   app.get('/api/categories',
     function(request: any, response: any, next: any) {
       const args = {

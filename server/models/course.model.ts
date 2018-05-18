@@ -86,3 +86,41 @@ export class UserCourseResponse implements IResponse {
     this.course = course;
   }
 }
+
+export interface IYoutubeInfo {
+  duration: string;
+  like: number;
+  dislike: number;
+  watched: number;
+  favoriteCount: number;
+  commentCount: number;
+  publishedDate: Date;
+}
+
+export class YoutubeInfo implements YoutubeInfo {
+  duration: string;
+  like: number;
+  dislike: number;
+  watched: number;
+  favoriteCount: number;
+  commentCount: number;
+  publishedDate: Date;
+
+  constructor(
+    duration: string,
+    like: number,
+    dislike: number,
+    watched: number,
+    favoriteCount: number,
+    commentCount: number,
+    publishedDate: Date,
+  ) {
+    this.duration = duration;
+    this.like = like;
+    this.dislike = dislike;
+    this.watched = watched;
+    this.favoriteCount = favoriteCount;
+    this.commentCount = commentCount;
+    this.publishedDate = publishedDate;
+  }
+}

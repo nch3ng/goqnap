@@ -1,5 +1,5 @@
-import { Route, Get, Query, Controller, Body, Post, Header, Security, Path } from 'tsoa';
-import { Course, UserCourseRequest, UserCourseResponse } from '../../models/course.model';
+import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa';
+import { Course, UserCourseRequest, UserCourseResponse, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
 
@@ -115,7 +115,8 @@ export class CoursesController extends Controller {
                       dislike: item.statistics.dislikeCount,
                       watched: item.statistics.viewCount,
                       favoriteCount: item.statistics.favoriteCount,
-                      commentCount: item.statistics.commentCount
+                      commentCount: item.statistics.commentCount,
+                      publishedDate: item.snippet.publishedAt
                     }
                   },
                   { new: true}).exec();
@@ -133,23 +134,133 @@ export class CoursesController extends Controller {
     });
   }
 
+  public getYoutubeInfo_not_saving(youtubeRef: string): Promise<YoutubeInfo> {
+    return new Promise<YoutubeInfo>((resolve, reject) => {
+      const youTube = new YouTube();
+
+      youTube.setKey(process.env.YOUTUBE_KEY);
+
+      youTube.getById(youtubeRef, (error, info) => {
+        if (error) {
+          reject(error);
+        } else {
+          const item = info.items[0];
+          if (item) {
+            resolve(
+              new YoutubeInfo( item.contentDetails.duration,
+                              +item.statistics.likeCount,
+                              +item.statistics.dislikeCount,
+                              +item.statistics.viewCount,
+                              +item.statistics.favoriteCount,
+                              +item.statistics.commentCount,
+                              item.snippet.publishedAt)
+            );
+          } else  {
+            reject([]);
+          }
+          // console.log(item);
+        }
+      });
+    });
+  }
+
   @Security('jwt')
   @Post()
   public addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
-      course.save(function (error) {
-        if (error) {
-          reject(new UserCourseResponse(false, error, null));
-        }
-
-        this.getYoutubeInfo(course.youtube_ref).then(
-          (res_course: Course) => {
-            resolve(new UserCourseResponse(true, 'Create a course successfully', res_course));
+      // console.log(course);
+      // console.log(this.getYoutubeInfo);
+      this.getYoutubeInfo_not_saving(course.youtube_ref).then(
+        (youtube_info: YoutubeInfo) => {
+          if (!youtube_info) {
+            reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null));
           }
-        ).catch(error1 => reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null)));
-      });
+
+          course.publishedDate = youtube_info.publishedDate;
+          course.commentCount = youtube_info.commentCount;
+          course.duration = youtube_info.duration;
+          course.favoriteCount = youtube_info.favoriteCount;
+          course.dislike = youtube_info.dislike;
+          course.like = youtube_info.like;
+          course.watched = youtube_info.watched;
+
+          course.save(function (error) {
+            if (error) {
+              reject(new UserCourseResponse(false, error, null));
+            }
+            resolve(new UserCourseResponse(true, 'Create a course successfully', course));
+          });
+        }
+      ).catch(error1 => reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null)));
     });
+  }
+
+  @Security('jwt')
+  @Put()
+  public updateCourse(@Body() requestBody: UserCourseRequest): Promise<UserCourseResponse> {
+    const course = new Course();
+    Object.assign(course, requestBody);
+
+    return new Promise<UserCourseResponse>((resolve, reject) => {
+
+      this.getYoutubeInfo_not_saving(course.youtube_ref).then(
+        (youtube_info: YoutubeInfo) => {
+          if (!youtube_info) {
+            reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null));
+          }
+          // console.log(youtube_info);
+          // console.log(course);
+
+          const course_promise = CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
+            title: course.title,
+            code_name: course.code_name,
+            keywords: course.keywords,
+            desc: course.desc,
+            youtube_ref: course.youtube_ref,
+            category: course.category,
+            publishedDate: youtube_info.publishedDate,
+            commentCount: +youtube_info.commentCount,
+            duration: youtube_info.duration,
+            favoriteCount: +youtube_info.favoriteCount,
+            dislike: +youtube_info.dislike,
+            like: +youtube_info.like,
+            watched: +youtube_info.watched
+          }}, { new: true}).exec();
+
+          course_promise.then((updated_course) => {
+            // console.log(updated_course);
+            resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course));
+          }).catch(
+            (error) => {
+              reject(new UserCourseResponse(false, 'Updated course failed.', null));
+            }
+          );
+        }
+      ).catch(
+        (error1) => {
+          reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null));
+        }
+      );
+    });
+  }
+
+  @Security('jwt')
+  @Delete('{id}')
+    public deleteCourse(@Path() id: String): Promise<UserCourseResponse> {
+      // console.log('Delete a course id');
+      return new Promise<UserCourseResponse>((resolve, reject) => {
+        const promise = CourseDB.findOneAndRemove({ _id: id}).exec();
+
+        promise.then(
+          (course) => {
+            resolve(new UserCourseResponse(true, 'Successfully deleted a course', course));
+          },
+          (error) => {
+            resolve(new UserCourseResponse(true, error, null));
+          }
+        );
+      });
   }
 }
