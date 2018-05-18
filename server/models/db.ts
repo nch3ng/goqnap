@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config')[env];
-var gracefulShutdown;
-var dbURI = config.DBConnectionUrl;
+let gracefulShutdown;
+const dbURI = config.DBConnectionUrl;
 
-console.log(config);
+// console.log(config);
 mongoose.connect(dbURI, {
   useMongoClient: true,
   /* other options */

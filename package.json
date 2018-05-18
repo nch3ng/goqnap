@@ -10,7 +10,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:dev": "nodemon --exec ./node_modules/.bin/ts-node -- ./server/server.ts",
-    "deploy:production": "pm2 deploy production setup; pm2 deploy production"
+    "deploy:production": "pm2 deploy production setup; pm2 deploy production",
+    "routes": "./node_modules/.bin/tsoa routes",
+    "swagger": "./node_modules/.bin/tsoa swagger"
   },
   "private": true,
   "dependencies": {

@@ -2,12 +2,13 @@
   "swagger": {
     "outputDirectory": "./dist/swagger",
     "entryFile": "./server/server.ts",
-    "host": "localhost:3000",
+    "host": "https://go.qnap.com/api",
     "basePath": "/api"
   },
   "routes": {
     "entryFile": "./server/server.ts",
     "routesDir": "./server/routes",
-    "outputDirectory": "./server/swagger"
+    "outputDirectory": "./server/swagger",
+    "authenticationModule": "./server/controllers/auth/middleware/authentication.ts"
   }
 }
