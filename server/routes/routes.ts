@@ -3,7 +3,8 @@ import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from
 import { CoursesController } from './../controllers/courses/courses.controller';
 import { CategoriesController } from './../controllers/courses/categories.controller';
 import { CategoryController } from './../controllers/courses/categories.controller';
-import { AuthController } from './../controllers/auth/login';
+import { AuthController } from './../controllers/auth/auth.controller';
+import { UsersController } from './../controllers/users/users.controller';
 import { expressAuthentication } from './../controllers/auth/middleware/authentication';
 
 const models: TsoaRoute.Models = {
@@ -61,10 +62,18 @@ const models: TsoaRoute.Models = {
       "level": { "dataType": "double", "required": true },
     },
   },
-  "UserModel": {
+  "User": {
     "properties": {
       "email": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
+    },
+  },
+  "Decoded": {
+    "properties": {
+      "_id": { "dataType": "string" },
+      "email": { "dataType": "string" },
+      "name": { "dataType": "string" },
+      "exp": { "dataType": "double" },
     },
   },
   "UserLoginResponse": {
@@ -72,13 +81,35 @@ const models: TsoaRoute.Models = {
       "success": { "dataType": "boolean", "required": true },
       "message": { "dataType": "string", "required": true },
       "token": { "dataType": "string" },
-      "user": { "ref": "UserModel" },
+      "user": { "ref": "User" },
+      "decoded": { "ref": "Decoded" },
     },
   },
   "UserLoginRequest": {
     "properties": {
       "email": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
+    },
+  },
+  "UserRegisterResponse": {
+    "properties": {
+      "success": { "dataType": "boolean", "required": true },
+      "message": { "dataType": "string", "required": true },
+      "token": { "dataType": "string" },
+      "user": { "ref": "User" },
+      "decoded": { "ref": "Decoded" },
+    },
+  },
+  "UserRegisterRequest": {
+    "properties": {
+      "email": { "dataType": "string", "required": true },
+      "password": { "dataType": "string", "required": true },
+      "name": { "dataType": "string", "required": true },
+    },
+  },
+  "UserCreationRequest": {
+    "properties": {
+      "email": { "dataType": "string", "required": true },
     },
   },
 };
@@ -279,6 +310,25 @@ export function RegisterRoutes(app: any) {
       const promise = controller.login.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
+  app.post('/api/register',
+    function(request: any, response: any, next: any) {
+      const args = {
+        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserRegisterRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new AuthController();
+
+
+      const promise = controller.register.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
   app.get('/api/check-state',
     authenticateMiddleware([{ "name": "jwt" }]),
     function(request: any, response: any, next: any) {
@@ -296,6 +346,43 @@ export function RegisterRoutes(app: any) {
 
 
       const promise = controller.checkState.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/users',
+    function(request: any, response: any, next: any) {
+      const args = {
+        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCreationRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UsersController();
+
+
+      const promise = controller.create.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/users',
+    function(request: any, response: any, next: any) {
+      const args = {
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UsersController();
+
+
+      const promise = controller.all.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
 

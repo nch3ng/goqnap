@@ -1,13 +1,18 @@
-export class UserModel {
+import { UserCreationRequest } from './user.model';
+export class User {
+  _id: string;
   email: string;
   password: string;
+  salt: string;
+  hash: string;
+  name: string;
 }
 
-export class UserCreationRequest {
+export interface UserCreationRequest {
   email: string;
 }
 
-export interface UserLoginRequest {
+export class UserLoginRequest implements UserCreationRequest {
   email: string;
   password: string;
 }
@@ -17,6 +22,11 @@ export interface IUserLoginResponse {
   message: string;
 }
 
+export class UserRegisterRequest implements UserCreationRequest {
+  email: string;
+  password: string;
+  name: string;
+}
 export class AuthResponseError {
   success: boolean;
   message: string;
@@ -36,13 +46,21 @@ export class JWTMessage {
   expiredAt: Date;
 }
 
+export interface Decoded {
+  _id?: string;
+  email?: string;
+  name?: string;
+  exp?: number;
+}
+
 export class UserLoginResponse implements IUserLoginResponse {
   success: boolean;
   message: string;
   token?: string;
-  user?: UserModel;
-  decoded?: object;
-  constructor(success: boolean, message: string, token?: string, user?: UserModel, decoded?: object) {
+  user?: User;
+  decoded?: Decoded;
+
+  constructor(success: boolean, message: string, token?: string, user?: User, decoded?: Decoded) {
     this.success = success;
     this.message = message;
     if (token) {
@@ -53,4 +71,7 @@ export class UserLoginResponse implements IUserLoginResponse {
       this.user = user;
     }
   }
+}
+
+export class UserRegisterResponse extends UserLoginResponse {
 }

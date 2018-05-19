@@ -8,7 +8,7 @@ import CourseDB from '../../models/schemas/courses';
 export class CategoriesController extends Controller {
 
   @Get()
-  getAll(): Promise<Category []>  {
+  public async getAll(): Promise<Category []>  {
     return new Promise<Category []>((resolve, reject) => {
       const promise = CategoryDB.find({}).sort('level').exec();
 
@@ -45,7 +45,7 @@ export class CategoryController {
   }
 
   @Get('{category}/courses')
-  getCourses(category?: string): Promise<Course []> {
+  public async getCourses(category?: string): Promise<Course []> {
     return new Promise<Course []>((resolve, reject) => {
       if (!category && !this.category) {
         reject('Please determine a category');

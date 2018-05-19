@@ -12,18 +12,21 @@ import * as path from 'path';
 import * as morgan from 'morgan';
 
 import * as favicon from 'serve-favicon';
-import * as logger from 'morgan';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 
+// Controllers for tsoa routes
 import './controllers/courses/courses.controller';
 import './controllers/courses/categories.controller';
 import './controllers/auth/middleware/authentication';
-import './controllers/auth/login';
+import './controllers/auth/auth.controller';
+import './controllers/users/users.controller';
+// End of Controllers
 
 import { RegisterRoutes } from './routes/routes';
 import { authErrorHandler } from './helpers/error.handler';
 
+const logger = require('./helpers/logger');
 const app = express();
 const env = process.env.NODE_ENV || 'development';
 const config = require('./config')[env];
@@ -37,15 +40,18 @@ app.use(cors());
 
 app.use(morgan('combined'));
 
-const api = require('./api');
 const goqnap = express.static('public');
+
+app.use(function timeLog (req, res, next) {
+  logger.debug('Time: ', Date.now());
+  next();
+});
 
 // Auto-generated routes by tsoa
 RegisterRoutes(app);
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 
-app.use('/api', api);
 app.use('/', goqnap);
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);

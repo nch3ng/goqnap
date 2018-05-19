@@ -1,3 +1,4 @@
+import { UserRegisterRequest, UserRegisterResponse, User } from './../../models/user.model';
 import UserDB from '../../models/schemas/users';
 const env = process.env.NODE_ENV || 'development';
 const config = require('../../config')[env];
@@ -12,8 +13,11 @@ import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
 export class AuthController {
 
   @Post('login')
-  login(@Body() requestBody: UserLoginRequest): Promise<UserLoginResponse> {
+  public async login(@Body() requestBody: UserLoginRequest): Promise<UserLoginResponse> {
+    // console.log('Login a user: ');
+    // // console.log(requestBody);
     return new Promise<UserLoginResponse>((resolve, reject) => {
+
       UserDB.findOne({'email' : requestBody.email}, (error, user) => {
 
         if (error) {
@@ -27,6 +31,8 @@ export class AuthController {
           reject(new UserLoginResponse(false, 'Incorrect password'));
         }
 
+        user.salt = '';
+        user.hash = '';
         const token = jwt.sign({
           userID: user._id,
           email: user.email,
@@ -34,14 +40,36 @@ export class AuthController {
         }, config.secret, {
           expiresIn : 60 * 60 * config.expiry
         });
-        resolve(new UserLoginResponse(true, 'You are logged in.', token, user));
+        resolve(new UserLoginResponse(true, 'You are logged in.', token, <User>{ name: user.name, email: user.email}));
+      });
+    });
+  }
+
+  @Post('register')
+  public async register(@Body() requestBody: UserRegisterRequest): Promise<UserRegisterResponse> {
+    const user = new UserDB();
+    console.log('Register: ');
+    console.log(requestBody);
+    user.name = requestBody.name;
+    user.email = requestBody.email;
+
+    user.setPassword(requestBody.password);
+    const token = user.generateJwt();
+    return new Promise<UserRegisterResponse> ((resolve, reject) => {
+      user.save((err) => {
+        if (err) {
+          reject(new UserRegisterResponse(false, err));
+        }
+        // console.log(token);
+        const decoded = jwt.verify(token, config.secret);
+        resolve(new UserRegisterResponse(true, 'Successfully registered', token, user, decoded));
       });
     });
   }
 
   @Security('jwt')
   @Get('check-state')
-  checkState(): Promise<UserLoginResponse> {
+  public async checkState(): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve) => {
       resolve(new UserLoginResponse(true, 'You are authorized.'));
     });

@@ -12,7 +12,7 @@ export class CoursesController extends Controller {
   dbQuery = {};
 
   @Get()
-  public getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
+  public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
 
     if (orderBy && orderBy.split(':')[0]) {
       this.orderBy = orderBy.split(':')[0];
@@ -58,7 +58,7 @@ export class CoursesController extends Controller {
 
   // Must place this before get by id
   @Get('search')
-  public search(@Query() query: string): Promise<Course []> {
+  public async search(@Query() query: string): Promise<Course []> {
     return new Promise<Course []> ((resolve, reject) => {
       const queryStr = query;
       // console.log('search ' + queryStr);
@@ -81,7 +81,7 @@ export class CoursesController extends Controller {
   }
 
   @Get('{id}')
-  public getCourse(@Path() id: string): Promise<Course> {
+  public async getCourse(@Path() id: string): Promise<Course> {
     return new Promise<Course>((resolve, reject) => {
       const promise = CourseDB.findOne({_id: id}).exec();
       promise.then(
@@ -95,7 +95,7 @@ export class CoursesController extends Controller {
   }
 
   @Get('{youtubeRef}/youtubeinfo')
-  public getYoutubeInfo(youtubeRef: string): Promise<Course> {
+  public async getYoutubeInfo(youtubeRef: string): Promise<Course> {
     return new Promise<Course>((resolve, reject) => {
       const youTube = new YouTube();
 
@@ -134,7 +134,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  public getYoutubeInfo_not_saving(youtubeRef: string): Promise<YoutubeInfo> {
+  public async getYoutubeInfo_not_saving(youtubeRef: string): Promise<YoutubeInfo> {
     return new Promise<YoutubeInfo>((resolve, reject) => {
       const youTube = new YouTube();
 
@@ -166,7 +166,7 @@ export class CoursesController extends Controller {
 
   @Security('jwt')
   @Post()
-  public addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
+  public async addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
@@ -199,7 +199,7 @@ export class CoursesController extends Controller {
 
   @Security('jwt')
   @Put()
-  public updateCourse(@Body() requestBody: UserCourseRequest): Promise<UserCourseResponse> {
+  public async updateCourse(@Body() requestBody: UserCourseRequest): Promise<UserCourseResponse> {
     const course = new Course();
     Object.assign(course, requestBody);
 
@@ -248,7 +248,7 @@ export class CoursesController extends Controller {
 
   @Security('jwt')
   @Delete('{id}')
-    public deleteCourse(@Path() id: String): Promise<UserCourseResponse> {
+    public async deleteCourse(@Path() id: String): Promise<UserCourseResponse> {
       // console.log('Delete a course id');
       return new Promise<UserCourseResponse>((resolve, reject) => {
         const promise = CourseDB.findOneAndRemove({ _id: id}).exec();
