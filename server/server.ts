@@ -32,6 +32,8 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('./config')[env];
 const port = config.port || 3000;
 
+const pathToSwaggerUi = require('swagger-ui-dist').absolutePath();
+
 require('./models/db');
 
 app.use(bodyParser.json());
@@ -53,6 +55,7 @@ RegisterRoutes(app);
 // all of our routes will be prefixed with /api
 
 app.use('/', goqnap);
+app.use('/api/document', express.static(pathToSwaggerUi));
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);
 

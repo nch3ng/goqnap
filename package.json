@@ -52,6 +52,7 @@
     "passport-local": "^1.0.0",
     "rxjs": "^5.5.2",
     "serve-favicon": "^2.4.5",
+    "swagger-ui-dist": "^3.15.0",
     "tsoa": "^2.1.4",
     "winston": "^2.4.0",
     "youtube-info": "^1.2.0",

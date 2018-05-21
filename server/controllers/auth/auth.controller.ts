@@ -1,5 +1,5 @@
 import { UserRegisterRequest, UserRegisterResponse, User } from './../../models/user.model';
-import UserDB from '../../models/schemas/users';
+import UserDB from '../../models/schemas/users.schema';
 const env = process.env.NODE_ENV || 'development';
 const config = require('../../config')[env];
 // logger = require('../../logger');
@@ -49,7 +49,7 @@ export class AuthController {
   public async register(@Body() requestBody: UserRegisterRequest): Promise<UserRegisterResponse> {
     const user = new UserDB();
     console.log('Register: ');
-    console.log(requestBody);
+    // console.log(requestBody);
     user.name = requestBody.name;
     user.email = requestBody.email;
 
@@ -67,7 +67,7 @@ export class AuthController {
     });
   }
 
-  @Security('jwt')
+  @Security('api_key')
   @Get('check-state')
   public async checkState(): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve) => {

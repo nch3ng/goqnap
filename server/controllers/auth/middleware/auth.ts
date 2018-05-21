@@ -24,7 +24,7 @@ const auth = {
     }
   }),
   verify: (req, res, next) => {
-    authentication.expressAuthentication(req, 'jwt').then(
+    authentication.expressAuthentication(req, 'api_key').then(
       (decoded) => {
         req.decoded = decoded;
         next();

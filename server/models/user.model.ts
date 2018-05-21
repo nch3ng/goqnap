@@ -1,4 +1,4 @@
-import { UserCreationRequest } from './user.model';
+import { UserCreationRequest, IUserLoginResponse } from './user.model';
 export class User {
   _id: string;
   email: string;
@@ -6,7 +6,16 @@ export class User {
   salt: string;
   hash: string;
   name: string;
+
+  isPasswordCreated(): boolean {
+    if (this.salt && this.hash) {
+      return true;
+    }
+
+    return false;
+  }
 }
+
 
 export interface UserCreationRequest {
   email: string;
@@ -20,6 +29,16 @@ export class UserLoginRequest implements UserCreationRequest {
 export interface IUserLoginResponse {
   success: boolean;
   message: string;
+}
+
+export class UserCreationResponse implements IUserLoginResponse {
+  success: boolean;
+  message: string;
+
+  constructor(success: boolean, message: string) {
+    this.success = success;
+    this.message = message;
+  }
 }
 
 export class UserRegisterRequest implements UserCreationRequest {

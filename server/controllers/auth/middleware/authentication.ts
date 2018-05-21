@@ -6,7 +6,7 @@ const config = require('../../../config')[env];
 
 export function expressAuthentication(request: express.Request, securityName: string, scopes?: string[]): Promise<any> {
   console.log('auth middle');
-  if (securityName === 'jwt') {
+  if (securityName === 'api_key') {
     const token = request.body.token || request.query.token || request.headers['x-access-token'];
     // console.log(token);
     return new Promise((resolve, reject) => {

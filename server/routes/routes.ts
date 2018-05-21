@@ -5,6 +5,7 @@ import { CategoriesController } from './../controllers/courses/categories.contro
 import { CategoryController } from './../controllers/courses/categories.controller';
 import { AuthController } from './../controllers/auth/auth.controller';
 import { UsersController } from './../controllers/users/users.controller';
+import { UserController } from './../controllers/users/users.controller';
 import { expressAuthentication } from './../controllers/auth/middleware/authentication';
 
 const models: TsoaRoute.Models = {
@@ -64,8 +65,12 @@ const models: TsoaRoute.Models = {
   },
   "User": {
     "properties": {
+      "_id": { "dataType": "string", "required": true },
       "email": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
+      "salt": { "dataType": "string", "required": true },
+      "hash": { "dataType": "string", "required": true },
+      "name": { "dataType": "string", "required": true },
     },
   },
   "Decoded": {
@@ -105,6 +110,12 @@ const models: TsoaRoute.Models = {
       "email": { "dataType": "string", "required": true },
       "password": { "dataType": "string", "required": true },
       "name": { "dataType": "string", "required": true },
+    },
+  },
+  "UserCreationResponse": {
+    "properties": {
+      "success": { "dataType": "boolean", "required": true },
+      "message": { "dataType": "string", "required": true },
     },
   },
   "UserCreationRequest": {
@@ -194,7 +205,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.post('/api/courses',
-    authenticateMiddleware([{ "name": "jwt" }]),
+    authenticateMiddleware([{ "name": "api_key" }]),
     function(request: any, response: any, next: any) {
       const args = {
         requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
@@ -215,7 +226,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.put('/api/courses',
-    authenticateMiddleware([{ "name": "jwt" }]),
+    authenticateMiddleware([{ "name": "api_key" }]),
     function(request: any, response: any, next: any) {
       const args = {
         requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
@@ -235,7 +246,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.delete('/api/courses/:id',
-    authenticateMiddleware([{ "name": "jwt" }]),
+    authenticateMiddleware([{ "name": "api_key" }]),
     function(request: any, response: any, next: any) {
       const args = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
@@ -330,7 +341,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.get('/api/check-state',
-    authenticateMiddleware([{ "name": "jwt" }]),
+    authenticateMiddleware([{ "name": "api_key" }]),
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -348,26 +359,8 @@ export function RegisterRoutes(app: any) {
       const promise = controller.checkState.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
-  app.post('/api/users',
-    function(request: any, response: any, next: any) {
-      const args = {
-        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCreationRequest" },
-      };
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = getValidatedArgs(args, request);
-      } catch (err) {
-        return next(err);
-      }
-
-      const controller = new UsersController();
-
-
-      const promise = controller.create.apply(controller, validatedArgs);
-      promiseHandler(controller, promise, response, next);
-    });
   app.get('/api/users',
+    authenticateMiddleware([{ "name": "api_key" }]),
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -383,6 +376,66 @@ export function RegisterRoutes(app: any) {
 
 
       const promise = controller.all.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.post('/api/user',
+    authenticateMiddleware([{ "name": "api_key" }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCreationRequest" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+
+      const promise = controller.create.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.get('/api/user/:id',
+    authenticateMiddleware([{ "name": "api_key" }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+
+      const promise = controller.get.apply(controller, validatedArgs);
+      promiseHandler(controller, promise, response, next);
+    });
+  app.delete('/api/user/:id',
+    authenticateMiddleware([{ "name": "api_key" }]),
+    function(request: any, response: any, next: any) {
+      const args = {
+        id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
+      };
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = getValidatedArgs(args, request);
+      } catch (err) {
+        return next(err);
+      }
+
+      const controller = new UserController();
+
+
+      const promise = controller.delete.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
 

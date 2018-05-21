@@ -12,5 +12,9 @@ export function authErrorHandler(error, req, res, next) {
     }
   }
 
+  if (res.statusCode === 500) {
+    res.json('Oops, something went wrong');
+  }
+
   next();
 }
