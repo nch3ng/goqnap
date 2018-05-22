@@ -1,6 +1,6 @@
 import { Course } from './../../models/course.model';
 import { Category } from './../../models/category.model';
-import { Controller, Get, Route } from 'tsoa';
+import { Controller, Get, Route } from 'tsoa-nc';
 import CategoryDB from '../../models/schemas/categories';
 import CourseDB from '../../models/schemas/courses';
 import { ErrorResponse } from '../../models/response.model';
@@ -46,7 +46,7 @@ export class CategoryController {
   }
 
   @Get('{category}/courses')
-  public async getCourses(category?: string): Promise<Course []> {
+  public async getCoursesByCategory(category?: string): Promise<Course []> {
     return new Promise<Course []>((resolve, reject) => {
       if (!category && !this.category) {
         reject(new ErrorResponse(false, 'Please determine a category'));

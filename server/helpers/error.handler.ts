@@ -13,6 +13,7 @@ export function authErrorHandler(error, req, res, next) {
     }
   }
 
+  // We check everything, when error was given, even the status code is 200 from tsoa
   if (res.statusCode === 500  || res.statusCode === 200) {
     if (error instanceof ErrorResponse || error instanceof UserLoginResponse) {
       res.status(500).json(error);

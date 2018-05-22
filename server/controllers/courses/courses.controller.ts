@@ -1,4 +1,4 @@
-import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa';
+import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa-nc';
 import { Course, UserCourseRequest, UserCourseResponse, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
@@ -170,7 +170,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('api_key')
+  @Security('JWT')
   @Post()
   public async addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     return new Promise<UserCourseResponse>((resolve, reject) => {
@@ -203,7 +203,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('api_key')
+  @Security('JWT')
   @Put()
   public async updateCourse(@Body() requestBody: UserCourseRequest): Promise<UserCourseResponse> {
     const course = new Course();
@@ -252,7 +252,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('api_key')
+  @Security('JWT')
   @Delete('{id}')
     public async deleteCourse(@Path() id: String): Promise<UserCourseResponse> {
       // console.log('Delete a course id');

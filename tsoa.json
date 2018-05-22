@@ -2,8 +2,16 @@
   "swagger": {
     "outputDirectory": "./dist/swagger",
     "entryFile": "./server/server.ts",
-    "host": "https://go.qnap.com/api",
-    "basePath": "/api"
+    "host": "go.qnap.com",
+    "basePath": "/api",
+    "schemes": ["https"],
+    "securityDefinitions": {
+      "JWT": {
+        "type": "apiKey",
+        "name": "x-access-token",
+        "in": "header"
+      }
+    }
   },
   "routes": {
     "entryFile": "./server/server.ts",

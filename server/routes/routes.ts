@@ -1,5 +1,5 @@
 /* tslint:disable */
-import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
+import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from 'tsoa-nc';
 import { CoursesController } from './../controllers/courses/courses.controller';
 import { CategoriesController } from './../controllers/courses/categories.controller';
 import { CategoryController } from './../controllers/courses/categories.controller';
@@ -205,7 +205,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.post('/api/courses',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
         requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
@@ -226,7 +226,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.put('/api/courses',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
         requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCourseRequest" },
@@ -246,7 +246,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.delete('/api/courses/:id',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
@@ -299,7 +299,7 @@ export function RegisterRoutes(app: any) {
       const controller = new CategoryController();
 
 
-      const promise = controller.getCourses.apply(controller, validatedArgs);
+      const promise = controller.getCoursesByCategory.apply(controller, validatedArgs);
       promiseHandler(controller, promise, response, next);
     });
   app.post('/api/login',
@@ -341,7 +341,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.get('/api/check-state',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -360,7 +360,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.get('/api/users',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
       };
@@ -379,7 +379,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.post('/api/user',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
         requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCreationRequest" },
@@ -399,7 +399,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.get('/api/user/:id',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },
@@ -419,7 +419,7 @@ export function RegisterRoutes(app: any) {
       promiseHandler(controller, promise, response, next);
     });
   app.delete('/api/user/:id',
-    authenticateMiddleware([{ "name": "api_key" }]),
+    authenticateMiddleware([{ "name": "JWT" }]),
     function(request: any, response: any, next: any) {
       const args = {
         id: { "in": "path", "name": "id", "required": true, "dataType": "string" },

@@ -1,10 +1,10 @@
 import { UserCreationResponse } from './../../models/user.model';
-import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Controller } from 'tsoa';
+import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Controller } from 'tsoa-nc';
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
 import { ErrorResponse } from '../../models/response.model';
 
-@Security('api_key')
+@Security('JWT')
 @Route('users')
 export class UsersController extends Controller {
 
@@ -25,7 +25,7 @@ export class UsersController extends Controller {
   }
 }
 
-@Security('api_key')
+@Security('JWT')
 @Route('user')
 export class UserController extends Controller {
 

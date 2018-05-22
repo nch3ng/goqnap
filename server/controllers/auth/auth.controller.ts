@@ -6,7 +6,7 @@ const config = require('../../config')[env];
 
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
-import { Route, Post, Body, Get, Security } from 'tsoa';
+import { Route, Post, Body, Get, Security } from 'tsoa-nc';
 import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
 
 @Route('')
@@ -69,7 +69,7 @@ export class AuthController {
     });
   }
 
-  @Security('api_key')
+  @Security('JWT')
   @Get('check-state')
   public async checkState(): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve) => {
