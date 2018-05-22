@@ -3,6 +3,7 @@ import { Category } from './../../models/category.model';
 import { Controller, Get, Route } from 'tsoa';
 import CategoryDB from '../../models/schemas/categories';
 import CourseDB from '../../models/schemas/courses';
+import { ErrorResponse } from '../../models/response.model';
 
 @Route('categories')
 export class CategoriesController extends Controller {
@@ -18,7 +19,7 @@ export class CategoriesController extends Controller {
         }
       ).catch(
         (err) => {
-          reject(err);
+          reject(new ErrorResponse(false, err));
         }
       );
     });
@@ -48,7 +49,7 @@ export class CategoryController {
   public async getCourses(category?: string): Promise<Course []> {
     return new Promise<Course []>((resolve, reject) => {
       if (!category && !this.category) {
-        reject('Please determine a category');
+        reject(new ErrorResponse(false, 'Please determine a category'));
       }
       if (category) {
         this.category = category;
@@ -61,7 +62,7 @@ export class CategoryController {
         }
       ).catch(
         (err) => {
-          reject(err);
+          reject(new ErrorResponse(false, err));
         }
       );
     });

@@ -15,7 +15,7 @@ export class AuthController {
   @Post('login')
   public async login(@Body() requestBody: UserLoginRequest): Promise<UserLoginResponse> {
     // console.log('Login a user: ');
-    // // console.log(requestBody);
+    // console.log(requestBody);
     return new Promise<UserLoginResponse>((resolve, reject) => {
 
       UserDB.findOne({'email' : requestBody.email}, (error, user) => {
@@ -23,24 +23,26 @@ export class AuthController {
         if (error) {
           return reject(new UserLoginResponse(false, error));
         }
+
+        // console.log(user);
         if (!user) {
           reject(new UserLoginResponse(false, 'User does not exists'));
-        }
+        } else {
+          if (!user.validPassword(requestBody.password)) {
+            reject(new UserLoginResponse(false, 'Incorrect password'));
+          }
 
-        if (!user.validPassword(requestBody.password)) {
-          reject(new UserLoginResponse(false, 'Incorrect password'));
+          user.salt = '';
+          user.hash = '';
+          const token = jwt.sign({
+            userID: user._id,
+            email: user.email,
+            name: user.name
+          }, config.secret, {
+            expiresIn : 60 * 60 * config.expiry
+          });
+          resolve(new UserLoginResponse(true, 'You are logged in.', token, <User>{ name: user.name, email: user.email}));
         }
-
-        user.salt = '';
-        user.hash = '';
-        const token = jwt.sign({
-          userID: user._id,
-          email: user.email,
-          name: user.name
-        }, config.secret, {
-          expiresIn : 60 * 60 * config.expiry
-        });
-        resolve(new UserLoginResponse(true, 'You are logged in.', token, <User>{ name: user.name, email: user.email}));
       });
     });
   }

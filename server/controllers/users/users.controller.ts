@@ -1,11 +1,12 @@
 import { UserCreationResponse } from './../../models/user.model';
-import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security } from 'tsoa';
+import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Controller } from 'tsoa';
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
+import { ErrorResponse } from '../../models/response.model';
 
 @Security('api_key')
 @Route('users')
-export class UsersController {
+export class UsersController extends Controller {
 
   @Get()
   public async all(): Promise<User []> {
@@ -26,7 +27,7 @@ export class UsersController {
 
 @Security('api_key')
 @Route('user')
-export class UserController {
+export class UserController extends Controller {
 
   @Post()
   public async create(@Body() requestBody: UserCreationRequest): Promise<UserCreationResponse> {
@@ -34,7 +35,7 @@ export class UserController {
     return new Promise<UserCreationResponse>((resolve, reject) => {
       UserDB.create({ email: requestBody.email }, (error, user) => {
         if (error) {
-          reject(new Error(error));
+          reject(new ErrorResponse(false, error));
         }
 
         resolve(new UserCreationResponse(true, 'Successfully created a user'));
@@ -50,13 +51,14 @@ export class UserController {
       promise.then(
         (user: User) => {
           if (!user) {
-            reject('No user found');
+            this.setStatus(500);
+            reject(new ErrorResponse(false, 'No user found'));
           }
           resolve(user);
         }
       ).catch(
         (error) => {
-          reject(error);
+          reject(new ErrorResponse(false, error));
         });
     });
   }
@@ -71,7 +73,7 @@ export class UserController {
         }
       ).catch(
         (error) => {
-          reject(error);
+          reject(new ErrorResponse(false, error));
       });
     });
   }

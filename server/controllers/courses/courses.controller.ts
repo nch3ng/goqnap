@@ -2,6 +2,8 @@ import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put,
 import { Course, UserCourseRequest, UserCourseResponse, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
+import { ErrorResponse } from '../../models/response.model';
+import courses from '../../../dist/server/models/schemas/courses';
 
 @Route('courses')
 export class CoursesController extends Controller {
@@ -47,11 +49,11 @@ export class CoursesController extends Controller {
       }
 
       promise.then(
-        (courses: Course []) => {
-          resolve(courses);
+        (res_courses: Course []) => {
+          resolve(res_courses);
         }
       ).catch((error) => {
-        reject(error);
+        reject(new ErrorResponse(false, error));
       });
     });
   }
@@ -65,17 +67,17 @@ export class CoursesController extends Controller {
       if (queryStr) {
         const promise = CourseDB.find({$text: {$search: queryStr}}).exec();
         promise.then(
-          (courses) => {
+          (res_courses) => {
             // console.log(courses);
-            resolve(courses);
+            resolve(res_courses);
           }
         ).catch(
           (err) => {
-            reject([]);
+            resolve([]);
           }
         );
       } else {
-        reject([]);
+        resolve([]);
       }
     });
   }
@@ -89,7 +91,7 @@ export class CoursesController extends Controller {
           resolve(course);
         }
       ).catch(
-        error => reject(error)
+        error => reject(new ErrorResponse(false, 'Couldn\'t find the courses.'))
       );
     });
   }
@@ -103,32 +105,37 @@ export class CoursesController extends Controller {
 
       youTube.getById(youtubeRef, (error, info) => {
         if (error) {
-          reject(error);
+          reject(new ErrorResponse(false, error));
         } else {
           const item = info.items[0];
-          // console.log(item);
-          const promise = CourseDB.findOneAndUpdate(
-                  { youtube_ref: youtubeRef },
-                  { $set: {
-                      duration: item.contentDetails.duration,
-                      like: item.statistics.likeCount,
-                      dislike: item.statistics.dislikeCount,
-                      watched: item.statistics.viewCount,
-                      favoriteCount: item.statistics.favoriteCount,
-                      commentCount: item.statistics.commentCount,
-                      publishedDate: item.snippet.publishedAt
-                    }
-                  },
-                  { new: true}).exec();
-          promise.then(
-            (course) => {
-              resolve(course);
-            }
-          ).catch(
-            (err) => {
-              reject(err);
-            }
-          );
+          console.log(info);
+          console.log(item);
+          if (!item) {
+            reject(new ErrorResponse(false, 'Cannot retreive the youtube info.'));
+          } else {
+            const promise = CourseDB.findOneAndUpdate(
+                    { youtube_ref: youtubeRef },
+                    { $set: {
+                        duration: item.contentDetails.duration,
+                        like: item.statistics.likeCount,
+                        dislike: item.statistics.dislikeCount,
+                        watched: item.statistics.viewCount,
+                        favoriteCount: item.statistics.favoriteCount,
+                        commentCount: item.statistics.commentCount,
+                        publishedDate: item.snippet.publishedAt
+                      }
+                    },
+                    { new: true}).exec();
+            promise.then(
+              (course) => {
+                resolve(course);
+              }
+            ).catch(
+              (err) => {
+                reject(new ErrorResponse(false, err));
+              }
+            );
+          }
         }
       });
     });
@@ -142,7 +149,7 @@ export class CoursesController extends Controller {
 
       youTube.getById(youtubeRef, (error, info) => {
         if (error) {
-          reject(error);
+          reject(new ErrorResponse(false, error));
         } else {
           const item = info.items[0];
           if (item) {
@@ -156,7 +163,7 @@ export class CoursesController extends Controller {
                               item.snippet.publishedAt)
             );
           } else  {
-            reject([]);
+            reject(new ErrorResponse(false, 'There\'s no youtube video found'));
           }
           // console.log(item);
         }
@@ -175,7 +182,7 @@ export class CoursesController extends Controller {
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) {
-            reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null));
+            reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
           }
 
           course.publishedDate = youtube_info.publishedDate;
@@ -188,12 +195,12 @@ export class CoursesController extends Controller {
 
           course.save(function (error) {
             if (error) {
-              reject(new UserCourseResponse(false, error, null));
+              reject(new ErrorResponse(false, error));
             }
             resolve(new UserCourseResponse(true, 'Create a course successfully', course));
           });
         }
-      ).catch(error1 => reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null)));
+      ).catch(error1 => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
     });
   }
 
@@ -208,7 +215,7 @@ export class CoursesController extends Controller {
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) {
-            reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null));
+            reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
           }
           // console.log(youtube_info);
           // console.log(course);
@@ -234,13 +241,13 @@ export class CoursesController extends Controller {
             resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course));
           }).catch(
             (error) => {
-              reject(new UserCourseResponse(false, 'Updated course failed.', null));
+              reject(new ErrorResponse(false, 'Updated course failed.'));
             }
           );
         }
       ).catch(
         (error1) => {
-          reject(new UserCourseResponse(false, 'The youtube reference does not exist.', null));
+          reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
         }
       );
     });

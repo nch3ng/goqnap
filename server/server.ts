@@ -44,21 +44,38 @@ app.use(morgan('combined'));
 
 const goqnap = express.static('public');
 
-app.use(function timeLog (req, res, next) {
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
   logger.debug('Time: ', Date.now());
   next();
 });
 
-// Auto-generated routes by tsoa
-RegisterRoutes(app);
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
 
 app.use('/', goqnap);
 app.use('/api/document', express.static(pathToSwaggerUi));
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);
 
+// Auto-generated routes by tsoa
+RegisterRoutes(app);
+
+// It's important that this come after the main routes are registered
+// app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+//   console.log(err);
+//   console.log(res.statusCode);
+//   // const status = err.status || 500;
+//   // const body: any = {
+//   //   fields: err.fields || undefined,
+//   //   message: err.message || 'An error occurred during the request.',
+//   //   name: err.name,
+//   //   status
+//   // };
+
+//   next();
+//   // res.status(status).json(body);
+// });
+
+// REGISTER OUR ROUTES -------------------------------
+// all of our routes will be prefixed with /api
 app.use(authErrorHandler);
 // app.use(['/login', '/register'], function(req, res, next) {
 //   // Just send the index.html for other files to support HTML5Mode
