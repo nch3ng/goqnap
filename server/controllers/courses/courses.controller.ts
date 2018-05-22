@@ -3,7 +3,6 @@ import { Course, UserCourseRequest, UserCourseResponse, YoutubeInfo } from '../.
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
 import { ErrorResponse } from '../../models/response.model';
-import courses from '../../../dist/server/models/schemas/courses';
 
 @Route('courses')
 export class CoursesController extends Controller {
