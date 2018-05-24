@@ -1,6 +1,7 @@
 {
   "rulesDirectory": [
-    "node_modules/codelyzer"
+    "node_modules/codelyzer",
+    "tslint-no-unused-expression-chai"
   ],
   "rules": {
     "arrow-return-shorthand": true,

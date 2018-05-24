@@ -1,5 +1,6 @@
-import { expect } from 'chai';
+// eslint-disable-next-line no-unused-expressions
 import 'mocha';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
@@ -7,11 +8,13 @@ import { Course } from '../../models/course.model';
 import { ICourse } from '../../models/interfaces/course.interface';
 import CourseDB from '../../models/schemas/courses';
 import { CoursesController } from './courses.controller';
+
 require('dotenv').config();
 let dbURI;
 let connection: mongoose.connection;
 let courseController;
 const assert = chai.assert;
+chai.use(require('dirty-chai'));
 
 describe('Courses Test', () => {
   before((done) => {
@@ -26,13 +29,11 @@ describe('Courses Test', () => {
       console.log('We are connected to test database!');
       done();
     });
-    // process.on('unhandledRejection', error => {
-    //   // Won't execute
-    //   console.log('unhandledRejection', error.test);
-    //   done();
-    // });
-
-    // done();
+    process.on('unhandledRejection', error => {
+      // Won't execute
+      console.log('unhandledRejection', error.test);
+      done();
+    });
   });
 
   after( (done) => {
@@ -42,14 +43,13 @@ describe('Courses Test', () => {
   });
 
   it('should get all courses', (done) => {
-    courseController.getCourses().then(() => {
-      expect([]).to.be.not.empty;
+    const promise = courseController.getCourses();
+    promise.then((courses: Course []) => {
+      expect(courses).to.be.not.empty('all courses');
       done();
     }).catch(
       (err) => {
-        console.log(err);
-        // assert.equal(err.message, 'oops!');
-        done();
+        done(err);
     });
     // done();
   });
