@@ -48,7 +48,7 @@ export class CoursesController extends Controller {
       }
 
       promise.then(
-        res_courses => resolve(res_courses)).catch((error) => {
+        all_courses => resolve(all_courses)).catch((error) => {
         reject(new ErrorResponse(false, error));
       });
     });
@@ -63,7 +63,7 @@ export class CoursesController extends Controller {
       if (queryStr) {
         const promise = CourseDB.find({$text: {$search: queryStr}}).exec();
         promise.then(
-          res_courses => resolve(res_courses)).catch(
+          searched_courses => resolve(searched_courses)).catch(
           err => resolve([]));
       } else {
         resolve([]);
@@ -76,7 +76,7 @@ export class CoursesController extends Controller {
     return new Promise<Course>((resolve, reject) => {
       const promise = CourseDB.findOne({_id: id}).exec();
       promise.then(
-        course => resolve(course)).catch(
+        acourse => resolve(acourse)).catch(
         error => reject(new ErrorResponse(false, 'Couldn\'t find the courses.'))
       );
     });
@@ -108,7 +108,7 @@ export class CoursesController extends Controller {
                       }
                     },
                     { new: true}).exec();
-            promise.then(course => resolve(course)).catch(err => reject(new ErrorResponse(false, err))); }
+            promise.then(updated_course => resolve(updated_course)).catch(err => reject(new ErrorResponse(false, err))); }
         }
       });
     });
@@ -152,7 +152,6 @@ export class CoursesController extends Controller {
           if (!youtube_info) {
             reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
           }
-
           course.publishedDate = youtube_info.publishedDate;
           course.commentCount = youtube_info.commentCount;
           course.duration = youtube_info.duration;
@@ -160,7 +159,6 @@ export class CoursesController extends Controller {
           course.dislike = youtube_info.dislike;
           course.like = youtube_info.like;
           course.watched = youtube_info.watched;
-
           course.save(function (error) {
             if (error) {
               reject(new ErrorResponse(false, error));

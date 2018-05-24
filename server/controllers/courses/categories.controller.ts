@@ -54,7 +54,9 @@ export class CategoryController {
       const promise = CourseDB.find({'category': this._category}).exec();
 
       promise.then(
-        courses => resolve(courses)).catch(
+        (cat_courses: Course []) => {
+          resolve(cat_courses);
+        }).catch(
         (err) => {
           reject(new ErrorResponse(false, err));
         }
