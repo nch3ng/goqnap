@@ -4,7 +4,7 @@
 /dist
 /tmp
 /out-tsc
-/server/routes
+/server/routes/routes.ts
 
 # static
 /public

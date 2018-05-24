@@ -12,9 +12,25 @@ export class CoursesController extends Controller {
   category = null;
   dbQuery = {};
 
-  @Get()
-  public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
+  private getOrder(): string {
+    let sort: string;
+    this.desc === true ? sort = '-' + this.orderBy : sort = this.orderBy;
+    return sort;
+  }
 
+  private setLimit(limit) {
+    if (limit) {
+      this.limit = limit;
+    }
+  }
+
+  private setCategory(category) {
+    if (category) {
+      this.category = category;
+    }
+  }
+
+  private setOrder(orderBy: string) {
     if (orderBy && orderBy.split(':')[0]) {
       this.orderBy = orderBy.split(':')[0];
       if (orderBy.split(':')[1] && orderBy.split(':')[1] === 'desc') {
@@ -23,21 +39,18 @@ export class CoursesController extends Controller {
         this.desc = false;
       }
     }
-    if (limit) {
-      this.limit = limit;
-    }
+  }
 
-    if (category) {
-      this.category = category;
-    }
+  @Get()
+  public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
+
+    this.setOrder(orderBy);
+    this.setLimit(limit);
+    this.setCategory(category);
 
     return new Promise<Course []>((resolve, reject) => {
-
-      let sort;
-      this.desc === true ? sort = '-' + this.orderBy : sort = this.orderBy;
-
+      const sort = this.getOrder();
       let promise;
-
       if (this.category) {
         this.dbQuery = { category: this.category };
       }
