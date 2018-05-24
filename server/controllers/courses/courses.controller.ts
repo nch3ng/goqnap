@@ -19,7 +19,6 @@ export class CoursesController extends Controller {
     this.setLimit(limit);
     this.setCategory(category);
 
-    console.log('get all courses');
     return new Promise<Course []>((resolve, reject) => {
       const sort = this.getOrder();
       let promise;
@@ -31,10 +30,8 @@ export class CoursesController extends Controller {
       } else {
         promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit);
       }
-      console.log('in promise');
       promise.then(
         (all_courses) => {
-          console.log(all_courses);
           resolve(all_courses);
         }).catch((error) => {
         reject(new ErrorResponse(false, error));

@@ -37,8 +37,11 @@ describe('Courses Test', () => {
   });
 
   after( (done) => {
-    connection.close(function () {
-      done();
+    connection.close(() => {
+      connection.db.dropDatabase( () => {
+        console.log('drop database');
+        done();
+      });
     });
   });
 
