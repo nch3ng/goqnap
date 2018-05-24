@@ -24,7 +24,7 @@ import './controllers/users/users.controller';
 // End of Controllers
 
 import { RegisterRoutes } from './routes/routes';
-import { authErrorHandler, errorHandler } from './helpers/error.handler';
+import { errorHandler } from './helpers/error.handler';
 
 const logger = require('./helpers/logger');
 const app = express();
@@ -76,7 +76,6 @@ RegisterRoutes(app);
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-app.use(authErrorHandler);
 app.use(errorHandler);
 
 const httpServer = http.createServer(app);

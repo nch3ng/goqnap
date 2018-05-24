@@ -12,35 +12,6 @@ export class CoursesController extends Controller {
   category = null;
   dbQuery = {};
 
-  private getOrder(): string {
-    let sort: string;
-    this.desc === true ? sort = '-' + this.orderBy : sort = this.orderBy;
-    return sort;
-  }
-
-  private setLimit(limit) {
-    if (limit) {
-      this.limit = limit;
-    }
-  }
-
-  private setCategory(category) {
-    if (category) {
-      this.category = category;
-    }
-  }
-
-  private setOrder(orderBy: string) {
-    if (orderBy && orderBy.split(':')[0]) {
-      this.orderBy = orderBy.split(':')[0];
-      if (orderBy.split(':')[1] && orderBy.split(':')[1] === 'desc') {
-        this.desc = true;
-      } else {
-        this.desc = false;
-      }
-    }
-  }
-
   @Get()
   public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
 
@@ -105,23 +76,15 @@ export class CoursesController extends Controller {
           reject(new ErrorResponse(false, error));
         } else {
           const item = info.items[0];
+          console.log(item);
           if (!item) {
             reject(new ErrorResponse(false, 'Cannot retreive the youtube info.'));
           } else {
-            const promise = CourseDB.findOneAndUpdate(
-                    { youtube_ref: youtubeRef },
-                    { $set: {
-                        duration: item.contentDetails.duration,
-                        like: item.statistics.likeCount,
-                        dislike: item.statistics.dislikeCount,
-                        watched: item.statistics.viewCount,
-                        favoriteCount: item.statistics.favoriteCount,
-                        commentCount: item.statistics.commentCount,
-                        publishedDate: item.snippet.publishedAt
-                      }
-                    },
-                    { new: true}).exec();
-            promise.then(updated_course => resolve(updated_course)).catch(err => reject(new ErrorResponse(false, err))); }
+            const promise = this.getFindAndUpdateYoutubePromise(youtubeRef, item);
+            promise.then(
+              (updated_course) => {
+                resolve(updated_course);
+          }).catch(err => reject(new ErrorResponse(false, err))); }
         }
       });
     });
@@ -191,26 +154,11 @@ export class CoursesController extends Controller {
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) { reject(new ErrorResponse(false, 'The youtube reference does not exist.')); }
-          const course_promise = CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
-            title: course.title,
-           code_name: course.code_name,
-            keywords: course.keywords,
-            desc: course.desc,
-            youtube_ref: course.youtube_ref,
-            category: course.category,
-            publishedDate: youtube_info.publishedDate,
-            commentCount: +youtube_info.commentCount,
-            duration: youtube_info.duration,
-            favoriteCount: +youtube_info.favoriteCount,
-            dislike: +youtube_info.dislike,
-            like: +youtube_info.like,
-            watched: +youtube_info.watched
-          }}, { new: true}).exec();
+          const course_promise = this.getFindAndUpdatePromise(course, youtube_info);
           course_promise.then((updated_course) => resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course))).catch(
             (error) => reject(new ErrorResponse(false, 'Updated course failed.')));
         }
-      ).catch(
-        (error1) => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
+      ).catch((error1) => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
     });
   }
 
@@ -230,5 +178,68 @@ export class CoursesController extends Controller {
           }
         );
       });
+  }
+
+  private getFindAndUpdateYoutubePromise(youtubeRef: string, item: any): Promise<Course> {
+    return CourseDB.findOneAndUpdate(
+      { youtube_ref: youtubeRef },
+      { $set: {
+          duration: item.contentDetails.duration,
+          like: item.statistics.likeCount,
+          dislike: item.statistics.dislikeCount,
+          watched: item.statistics.viewCount,
+          favoriteCount: item.statistics.favoriteCount,
+          commentCount: item.statistics.commentCount,
+          publishedDate: item.snippet.publishedAt
+        }
+      },
+      { new: true}).exec();
+  }
+
+  private getFindAndUpdatePromise(course: Course, youtube_info: YoutubeInfo): Promise<Course> {
+    return CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
+      title: course.title,
+      code_name: course.code_name,
+      keywords: course.keywords,
+      desc: course.desc,
+      youtube_ref: course.youtube_ref,
+      category: course.category,
+      publishedDate: youtube_info.publishedDate,
+      commentCount: +youtube_info.commentCount,
+      duration: youtube_info.duration,
+      favoriteCount: +youtube_info.favoriteCount,
+      dislike: +youtube_info.dislike,
+      like: +youtube_info.like,
+      watched: +youtube_info.watched
+    }}, { new: true}).exec();
+  }
+
+  private getOrder(): string {
+    let sort: string;
+    this.desc === true ? sort = '-' + this.orderBy : sort = this.orderBy;
+    return sort;
+  }
+
+  private setLimit(limit) {
+    if (limit) {
+      this.limit = limit;
+    }
+  }
+
+  private setCategory(category) {
+    if (category) {
+      this.category = category;
+    }
+  }
+
+  private setOrder(orderBy: string) {
+    if (orderBy && orderBy.split(':')[0]) {
+      this.orderBy = orderBy.split(':')[0];
+      if (orderBy.split(':')[1] && orderBy.split(':')[1] === 'desc') {
+        this.desc = true;
+      } else {
+        this.desc = false;
+      }
+    }
   }
 }
