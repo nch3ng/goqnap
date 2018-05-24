@@ -86,16 +86,12 @@ export class CoursesController extends Controller {
   public async getYoutubeInfo(youtubeRef: string): Promise<Course> {
     return new Promise<Course>((resolve, reject) => {
       const youTube = new YouTube();
-
       youTube.setKey(process.env.YOUTUBE_KEY);
-
       youTube.getById(youtubeRef, (error, info) => {
         if (error) {
           reject(new ErrorResponse(false, error));
         } else {
           const item = info.items[0];
-          console.log(info);
-          console.log(item);
           if (!item) {
             reject(new ErrorResponse(false, 'Cannot retreive the youtube info.'));
           } else {
@@ -112,16 +108,7 @@ export class CoursesController extends Controller {
                       }
                     },
                     { new: true}).exec();
-            promise.then(
-              (course) => {
-                resolve(course);
-              }
-            ).catch(
-              (err) => {
-                reject(new ErrorResponse(false, err));
-              }
-            );
-          }
+            promise.then(course => resolve(course)).catch(err => reject(new ErrorResponse(false, err))); }
         }
       });
     });
@@ -130,9 +117,7 @@ export class CoursesController extends Controller {
   public async getYoutubeInfo_not_saving(youtubeRef: string): Promise<YoutubeInfo> {
     return new Promise<YoutubeInfo>((resolve, reject) => {
       const youTube = new YouTube();
-
       youTube.setKey(process.env.YOUTUBE_KEY);
-
       youTube.getById(youtubeRef, (error, info) => {
         if (error) {
           reject(new ErrorResponse(false, error));
@@ -151,7 +136,6 @@ export class CoursesController extends Controller {
           } else  {
             reject(new ErrorResponse(false, 'There\'s no youtube video found'));
           }
-          // console.log(item);
         }
       });
     });
@@ -163,8 +147,6 @@ export class CoursesController extends Controller {
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
-      // console.log(course);
-      // console.log(this.getYoutubeInfo);
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) {
@@ -182,8 +164,7 @@ export class CoursesController extends Controller {
           course.save(function (error) {
             if (error) {
               reject(new ErrorResponse(false, error));
-            }
-            resolve(new UserCourseResponse(true, 'Create a course successfully', course));
+            } else { resolve(new UserCourseResponse(true, 'Create a course successfully', course)); }
           });
         }
       ).catch(error1 => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
@@ -203,8 +184,6 @@ export class CoursesController extends Controller {
           if (!youtube_info) {
             reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
           }
-          // console.log(youtube_info);
-          // console.log(course);
 
           const course_promise = CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
             title: course.title,
@@ -222,20 +201,11 @@ export class CoursesController extends Controller {
             watched: +youtube_info.watched
           }}, { new: true}).exec();
 
-          course_promise.then((updated_course) => {
-            // console.log(updated_course);
-            resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course));
-          }).catch(
-            (error) => {
-              reject(new ErrorResponse(false, 'Updated course failed.'));
-            }
-          );
+          course_promise.then((updated_course) => resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course))).catch(
+            (error) => reject(new ErrorResponse(false, 'Updated course failed.')));
         }
       ).catch(
-        (error1) => {
-          reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
-        }
-      );
+        (error1) => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
     });
   }
 
