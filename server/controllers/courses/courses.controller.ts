@@ -26,9 +26,9 @@ export class CoursesController extends Controller {
         this.dbQuery = { category: this.category };
       }
       if (this.limit === 0) {
-        promise = CourseDB.find(this.dbQuery).sort(sort).exec();
+        promise = CourseDB.find(this.dbQuery).sort(sort);
       } else {
-        promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit).exec();
+        promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit);
       }
 
       promise.then(
@@ -45,7 +45,7 @@ export class CoursesController extends Controller {
       const queryStr = query;
       // console.log('search ' + queryStr);
       if (queryStr) {
-        const promise = CourseDB.find({$text: {$search: queryStr}}).exec();
+        const promise = CourseDB.find({$text: {$search: queryStr}});
         promise.then(
           searched_courses => resolve(searched_courses)).catch(
           err => resolve([]));
@@ -58,7 +58,7 @@ export class CoursesController extends Controller {
   @Get('{id}')
   public async getCourse(@Path() id: string): Promise<Course> {
     return new Promise<Course>((resolve, reject) => {
-      const promise = CourseDB.findOne({_id: id}).exec();
+      const promise = CourseDB.findOne({_id: id});
       promise.then(
         acourse => resolve(acourse)).catch(
         error => reject(new ErrorResponse(false, 'Couldn\'t find the courses.'))
@@ -167,7 +167,7 @@ export class CoursesController extends Controller {
     public async deleteCourse(@Path() id: String): Promise<UserCourseResponse> {
       // console.log('Delete a course id');
       return new Promise<UserCourseResponse>((resolve, reject) => {
-        const promise = CourseDB.findOneAndRemove({ _id: id}).exec();
+        const promise = CourseDB.findOneAndRemove({ _id: id});
 
         promise.then(
           (course) => {
@@ -193,7 +193,7 @@ export class CoursesController extends Controller {
           publishedDate: item.snippet.publishedAt
         }
       },
-      { new: true}).exec();
+      { new: true});
   }
 
   private getFindAndUpdatePromise(course: Course, youtube_info: YoutubeInfo): Promise<Course> {
@@ -211,7 +211,7 @@ export class CoursesController extends Controller {
       dislike: +youtube_info.dislike,
       like: +youtube_info.like,
       watched: +youtube_info.watched
-    }}, { new: true}).exec();
+    }}, { new: true});
   }
 
   private getOrder(): string {

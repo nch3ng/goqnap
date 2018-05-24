@@ -1,4 +1,4 @@
-const winston = require("winston");
+import * as winston from 'winston';
 
 const level = process.env.LOG_LEVEL || 'debug';
 
@@ -14,4 +14,4 @@ const logger = new winston.Logger({
   ]
 });
 
-module.exports = logger
+module.exports = logger;

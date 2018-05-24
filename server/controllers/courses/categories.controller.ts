@@ -11,7 +11,7 @@ export class CategoriesController extends Controller {
   @Get()
   public async getAll(): Promise<Category []>  {
     return new Promise<Category []>((resolve, reject) => {
-      const promise = CategoryDB.find({}).sort('level').exec();
+      const promise = CategoryDB.find({}).sort('level');
 
       promise.then(
         categories => resolve(categories)).catch(
@@ -51,7 +51,7 @@ export class CategoryController {
       if (category) {
         this.category = category;
       }
-      const promise = CourseDB.find({'category': this._category}).exec();
+      const promise = CourseDB.find({'category': this._category});
 
       promise.then(
         (cat_courses: Course []) => {

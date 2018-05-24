@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
+import * as Bluebird from 'bluebird';
+
+// User Bluebird promise for global promise
+(<any>mongoose).Promise = Bluebird;
+
 const env = process.env.NODE_ENV || 'development';
 let gracefulShutdown;
 const dbURI = 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSSWORD + '@' + process.env.DB_ADDRESS + '/' + process.env.DB;
 
-mongoose.connect(dbURI, {
-  useMongoClient: true,
-  /* other options */
-});
+mongoose.connect(dbURI, { useMongoClient: true });
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', function() {
@@ -45,6 +47,3 @@ process.on('SIGTERM', function() {
     process.exit(0);
   });
 });
-
-// BRING IN YOUR SCHEMAS & MODELS
-// require('./schemas/users.schema');

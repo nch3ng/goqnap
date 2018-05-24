@@ -11,7 +11,7 @@ export class UsersController extends Controller {
   @Get()
   public async all(): Promise<User []> {
     return new Promise<User []>((resolve, reject) => {
-      const promise = UserDB.find({}).select('-salt -hash').exec();
+      const promise = UserDB.find({}).select('-salt -hash');
       promise.then(
         (users: User []) => {
           if (!users) {
@@ -46,7 +46,7 @@ export class UserController extends Controller {
   @Get('{id}')
   public async get(@Path() id: string): Promise<User> {
     return new Promise<User> ((resolve, reject) => {
-      const promise = UserDB.findOne({ _id: id }).select('-salt -hash').exec();
+      const promise = UserDB.findOne({ _id: id }).select('-salt -hash');
 
       promise.then(
         (user: User) => {
@@ -66,7 +66,7 @@ export class UserController extends Controller {
   @Delete('{id}')
   public async delete(@Path() id: string): Promise<UserCreationResponse> {
     return new Promise<UserCreationResponse>((resolve, reject) => {
-      const promise = UserDB.findOneAndRemove({ _id: id}).exec();
+      const promise = UserDB.findOneAndRemove({ _id: id});
       promise.then(
         (user: User) => {
           resolve(new UserCreationResponse(true, 'Successfully deleted ' + user.email));

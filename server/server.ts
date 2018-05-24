@@ -32,8 +32,6 @@ const env = process.env.NODE_ENV || 'development';
 
 const port = process.env.port || 3000;
 
-const pathToSwaggerUi = require('swagger-ui-dist').absolutePath();
-
 require('./models/db');
 
 app.use(bodyParser.json());
@@ -51,7 +49,6 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 
 
 app.use('/', goqnap);
-app.use('/api/document', express.static(pathToSwaggerUi));
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);
 
