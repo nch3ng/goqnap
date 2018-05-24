@@ -24,7 +24,7 @@ import './controllers/users/users.controller';
 // End of Controllers
 
 import { RegisterRoutes } from './routes/routes';
-import { authErrorHandler } from './helpers/error.handler';
+import { authErrorHandler, errorHandler } from './helpers/error.handler';
 
 const logger = require('./helpers/logger');
 const app = express();
@@ -77,15 +77,9 @@ RegisterRoutes(app);
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use(authErrorHandler);
-// app.use(['/login', '/register'], function(req, res, next) {
-//   // Just send the index.html for other files to support HTML5Mode
-//   res.sendFile('/index.html', { root: path.join(__dirname, '../dist') });
-// });
+app.use(errorHandler);
 
 const httpServer = http.createServer(app);
-
-// app.use(express.static(__dirname + '../dist'));
-// app.get("/register", express.static(path.join(__dirname, '../dist/register')));
 console.log('CORS-enabled for all origins.  Listen: ' + port);
 httpServer.listen(port);
 
