@@ -1,7 +1,6 @@
 import { UserRegisterRequest, UserRegisterResponse, User } from './../../models/user.model';
 import UserDB from '../../models/schemas/users.schema';
 const env = process.env.NODE_ENV || 'development';
-const config = require('../../config')[env];
 // logger = require('../../logger');
 
 import * as express from 'express';
@@ -38,8 +37,8 @@ export class AuthController {
             userID: user._id,
             email: user.email,
             name: user.name
-          }, config.secret, {
-            expiresIn : 60 * 60 * config.expiry
+          }, process.env.secret, {
+            expiresIn : 60 * 60 * process.env.expiry
           });
           resolve(new UserLoginResponse(true, 'You are logged in.', token, <User>{ name: user.name, email: user.email}));
         }
@@ -63,7 +62,7 @@ export class AuthController {
           reject(new UserRegisterResponse(false, err));
         }
         // console.log(token);
-        const decoded = jwt.verify(token, config.secret);
+        const decoded = jwt.verify(token, process.env.secret);
         resolve(new UserRegisterResponse(true, 'Successfully registered', token, user, decoded));
       });
     });

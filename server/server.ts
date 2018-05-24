@@ -29,8 +29,8 @@ import { authErrorHandler, errorHandler } from './helpers/error.handler';
 const logger = require('./helpers/logger');
 const app = express();
 const env = process.env.NODE_ENV || 'development';
-const config = require('./config')[env];
-const port = config.port || 3000;
+
+const port = process.env.port || 3000;
 
 const pathToSwaggerUi = require('swagger-ui-dist').absolutePath();
 
@@ -83,8 +83,8 @@ const httpServer = http.createServer(app);
 console.log('CORS-enabled for all origins.  Listen: ' + port);
 httpServer.listen(port);
 
-if (config.ssl_enable) {
-  const ssl_port = config.ssl_port || 9000;
+if (process.env.ssl_enable) {
+  const ssl_port = process.env.ssl_port || 9000;
   const credentials = {
     key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
     cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),

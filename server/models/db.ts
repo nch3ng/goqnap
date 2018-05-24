@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config')[env];
 let gracefulShutdown;
-const dbURI = config.DBConnectionUrl;
+const dbURI = 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSSWORD + '@' + process.env.DB_ADDRESS + '/' + process.env.DB;
 
-// console.log(config);
 mongoose.connect(dbURI, {
   useMongoClient: true,
   /* other options */

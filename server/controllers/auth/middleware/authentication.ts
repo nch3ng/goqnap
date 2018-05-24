@@ -2,7 +2,6 @@ import * as jwt from 'jsonwebtoken';
 import * as express from 'express';
 import { UserLoginResponse, AuthResponseError } from '../../../models/user.model';
 const env = process.env.NODE_ENV || 'development';
-const config = require('../../../config')[env];
 
 export function expressAuthentication(request: express.Request, securityName: string, scopes?: string[]): Promise<any> {
   console.log('auth middle');
@@ -15,7 +14,7 @@ export function expressAuthentication(request: express.Request, securityName: st
       if (!token) {
           reject(new AuthResponseError(false, 'No token provided'));
       }
-      jwt.verify(token, config.secret, (err: any, decoded: any) => {
+      jwt.verify(token, process.env.secret, (err: any, decoded: any) => {
         if (err) {
           reject(new AuthResponseError(false, err.message, err));
         } else {

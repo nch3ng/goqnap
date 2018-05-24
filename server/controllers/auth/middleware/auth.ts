@@ -1,6 +1,5 @@
 import * as jwt from 'jsonwebtoken';
 const env = process.env.NODE_ENV || 'development';
-const config = require('../../../config')[env];
 import * as authentication from './authentication';
 
 const auth = {
@@ -9,7 +8,7 @@ const auth = {
     // console.log(req.headers);
     // console.log(token);
     if (token) {
-        jwt.verify(token, config.secret, function(err, decoded) {
+        jwt.verify(token, process.env.secret, function(err, decoded) {
           if (err) {
             res.send({ success: false, message: 'Authroized failed' });
           } else {

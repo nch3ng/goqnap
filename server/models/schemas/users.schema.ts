@@ -3,7 +3,6 @@ import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 
 const env = process.env.NODE_ENV || 'development';
-const config = require('../../config')[env];
 
 const Schema = mongoose.Schema;
 
@@ -37,7 +36,7 @@ userSchema.methods.generateJwt = function() {
     email: this.email,
     name: this.name,
     exp: Math.trunc(expiry.getTime() / 1000),
-  }, config.secret); // DO NOT KEEP YOUR SECRET IN THE CODE!
+  }, process.env.secret); // DO NOT KEEP YOUR SECRET IN THE CODE!
 };
 
 const UserDB = mongoose.model('User', userSchema);
