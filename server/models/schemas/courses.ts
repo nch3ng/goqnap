@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { ICourse } from '../interfaces/course.interface';
 
 const courseSchema = new mongoose.Schema({
   title: {
@@ -63,6 +64,6 @@ const courseSchema = new mongoose.Schema({
 
 courseSchema.index({'$**': 'text'});
 
-const CourseDB = mongoose.model('Course', courseSchema);
+const CourseDB = mongoose.model<ICourse>('Course', courseSchema);
 
 export default CourseDB;
