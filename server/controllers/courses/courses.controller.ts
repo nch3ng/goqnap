@@ -63,15 +63,8 @@ export class CoursesController extends Controller {
       if (queryStr) {
         const promise = CourseDB.find({$text: {$search: queryStr}}).exec();
         promise.then(
-          (res_courses) => {
-            // console.log(courses);
-            resolve(res_courses);
-          }
-        ).catch(
-          (err) => {
-            resolve([]);
-          }
-        );
+          res_courses => resolve(res_courses)).catch(
+          err => resolve([]));
       } else {
         resolve([]);
       }
@@ -83,10 +76,7 @@ export class CoursesController extends Controller {
     return new Promise<Course>((resolve, reject) => {
       const promise = CourseDB.findOne({_id: id}).exec();
       promise.then(
-        (course: Course) => {
-          resolve(course);
-        }
-      ).catch(
+        course => resolve(course)).catch(
         error => reject(new ErrorResponse(false, 'Couldn\'t find the courses.'))
       );
     });
