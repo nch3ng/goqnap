@@ -48,10 +48,7 @@ export class CoursesController extends Controller {
       }
 
       promise.then(
-        (res_courses: Course []) => {
-          resolve(res_courses);
-        }
-      ).catch((error) => {
+        res_courses => resolve(res_courses)).catch((error) => {
         reject(new ErrorResponse(false, error));
       });
     });
