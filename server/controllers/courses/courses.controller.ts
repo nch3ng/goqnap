@@ -174,15 +174,10 @@ export class CoursesController extends Controller {
   public async updateCourse(@Body() requestBody: UserCourseRequest): Promise<UserCourseResponse> {
     const course = new Course();
     Object.assign(course, requestBody);
-
     return new Promise<UserCourseResponse>((resolve, reject) => {
-
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
-          if (!youtube_info) {
-            reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
-          }
-
+          if (!youtube_info) { reject(new ErrorResponse(false, 'The youtube reference does not exist.')); }
           const course_promise = CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
             title: course.title,
             code_name: course.code_name,
@@ -198,7 +193,6 @@ export class CoursesController extends Controller {
             like: +youtube_info.like,
             watched: +youtube_info.watched
           }}, { new: true}).exec();
-
           course_promise.then((updated_course) => resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course))).catch(
             (error) => reject(new ErrorResponse(false, 'Updated course failed.')));
         }
