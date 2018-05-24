@@ -180,7 +180,7 @@ export class CoursesController extends Controller {
           if (!youtube_info) { reject(new ErrorResponse(false, 'The youtube reference does not exist.')); }
           const course_promise = CourseDB.findOneAndUpdate({_id: course._id}, {$set: {
             title: course.title,
-            code_name: course.code_name,
+           code_name: course.code_name,
             keywords: course.keywords,
             desc: course.desc,
             youtube_ref: course.youtube_ref,
