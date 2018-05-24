@@ -14,10 +14,7 @@ export class CategoriesController extends Controller {
       const promise = CategoryDB.find({}).sort('level').exec();
 
       promise.then(
-        (categories: Category []) => {
-          resolve(categories);
-        }
-      ).catch(
+        categories => resolve(categories)).catch(
         (err) => {
           reject(new ErrorResponse(false, err));
         }
@@ -57,10 +54,7 @@ export class CategoryController {
       const promise = CourseDB.find({'category': this._category}).exec();
 
       promise.then(
-        (courses: Course []) => {
-          resolve(courses);
-        }
-      ).catch(
+        courses => resolve(courses)).catch(
         (err) => {
           reject(new ErrorResponse(false, err));
         }
