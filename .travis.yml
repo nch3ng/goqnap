@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - "9"
+before_install:
+  - npm i -g npm@6.0.1
 before_script:
   - npm install
   - npm run routes
