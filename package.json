@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "node dist/server.js",
     "build": "./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5 && npm run routes && npm run swagger",
-    "test": "mocha -r ts-node/register server/**/*.spec.ts --timeout 3000",
+    "test": "mocha -r ts-node/register server/**/*.spec.ts --timeout 15000",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:dev": "nodemon --exec ./node_modules/.bin/ts-node -- ./server/server.ts",

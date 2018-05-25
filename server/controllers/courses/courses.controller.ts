@@ -62,7 +62,7 @@ export class CoursesController extends Controller {
       const promise = CourseDB.findOne({_id: id});
       promise.then(
         acourse => resolve(acourse)).catch(
-        error => reject(new ErrorResponse(false, 'Couldn\'t find the courses.'))
+        error => reject(new ErrorResponse(false, 'Couldn\'t find the course.'))
       );
     });
   }
@@ -77,7 +77,7 @@ export class CoursesController extends Controller {
           reject(new ErrorResponse(false, error));
         } else {
           const item = info.items[0];
-          console.log(item);
+          // console.log(item);
           if (!item) {
             reject(new ErrorResponse(false, 'Cannot retreive the youtube info.'));
           } else {
