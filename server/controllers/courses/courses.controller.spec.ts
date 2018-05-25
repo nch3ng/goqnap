@@ -20,13 +20,13 @@ const assert = chai.assert;
 chai.use(require('dirty-chai'));
 
 const prepareData = async (done): Promise<any> => {
-
+  console.log('Preparing data');
   await mongoose.connection.dropDatabase( () => {
     const items: Course [] = require('../..//tests/testdata.json');
     for (const item of items) {
       CourseDB.create(item, (err, saved_item) => {
         // assert.isNull(err, 'Prepare data failed.');
-        console.log(saved_item._id + ' has been created.');
+        // console.log(saved_item._id + ' has been created.');
         aCourseId = saved_item._id;
       });
     }
