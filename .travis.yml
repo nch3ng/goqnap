@@ -5,7 +5,9 @@ before_install:
   - npm i -g npm@6.0.1
 before_script:
   - npm install
-  - npm run routes
+  - rm -rf ./server/routes
+  - mkdir ./server/routes 
+  - ./node_modules/.bin/tsoa routes
   - ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES
 script:
   - npm start
