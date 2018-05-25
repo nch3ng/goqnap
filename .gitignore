@@ -6,9 +6,10 @@
 /out-tsc
 /server/routes/routes.ts
 /coverage
-# static
 /public
 .env
+.nyc_output
+# static
 
 # dependencies
 /node_modules
