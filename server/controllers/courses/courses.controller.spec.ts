@@ -21,6 +21,7 @@ describe('Courses Test', () => {
     courseController = new CoursesController();
     // User Bluebird promise for global promise
     (<any>mongoose).Promise = Bluebird;
+    console.log(process.env);
     dbURI = 'mongodb://' + process.env.DB_TEST_USERNAME + ':' + process.env.DB_TEST_PASSWORD + '@' + process.env.DB_TEST_ADDRESS + '/' + process.env.DB_TEST;
     // console.log(dbURI);
     connection = mongoose.connect(dbURI, {useMongoClient: true});

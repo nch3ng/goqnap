@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "node dist/server/server.js",
+    "start": "node dist/server.js",
     "build": "./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5 && npm run routes && npm run swagger",
     "test": "mocha -r ts-node/register server/**/*.spec.ts --timeout 3000",
     "lint": "ng lint",
