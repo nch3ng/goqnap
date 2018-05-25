@@ -1,14 +1,26 @@
 language: node_js
 node_js:
-  - "9"
+- '9'
 before_install:
-  - npm i -g npm@6.0.1
+- npm i -g npm@6.0.1
 before_script:
-  - npm install
-  - rm -rf ./server/routes
-  - mkdir ./server/routes 
-  - ./node_modules/.bin/tsoa routes
-  - ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5
+- npm install
+- rm -rf ./server/routes
+- mkdir ./server/routes
+- "./node_modules/.bin/tsoa routes"
+- "./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target
+  ES5"
 script:
-  - npm start
-  - npm test
+- npm start
+- npm test
+env:
+  matrix:
+  - port=3000
+  - secret=test-environment-secret
+  - expiry=2
+  - DB_TEST_USERNAME=admintest
+  - DB_TEST_PASSWORD=qnaptest
+  - DB_TEST_ADDRESS=ds233970.mlab.com:33970
+  - DB_TEST=qnapusatest
+  global:
+    secure: BdbMd7znm4qj1KSYQguasYEUc9IMhWGH7E16isyKfyWdaIh6gKlnbxRC7Ac+MuXNSsUEoxgI1QahJ7/vhTXjUQhhn+vtj/1bbt5zLxA7FVrQH6p3C5cIbZTPEWiKCu4rBK7PwQ7hLKJI5eYSJ2sdFHosMt9wojj0IazMGEeqz7szIRNYtWtMoD28tFFbpxomPQEpF5Cqb0xC7QQ58AsSUKg3tZ2Nt/yf0mItLpfziBHreEr42UuD7DAF2yNQzRazNCcZR2ns4JZyPrQWcAkQrXrKU+5yloQSWN5gQ63gAYA92vUvteRMR6pM8nOrkruDk59ezY029wjKl1tsT2CMgZkjAPYM7SwXbUvorVubysTCxc6UHFHEQXJBev7CNi1h4KRJ0HmwQpbvy1y7dcrQGqgT2qrtBYGIqBGPZTfr+cAIGS/tlp4VG2+u3EBAObRD0+mLrBQ63BF8FV0VzgEVhE96Prrb6wHr+eV7s1kqckw0hDHc1sxPI31N5VwQkaKYUD0jPBp7vK0UmcNGXG/WGA11OXOQCF5ZC3DsMvdII9AZWxjTGX8dUM7a5/UCJrH6N40Ilyl7Mplw16pQzIrr2+ZEeqeldEohT815jgj7iTGGnHUpUmIv2dMgtJzpoLXVg8rFukWJ6x3WUlvGosIS7pEalg6QWQoatffUG4ucpfQ=

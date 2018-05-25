@@ -6,7 +6,7 @@ import * as Bluebird from 'bluebird';
 
 const env = process.env.NODE_ENV || 'development';
 let gracefulShutdown;
-const dbURI = 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSSWORD + '@' + process.env.DB_ADDRESS + '/' + process.env.DB;
+const dbURI = 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_ADDRESS + '/' + process.env.DB;
 
 mongoose.connect(dbURI, { useMongoClient: true });
 
