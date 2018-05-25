@@ -8,7 +8,7 @@ before_script:
   - rm -rf ./server/routes
   - mkdir ./server/routes 
   - ./node_modules/.bin/tsoa routes
-  - ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES
+  - ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5
 script:
   - npm start
   - npm test
