@@ -11,7 +11,6 @@ before_script:
 - "./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target
   ES5"
 script:
-- npm start
 - npm test
 env:
   - port=3000 secret=test-environment-secret expiry=2 DB_TEST_ADDRESS=ds233970.mlab.com:33970 DB_TEST=qnapusatest
