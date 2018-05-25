@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "10"
+before_script:
+  - npm install
+  - npm run routes
+  - ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES
+script:
+  - npm start
+  - npm test

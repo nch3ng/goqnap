@@ -26,7 +26,6 @@ describe('Courses Test', () => {
 
     connection.on('error', console.error.bind(console, 'connection error'));
     connection.once('open', function() {
-      console.log('We are connected to test database!');
       done();
     });
     process.on('unhandledRejection', error => {
@@ -39,7 +38,6 @@ describe('Courses Test', () => {
   after( (done) => {
     connection.close(() => {
       connection.db.dropDatabase( () => {
-        console.log('drop database');
         done();
       });
     });
@@ -48,16 +46,12 @@ describe('Courses Test', () => {
   it('should get all courses', (done) => {
     const promise = courseController.getCourses();
     promise.then((courses: Course []) => {
-      expect(courses).to.be.not.empty('all courses');
+      expect(courses).to.be.empty('all courses');
       done();
     }).catch(
       (err) => {
         done(err);
     });
-    // done();
   });
-    // const result = new CoursesController().getCourses().then(
-    //   (courses: Course []) => {
-    //     console.log(courses);
-    // });
+
 });
