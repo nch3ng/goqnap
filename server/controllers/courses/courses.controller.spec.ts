@@ -9,41 +9,62 @@ import { Course } from '../../models/course.model';
 import { ICourse } from '../../models/interfaces/course.interface';
 import CourseDB from '../../models/schemas/courses';
 import { CoursesController } from './courses.controller';
+import { AuthController } from '../../../dist/controllers/auth/auth.controller';
 
 require('dotenv').config();
 
+// Global variables
 let dbURI;
 let connection: mongoose.connection;
 let courseController;
+let authController;
 let aCourseId;
+// End
+
 const assert = chai.assert;
 chai.use(require('dirty-chai'));
 
-const prepareData = async (done): Promise<any> => {
-  console.log('Preparing data');
+const prepareData = async (done) => {
+  console.log('Preparing testing');
   await mongoose.connection.dropDatabase( () => {
     const items: Course [] = require('../..//tests/testdata.json');
     for (const item of items) {
       CourseDB.create(item, (err, saved_item) => {
-        // assert.isNull(err, 'Prepare data failed.');
-        // console.log(saved_item._id + ' has been created.');
+        console.log(saved_item.code_name + ' has been created.');
         aCourseId = saved_item._id;
       });
     }
-  });
 
-  setTimeout( () => { done(); }, 1000);
+    setTimeout( () => { done(); }, 1000);
+  });
 };
 
-describe('Courses Test', () => {
+const registerAUser = (done) => {
+  authController.register({
+    name: 'test',
+    email: 'test@test.com',
+    password:  '123456'}).then(
+    (rResponse) => {
+      console.log(rResponse);
+      done();
+    }
+  ).catch(
+    (e) => {
+      done(e);
+    }
+  );
+};
+
+describe('Courses', () => {
   before((done) => {
     courseController = new CoursesController();
+    authController = new AuthController();
     // User Bluebird promise for global promise
     (<any>mongoose).Promise = Bluebird;
     dbURI = 'mongodb://' + process.env.DB_TEST_USERNAME + ':' + process.env.DB_TEST_PASSWORD + '@' + process.env.DB_TEST_ADDRESS + '/' + process.env.DB_TEST;
     connection = mongoose.connect(dbURI, {useMongoClient: true});
     prepareData(done);
-
+    // registerAUser(done);
     connection.on('error', console.error.bind(console, 'connection error'));
     connection.once('open', function() {
       // done();
@@ -131,6 +152,62 @@ describe('Courses Test', () => {
         } catch (e) {
           done(e);
         }
+      }
+    );
+  });
+
+  it('should 4 courses by a valid search keyword \'backup\'', (done) => {
+    const promise = courseController.search('backup');
+    promise.then(
+      (courses) => {
+       expect(courses.length).to.be.equal(4);
+       done();
+      }
+    ).catch(
+      (err) => {
+        done(err);
+      }
+    );
+  });
+
+  it('should return empty by a valid search non-match keyword', (done) => {
+    const promise = courseController.search('dadeada@#@!#!');
+    promise.then(
+      (courses) => {
+       expect(courses).to.be.empty('searched courses');
+       done();
+      }
+    ).catch(
+      (err) => {
+        done(err);
+      }
+    );
+  });
+
+  it('should return empty by a empty search keyword', (done) => {
+    const promise = courseController.search('');
+    promise.then(
+      (courses) => {
+       expect(courses).to.be.empty('searched courses');
+       done();
+      }
+    ).catch(
+      (err) => {
+        done(err);
+      }
+    );
+  });
+
+  it('should return empty by a null search keyword', (done) => {
+    const promise = courseController.search();
+    promise.then(
+      (courses) => {
+       expect(courses).to.be.empty('searched courses');
+       done();
+      }
+    ).catch(
+      (err) => {
+        done(err);
       }
     );
   });
