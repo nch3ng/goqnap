@@ -9,7 +9,7 @@ import { Course } from '../../models/course.model';
 import { ICourse } from '../../models/interfaces/course.interface';
 import CourseDB from '../../models/schemas/courses';
 import { CoursesController } from './courses.controller';
-import { AuthController } from '../../../dist/controllers/auth/auth.controller';
+import { AuthController } from '../auth/auth.controller';
 
 require('dotenv').config();
 
