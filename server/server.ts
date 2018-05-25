@@ -11,9 +11,7 @@ import * as path from 'path';
 
 import * as morgan from 'morgan';
 
-import * as favicon from 'serve-favicon';
 import * as cookieParser from 'cookie-parser';
-import * as passport from 'passport';
 
 // Controllers for tsoa routes
 import './controllers/courses/courses.controller';
