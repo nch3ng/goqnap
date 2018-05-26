@@ -1,16 +1,14 @@
 import { UserLoginResponse, UserRegisterResponse, AuthResponseError } from './../models/user.model';
-import { global } from './global.available';
 import { AuthController } from './../controllers/auth/auth.controller';
 import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
 import * as httpMocks from 'node-mocks-http';
 import { UserRegisterRequest, User } from '../models/user.model';
-
-
 import 'mocha';
 import { expect, assert } from 'chai';
 import * as chai from 'chai';
 import { expressAuthentication } from '../controllers/auth/middleware/authentication';
+import { global } from '../global.available';
 chai.use(require('dirty-chai'));
 require('dotenv').config();
 

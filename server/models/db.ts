@@ -1,3 +1,4 @@
+import { global } from './../global.available';
 import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
 
@@ -6,13 +7,12 @@ import * as Bluebird from 'bluebird';
 
 const env = process.env.NODE_ENV || 'development';
 let gracefulShutdown;
-const dbURI = 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_ADDRESS + '/' + process.env.DB;
 
-mongoose.connect(dbURI, { useMongoClient: true });
+mongoose.connect(global.dbURI, { useMongoClient: true });
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', function() {
-  console.log('Mongoose connected to ' + dbURI);
+  console.log('Mongoose connected to ' + global.dbURI);
 });
 mongoose.connection.on('error', function(err) {
   console.log('Mongoose connection error: ' + err);

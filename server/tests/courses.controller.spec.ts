@@ -9,8 +9,7 @@ import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
 import CourseDB from '../models/schemas/courses.schema';
-
-import { global } from './global.available';
+import { global } from '../global.available';
 
 // Global variables
 let connection: mongoose.connection;
