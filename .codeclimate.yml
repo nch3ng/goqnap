@@ -4,3 +4,4 @@ plugins:
 exclude_patterns:
 - "**/*.spec.ts"
 - "tests/"
+- "server/models/interfaces/*.ts"

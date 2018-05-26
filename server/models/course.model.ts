@@ -1,3 +1,4 @@
+import { IResponse } from './interfaces/response.interface';
 import { ICourse } from './interfaces/course.interface';
 
 export class Course implements ICourse {
@@ -52,33 +53,6 @@ export class UserCourseRequest implements ICourse {
   favoriteCount?: number;
   duration?: string;
   commentCount?: number;
-}
-
-export interface IResponse {
-  success: boolean;
-  message: string;
-}
-
-export class UserCourseResponse implements IResponse {
-  success: boolean;
-  message: string;
-  course: Course;
-
-  constructor(success: boolean, message: string, course: Course) {
-    this.success = success;
-    this.message = message;
-    this.course = course;
-  }
-}
-
-export interface IYoutubeInfo {
-  duration: string;
-  like: number;
-  dislike: number;
-  watched: number;
-  favoriteCount: number;
-  commentCount: number;
-  publishedDate: Date;
 }
 
 export class YoutubeInfo implements YoutubeInfo {

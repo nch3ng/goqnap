@@ -1,15 +1,13 @@
-// eslint-disable-next-line no-unused-expressions
+import { AuthController } from '../controllers/auth/auth.controller';
+import { CoursesController } from '../controllers/courses/courses.controller';
+import { Course } from '../models/course.model';
 import 'mocha';
 import { expect } from 'chai';
 import * as chai from 'chai';
 import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
-import { Course } from '../../models/course.model';
-import { ICourse } from '../../models/interfaces/course.interface';
-import CourseDB from '../../models/schemas/courses';
-import { CoursesController } from './courses.controller';
-import { AuthController } from '../auth/auth.controller';
+import CourseDB from '../models/schemas/courses';
 
 require('dotenv').config();
 
@@ -19,6 +17,7 @@ let connection: mongoose.connection;
 let courseController;
 let authController;
 let aCourseId;
+let token;
 // End
 
 const assert = chai.assert;
@@ -27,32 +26,24 @@ chai.use(require('dirty-chai'));
 const prepareData = async (done) => {
   console.log('Preparing testing');
   await mongoose.connection.dropDatabase( () => {
-    const items: Course [] = require('../..//tests/testdata.json');
-    for (const item of items) {
-      CourseDB.create(item, (err, saved_item) => {
-        console.log(saved_item.code_name + ' has been created.');
-        aCourseId = saved_item._id;
-      });
-    }
-
-    setTimeout( () => { done(); }, 1000);
-  });
-};
-
-const registerAUser = (done) => {
-  authController.register({
-    name: 'test',
-    email: 'test@test.com',
-    password:  '123456'}).then(
-    (rResponse) => {
-      console.log(rResponse);
+    const items: Course [] = require('./testdata.json');
+    CourseDB.collection.insert(items, async () => {
+      await CourseDB.findOne().limit(1).then(
+        (item) => {
+          aCourseId = item._id;
+        }
+      );
+      await authController.register({
+        name: 'test',
+        email: 'test@test.com',
+        password:  '123456'}).then(
+        (rResponse) => {
+          token = rResponse.token;
+        }
+      ).catch((e) => { done(e); });
       done();
-    }
-  ).catch(
-    (e) => {
-      done(e);
-    }
-  );
+    });
+  });
 };
 
 describe('Courses', () => {
@@ -64,7 +55,6 @@ describe('Courses', () => {
     dbURI = 'mongodb://' + process.env.DB_TEST_USERNAME + ':' + process.env.DB_TEST_PASSWORD + '@' + process.env.DB_TEST_ADDRESS + '/' + process.env.DB_TEST;
     connection = mongoose.connect(dbURI, {useMongoClient: true});
     prepareData(done);
-    // registerAUser(done);
     connection.on('error', console.error.bind(console, 'connection error'));
     connection.once('open', function() {
       // done();

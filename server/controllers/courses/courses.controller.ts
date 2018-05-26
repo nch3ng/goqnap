@@ -1,8 +1,9 @@
+import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa-nc';
-import { Course, UserCourseRequest, UserCourseResponse, YoutubeInfo } from '../../models/course.model';
+import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses';
 import * as YouTube from 'youtube-node';
-import { ErrorResponse } from '../../models/response.model';
+import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 
 @Route('courses')
 export class CoursesController extends Controller {

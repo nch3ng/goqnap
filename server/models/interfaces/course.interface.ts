@@ -16,3 +16,13 @@ export interface ICourse {
   duration?: string;
   commentCount?: number;
 }
+
+export interface IYoutubeInfo {
+  duration: string;
+  like: number;
+  dislike: number;
+  watched: number;
+  favoriteCount: number;
+  commentCount: number;
+  publishedDate: Date;
+}
