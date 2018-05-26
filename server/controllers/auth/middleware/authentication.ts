@@ -4,7 +4,6 @@ import { UserLoginResponse, AuthResponseError } from '../../../models/user.model
 const env = process.env.NODE_ENV || 'development';
 
 export function expressAuthentication(request: express.Request, securityName: string, scopes?: string[]): Promise<any> {
-  console.log('auth middle');
   if (securityName === 'JWT') {
     const token = request.body.token || request.query.token || request.headers['x-access-token'];
     // console.log(token);

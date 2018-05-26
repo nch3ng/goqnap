@@ -1,7 +1,7 @@
 import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa-nc';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
-import CourseDB from '../../models/schemas/courses';
+import CourseDB from '../../models/schemas/courses.schema';
 import * as YouTube from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 
@@ -50,7 +50,10 @@ export class CoursesController extends Controller {
         const promise = CourseDB.find({$text: {$search: queryStr}});
         promise.then(
           searched_courses => resolve(searched_courses)).catch(
-          err => resolve([]));
+          err => {
+            // console.error(err);
+            resolve([]);
+          });
       } else {
         resolve([]);
       }

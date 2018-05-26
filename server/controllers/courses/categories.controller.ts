@@ -2,7 +2,7 @@ import { Course } from './../../models/course.model';
 import { Category } from './../../models/category.model';
 import { Controller, Get, Route } from 'tsoa-nc';
 import CategoryDB from '../../models/schemas/categories';
-import CourseDB from '../../models/schemas/courses';
+import CourseDB from '../../models/schemas/courses.schema';
 import { ErrorResponse } from '../../models/response.model';
 
 @Route('categories')

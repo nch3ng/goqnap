@@ -79,6 +79,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "mocha": "^4.1.0",
+    "node-mocks-http": "^1.7.0",
     "nodemon": "^1.17.4",
     "protractor": "~5.1.2",
     "sinon": "^4.5.0",

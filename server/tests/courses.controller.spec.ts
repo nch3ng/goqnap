@@ -1,16 +1,18 @@
-import { AuthController } from '../controllers/auth/auth.controller';
-import { CoursesController } from '../controllers/courses/courses.controller';
-import { Course } from '../models/course.model';
 import 'mocha';
 import { expect } from 'chai';
 import * as chai from 'chai';
+
+import { AuthController } from '../controllers/auth/auth.controller';
+import { CoursesController } from '../controllers/courses/courses.controller';
+import { Course } from '../models/course.model';
 import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
-import CourseDB from '../models/schemas/courses';
+import CourseDB from '../models/schemas/courses.schema';
+
+import { global } from './global.available';
 
 // Global variables
-let dbURI;
 let connection: mongoose.connection;
 let courseController;
 let authController;
@@ -20,28 +22,29 @@ require('dotenv').config();
 const assert = chai.assert;
 chai.use(require('dirty-chai'));
 
-const prepareData = async (done) => {
-  console.log('Preparing testing');
-  await mongoose.connection.dropDatabase( () => {
-    const items: Course [] = require('./testdata.json');
-    CourseDB.collection.insert(items, async () => {
-      console.log('inserted');
-      await CourseDB.findOne().limit(1).then(
-        (item) => {
-          aCourseId = item._id;
-        }
-      );
-      // await authController.register({
-      //   name: 'test',
-      //   email: 'test@test.com',
-      //   password:  '123456'}).then(
-      //   (rResponse) => {
-      //     token = rResponse.token;
-      //   }
-      // ).catch((e) => { done(e); });
-      console.log('done');
-      done();
-    });
+const prepareData = (done) => {
+  // console.log('Preparing testing');
+  const items: Course [] = require('./testdata.json');
+
+  CourseDB.collection.insert(items, () => {
+    // console.log('inserted');
+    CourseDB.findOne().limit(1).then(
+      (item) => {
+        aCourseId = item._id;
+        // console.log('done');
+        setTimeout( () => {
+          done();
+        }, 1000);
+      }
+    );
+    // await authController.register({
+    //   name: 'test',
+    //   email: 'test@test.com',
+    //   password:  '123456'}).then(
+    //   (rResponse) => {
+    //     token = rResponse.token;
+    //   }
+    // ).catch((e) => { done(e); });
   });
 };
 
@@ -51,23 +54,27 @@ describe('Courses', () => {
     authController = new AuthController();
     // User Bluebird promise for global promise
     (<any>mongoose).Promise = Bluebird;
-    dbURI = 'mongodb://' + process.env.DB_TEST_USERNAME + ':' + process.env.DB_TEST_PASSWORD + '@' + process.env.DB_TEST_ADDRESS + '/' + process.env.DB_TEST;
-    connection = mongoose.connect(dbURI, {useMongoClient: true});
+    connection = mongoose.connect(global.dbURI, {useMongoClient: true});
     connection.on('error', console.error.bind(console, 'connection error'));
     connection.once('open', function() {
       prepareData(done);
     });
     process.on('unhandledRejection', error => {
       // Won't execute
-      console.log('unhandledRejection', error.test);
+      console.log('Unhandled Rejection, try to fix this', error.test);
       done();
     });
   });
 
-  after( (done) => {
-    connection.close(() => {
-      connection.db.dropDatabase( () => {
-        done();
+  after( () => {
+    return new Promise( (resolve) => {
+      connection.close(() => {
+        connection.db.dropDatabase( () => {
+          setTimeout( () => {
+            // console.log('drop db');
+            resolve();
+          }, 0);
+        });
       });
     });
   });

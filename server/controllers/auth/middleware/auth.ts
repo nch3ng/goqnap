@@ -3,25 +3,25 @@ const env = process.env.NODE_ENV || 'development';
 import * as authentication from './authentication';
 
 const auth = {
-  verifyToken: ( (req, res, next) => {
-    const token = req.body.token || req.query.token || req.headers['x-access-token'];
-    // console.log(req.headers);
-    // console.log(token);
-    if (token) {
-        jwt.verify(token, process.env.secret, function(err, decoded) {
-          if (err) {
-            res.send({ success: false, message: 'Authroized failed' });
-          } else {
-              // all good, continue
-            req.decoded = decoded;
-            next();
-          }
-        });
+  // verifyToken: ( (req, res, next) => {
+  //   const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  //   // console.log(req.headers);
+  //   // console.log(token);
+  //   if (token) {
+  //       jwt.verify(token, process.env.secret, function(err, decoded) {
+  //         if (err) {
+  //           res.send({ success: false, message: 'Authroized failed' });
+  //         } else {
+  //             // all good, continue
+  //           req.decoded = decoded;
+  //           next();
+  //         }
+  //       });
 
-    }  else {
-      res.send({ success: false, message: 'No token exists.' });
-    }
-  }),
+  //   }  else {
+  //     res.send({ success: false, message: 'No token exists.' });
+  //   }
+  // }),
   verify: (req, res, next) => {
     authentication.expressAuthentication(req, 'JWT').then(
       (decoded) => {

@@ -3,11 +3,12 @@ import { expect } from 'chai';
 import * as chai from 'chai';
 import * as mongoose from 'mongoose';
 import * as Bluebird from 'bluebird';
-import CourseDB from '../models/schemas/courses';
+import CourseDB from '../models/schemas/courses.schema';
+// import CourseDB from '../models/schemas/courses.schema';
 
 chai.use(require('dirty-chai'));
 let c;
-describe('Course schema', () => {
+describe('Course model', () => {
   before(() => {
     (<any>mongoose).Promise = Bluebird;
     c = new CourseDB();

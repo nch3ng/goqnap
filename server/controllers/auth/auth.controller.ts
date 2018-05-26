@@ -25,7 +25,7 @@ export class AuthController {
 
         // console.log(user);
         if (!user) {
-          reject(new UserLoginResponse(false, 'User does not exists'));
+          reject(new UserLoginResponse(false, 'User does not exist'));
         } else {
           if (!user.validPassword(requestBody.password)) {
             reject(new UserLoginResponse(false, 'Incorrect password'));
@@ -47,9 +47,9 @@ export class AuthController {
   }
 
   @Post('register')
-  public async register(@Body() requestBody: UserRegisterRequest): Promise<UserRegisterResponse> {
+  public register(@Body() requestBody: UserRegisterRequest): Promise<UserRegisterResponse> {
     const user = new UserDB();
-    console.log('Register: ');
+    // console.log('Register: ');
     // console.log(requestBody);
     user.name = requestBody.name;
     user.email = requestBody.email;
@@ -59,7 +59,7 @@ export class AuthController {
     return new Promise<UserRegisterResponse> ((resolve, reject) => {
       user.save((err) => {
         if (err) {
-          reject(new UserRegisterResponse(false, err));
+          reject(new UserRegisterResponse(false, 'Email exists'));
         }
         // console.log(token);
         const decoded = jwt.verify(token, process.env.secret);
@@ -70,7 +70,7 @@ export class AuthController {
 
   @Security('JWT')
   @Get('check-state')
-  public async checkState(): Promise<UserLoginResponse> {
+  public checkState(): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve) => {
       resolve(new UserLoginResponse(true, 'You are authorized.'));
     });
