@@ -3,16 +3,12 @@ require('dotenv').config();
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as path from 'path';
-
 import * as morgan from 'morgan';
-
 import * as cookieParser from 'cookie-parser';
-
 // Controllers for tsoa routes
 import './controllers/courses/courses.controller';
 import './controllers/courses/categories.controller';
@@ -20,14 +16,12 @@ import './controllers/auth/middleware/authentication';
 import './controllers/auth/auth.controller';
 import './controllers/users/users.controller';
 // End of Controllers
-
 import { RegisterRoutes } from './routes/routes';
 import { errorHandler } from './helpers/error.handler';
 
 const logger = require('./helpers/logger');
 const app = express();
 const env = process.env.NODE_ENV || 'development';
-
 const port = process.env.port || 3000;
 
 require('./models/db');

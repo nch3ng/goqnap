@@ -9,9 +9,9 @@ module.exports = new winston.Logger({
       name: 'console.info',
       colorize: true,
       showLevel: true,
-      // timestamp: function () {
-      //     return (new Date()).toISOString();
-      // },
+      timestamp: function () {
+          return (new Date()).toISOString();
+      },
       silent: process.env.NODE_ENV === 'testing'
     })
   ]

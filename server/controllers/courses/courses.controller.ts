@@ -124,14 +124,29 @@ export class CoursesController extends Controller {
 
   @Security('JWT')
   @Post()
-  public async addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
-    return new Promise<UserCourseResponse>((resolve, reject) => {
+  public addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse | ErrorResponse> {
+    return new Promise<UserCourseResponse | ErrorResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
+      const paramChecked = this.checkAddCourseParams(requestBody);
+
+      if(paramChecked) {
+        reject(new ErrorResponse(false, paramChecked + ' is required'));
+      }
+      CourseDB.findOne({code_name: course.code_name}).then(
+        (course) => {
+          if (course) {
+            reject(new ErrorResponse(false, 'Code name exists'));
+            return;
+          }
+        }
+      );
+
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) {
             reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
+            return;
           }
           course.publishedDate = youtube_info.publishedDate;
           course.commentCount = youtube_info.commentCount;
@@ -246,5 +261,33 @@ export class CoursesController extends Controller {
         this.desc = false;
       }
     }
+  }
+
+  private checkAddCourseParams(requestBody: UserCourseRequest) {
+    if(!requestBody.title) {
+      return 'title';
+    }
+
+    if(!requestBody.code_name) {
+      return 'code name';
+    }
+
+    if(!requestBody.desc) {
+      return 'desc';
+    } 
+
+    if(!requestBody.keywords) {
+      return 'keywords';
+    } 
+
+    if(!requestBody.category) {
+      return 'category';
+    }
+
+    if(!requestBody.youtube_ref) {
+      return 'youtube reference';
+    }
+
+    return false;
   }
 }

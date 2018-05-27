@@ -1,3 +1,4 @@
+import { UserCourseResponse } from './../models/response.model';
 import 'mocha';
 import { expect } from 'chai';
 import * as chai from 'chai';
@@ -9,11 +10,13 @@ import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
 import CourseDB from '../models/schemas/courses.schema';
 import { global } from '../global.available';
+import * as httpMocks from 'node-mocks-http';
 
 // Global variables
 let connection: mongoose.connection;
 let courseController;
 let aCourseId;
+let youtubeRef;
 // End
 require('dotenv').config();
 const assert = chai.assert;
@@ -26,8 +29,9 @@ const prepareData = (done) => {
   CourseDB.collection.insert(items, () => {
     // console.log('inserted');
     CourseDB.findOne().limit(1).then(
-      (item) => {
+      (item: Course) => {
         aCourseId = item._id;
+        youtubeRef = item.youtube_ref;
         // console.log('done');
         setTimeout( () => {
           done();
@@ -174,5 +178,208 @@ describe('Courses', () => {
         // should not be here
       }
     );
+  });
+
+  it('should return true and course object after add a course', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'Transfer files from Windows',
+        code_name: 'QNP110',
+        desc: 'In this video, we will teach you about the few and easy steps on how to transfer your files from your PC to your QNAP NAS.',
+        keywords: 'samba smb qfinder ip address find',
+        youtube_ref: 'J5yhBpsPSFU',
+        category: 'freshman'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        expect(uResponse).to.be.not.null('responded');
+        expect(uResponse.success).to.be.true('success');
+        expect(uResponse.message).to.be.equal('Create a course successfully');
+        expect(uResponse.course).to.be.not.null('course object');
+        expect(uResponse.course.code_name).to.be.equal('QNP110');
+    });
+  });
+
+  it('should return false if code_name exists', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'Transfer files from Windows',
+        code_name: 'QNP110',
+        desc: 'In this video, we will teach you about the few and easy steps on how to transfer your files from your PC to your QNAP NAS.',
+        keywords: 'samba smb qfinder ip address find',
+        youtube_ref: 'J5yhBpsPSFU',
+        category: 'freshman'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('Code name exists');
+    });
+  });
+
+  it('should return false if no title given', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        code_name: 'test',
+        desc: 'test desc',
+        keywords: 'test keyword',
+        youtube_ref: 'testyoutuberef',
+        category: 'testcategory'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('title is required');
+    });;
+  });
+
+  it('should return false if no code name given', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'testtitle',
+        desc: 'test desc',
+        keywords: 'test keyword',
+        youtube_ref: 'testyoutuberef',
+        category: 'testcategory'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('code name is required');
+    });;
+  });
+
+  it('should return false if no description given', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'testtitle',
+        code_name: 'test',
+        keywords: 'test keyword',
+        youtube_ref: 'testyoutuberef',
+        category: 'testcategory'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('desc is required');
+    });;
+  });
+
+  it('should return false if no keywords given', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'testtitle',
+        code_name: 'test',
+        desc: 'test desc',
+        youtube_ref: 'testyoutuberef',
+        category: 'testcategory'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('keywords is required');
+    });;
+  });
+
+  it('should return false if no youtube reference given', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'testtitle',
+        code_name: 'test',
+        desc: 'test desc',
+        keywords: 'test keyword',
+        category: 'testcategory'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('youtube reference is required');
+    });;
+  });
+
+  it('should return false if no category given', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'testtitle',
+        code_name: 'test',
+        desc: 'test desc',
+        keywords: 'test keyword',
+        youtube_ref: 'testyoutuberef'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('category is required');
+    });;
+  });
+
+  it('should return false if youtube reference does not exist', () => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'testtitle',
+        code_name: 'test',
+        desc: 'test desc',
+        keywords: 'test keyword',
+        youtube_ref: 'testyoutuberef',
+        category: 'test category'
+      }
+    });
+
+    return courseController.addCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('no success');
+      expect(e.message).to.be.equal('The youtube reference does not exist.');
+    });;
   });
 });
