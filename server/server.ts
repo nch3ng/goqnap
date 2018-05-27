@@ -36,7 +36,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cors());
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'testing') {
   app.use(morgan('combined'));
 }
 
