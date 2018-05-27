@@ -2,7 +2,6 @@ import 'mocha';
 import { expect } from 'chai';
 import * as chai from 'chai';
 
-import { AuthController } from '../controllers/auth/auth.controller';
 import { CoursesController } from '../controllers/courses/courses.controller';
 import { Course } from '../models/course.model';
 import * as mongoose from 'mongoose';
@@ -14,7 +13,6 @@ import { global } from '../global.available';
 // Global variables
 let connection: mongoose.connection;
 let courseController;
-let authController;
 let aCourseId;
 // End
 require('dotenv').config();
@@ -36,21 +34,12 @@ const prepareData = (done) => {
         }, 1000);
       }
     );
-    // await authController.register({
-    //   name: 'test',
-    //   email: 'test@test.com',
-    //   password:  '123456'}).then(
-    //   (rResponse) => {
-    //     token = rResponse.token;
-    //   }
-    // ).catch((e) => { done(e); });
   });
 };
 
 describe('Courses', () => {
   before((done) => {
     courseController = new CoursesController();
-    authController = new AuthController();
     // User Bluebird promise for global promise
     (<any>mongoose).Promise = Bluebird;
     connection = mongoose.connect(global.dbURI, {useMongoClient: true});

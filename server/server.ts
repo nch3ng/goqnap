@@ -36,7 +36,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cors());
 
-app.use(morgan('combined'));
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan('combined'));
+}
 
 const goqnap = express.static('public');
 
@@ -52,29 +54,12 @@ app.use(static_dist);
 
 // Auto-generated routes by tsoa
 RegisterRoutes(app);
-
-// It's important that this come after the main routes are registered
-// app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-//   console.log(err);
-//   console.log(res.statusCode);
-//   // const status = err.status || 500;
-//   // const body: any = {
-//   //   fields: err.fields || undefined,
-//   //   message: err.message || 'An error occurred during the request.',
-//   //   name: err.name,
-//   //   status
-//   // };
-
-//   next();
-//   // res.status(status).json(body);
-// });
-
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use(errorHandler);
 
 const httpServer = http.createServer(app);
-console.log('CORS-enabled for all origins.  Listen: ' + port);
+logger.info('CORS-enabled for all origins.  Listen: ' + port);
 httpServer.listen(port);
 
 if (process.env.ssl_enable) {
@@ -86,7 +71,9 @@ if (process.env.ssl_enable) {
   };
 
   const httpsServer = https.createServer(credentials, app);
-  console.log('CORS-enabled for all origins.  Listen: ' + ssl_port);
+  logger.info('CORS-enabled for all origins.  Listen: ' + ssl_port);
   httpsServer.listen(ssl_port);
 
 }
+
+module.exports = app;

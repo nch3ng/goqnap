@@ -13,8 +13,6 @@ export class AuthController {
 
   @Post('login')
   public async login(@Body() requestBody: UserLoginRequest): Promise<UserLoginResponse> {
-    // console.log('Login a user: ');
-    // console.log(requestBody);
     return new Promise<UserLoginResponse>((resolve, reject) => {
 
       UserDB.findOne({'email' : requestBody.email}, (error, user) => {

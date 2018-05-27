@@ -6,9 +6,13 @@ module.exports = new winston.Logger({
   transports: [
     new winston.transports.Console({
       level: level,
-      timestamp: function () {
-          return (new Date()).toISOString();
-      }
+      name: 'console.info',
+      colorize: true,
+      showLevel: true,
+      // timestamp: function () {
+      //     return (new Date()).toISOString();
+      // },
+      silent: process.env.NODE_ENV === 'test'
     })
   ]
 });
