@@ -12,7 +12,7 @@ module.exports = new winston.Logger({
       // timestamp: function () {
       //     return (new Date()).toISOString();
       // },
-      silent: process.env.NODE_ENV === 'test'
+      silent: process.env.NODE_ENV === 'testing'
     })
   ]
 });
