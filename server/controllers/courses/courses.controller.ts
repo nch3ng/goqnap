@@ -129,7 +129,6 @@ export class CoursesController extends Controller {
       const course = new CourseDB();
       Object.assign(course, requestBody);
       const paramChecked = this.checkAddCourseParams(requestBody);
-
       if(paramChecked) {
         reject(new ErrorResponse(false, paramChecked + ' is required'));
       }
@@ -167,10 +166,18 @@ export class CoursesController extends Controller {
 
   @Security('JWT')
   @Put()
-  public async updateCourse(@Body() requestBody: UserCourseRequest): Promise<UserCourseResponse> {
+  public async updateCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     const course = new Course();
     Object.assign(course, requestBody);
     return new Promise<UserCourseResponse>((resolve, reject) => {
+      const paramChecked = this.checkAddCourseParams(requestBody);
+      if(paramChecked) {
+        reject(new ErrorResponse(false, paramChecked + ' is required'));
+      }
+      if(!course._id) {
+        reject(new ErrorResponse(false, 'Please specify a course id'));
+        return;
+      }
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) { reject(new ErrorResponse(false, 'The youtube reference does not exist.')); }
@@ -184,9 +191,13 @@ export class CoursesController extends Controller {
 
   @Security('JWT')
   @Delete('{id}')
-    public async deleteCourse(@Path() id: String): Promise<UserCourseResponse> {
+    public async deleteCourse(@Path() id: String, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
       // console.log('Delete a course id');
       return new Promise<UserCourseResponse>((resolve, reject) => {
+        if(!id) {
+          reject(new ErrorResponse(false, 'Please specify a course id'));
+          return;
+        }
         const promise = CourseDB.findOneAndRemove({ _id: id});
 
         promise.then(
@@ -194,7 +205,7 @@ export class CoursesController extends Controller {
             resolve(new UserCourseResponse(true, 'Successfully deleted a course', course));
           },
           (error) => {
-            resolve(new UserCourseResponse(true, error, null));
+            reject(new ErrorResponse(false, 'Failed to delete a course'));
           }
         );
       });
@@ -264,30 +275,32 @@ export class CoursesController extends Controller {
   }
 
   private checkAddCourseParams(requestBody: UserCourseRequest) {
+
+    let return_str: string = null;
     if(!requestBody.title) {
-      return 'title';
+      return_str = 'title';
     }
 
     if(!requestBody.code_name) {
-      return 'code name';
+      return_str = 'code name';
     }
 
     if(!requestBody.desc) {
-      return 'desc';
+      return_str = 'desc';
     } 
 
     if(!requestBody.keywords) {
-      return 'keywords';
+      return_str = 'keywords';
     } 
 
     if(!requestBody.category) {
-      return 'category';
+      return_str = 'category';
     }
 
     if(!requestBody.youtube_ref) {
-      return 'youtube reference';
+      return_str =  'youtube reference';
     }
 
-    return false;
+    return return_str;
   }
 }

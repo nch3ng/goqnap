@@ -53,8 +53,8 @@ describe('Courses', () => {
     });
     process.on('unhandledRejection', error => {
       // Won't execute
-      console.log('Unhandled Rejection, try to fix this', error.test);
-      done();
+      console.log('Unhandled Rejection, try to fix this', error);
+      // done();
     });
   });
 
@@ -90,43 +90,48 @@ describe('Courses', () => {
     });
   });
 
-  it('should not get youtube info from wrong youtub_ref', () => {
-    return courseController.getYoutubeInfo('aaa').then(
+  it('should not get youtube info from wrong youtub_ref', (done) => {
+    courseController.getYoutubeInfo('aaa').then(
       (course) => {
         // Should not come here
+        done('no should not be here');
       }
     ).catch(
       (err) => {
         try {
           expect(err.success).to.be.false('No youtube info');
           expect(err.message).to.be.equal('Cannot retreive the youtube info.');
+          done();
         } catch (e) {
-          assert(false, e.message);
+          done(e);
         }
       }
     );
   });
 
-  it('should get a course by Id', () => {
-    return courseController.getCourse(aCourseId).then(
+  it('should get a course by Id', (done) => {
+    courseController.getCourse(aCourseId).then(
       (course) => {
         expect(course).to.be.not.null('a course');
+        done();
       }
     ).catch(
       (err) => {
         // should not be here
+        done(err);
       }
     );
   });
 
-  it('should not get a course by a wrong Id', () => {
-    return courseController.getCourse('wronfid').catch(
+  it('should not get a course by a wrong Id', (done) => {
+    courseController.getCourse('wronfid').catch(
       (err) => {
         try {
           expect(err.success).to.be.false('No course info');
           expect(err.message).to.be.equal('Couldn\'t find the course.');
+          done();
         } catch (e) {
-          assert(false, 'should not get a course');
+          done(e);
         }
       }
     );
@@ -144,26 +149,30 @@ describe('Courses', () => {
     );
   });
 
-  it('should return empty by a valid search non-match keyword', () => {
-    return courseController.search('dadeada@#@!#!').then(
+  it('should return empty by a valid search non-match keyword', (done) => {
+    courseController.search('dadeada@#@!#!').then(
       (courses) => {
         expect(courses).to.be.empty('searched courses');
+        done();
       }
     ).catch(
       (err) => {
         // should not be here
+        done(err);
       }
     );
   });
 
-  it('should return empty by a empty search keyword', () => {
-    return courseController.search('').then(
+  it('should return empty by a empty search keyword', (done) => {
+    courseController.search('').then(
       (courses) => {
-       expect(courses).to.be.empty('searched courses');
+        expect(courses).to.be.empty('searched courses');
+        done();
       }
     ).catch(
       (err) => {
         // should not be here
+        done(err);
       }
     );
   });
@@ -201,6 +210,26 @@ describe('Courses', () => {
         expect(uResponse.message).to.be.equal('Create a course successfully');
         expect(uResponse.course).to.be.not.null('course object');
         expect(uResponse.course.code_name).to.be.equal('QNP110');
+
+        courseController.getCourse(uResponse.course._id).then(
+          (course) => {
+            expect(course).to.be.not.null('found course');
+            expect(course.code_name).to.be.equal(request.body.code_name);
+            expect(course._id.toString()).to.be.eq(uResponse.course._id.toString());
+            expect(course.title).to.be.equal(request.body.title);
+            expect(course.keywords).to.be.equal(request.body.keywords);
+            expect(course.youtube_ref).to.be.equal(request.body.youtube_ref);
+            expect(course.category).to.be.equal(request.body.category);
+
+          }
+        ).catch(
+          (e) => {
+            console.error(e);
+            // assert(false, e.message);
+          }
+        );
+    }).catch((e) => {
+      console.log(e);
     });
   });
 
@@ -291,7 +320,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('desc is required');
-    });;
+    });
   });
 
   it('should return false if no keywords given', () => {
@@ -380,6 +409,275 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('The youtube reference does not exist.');
-    });;
+    });
   });
+
+  it('should return true and course object after update a course with valid info', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        _id: aCourseId,
+        title: 'This is a modified title',
+        code_name: 'This is a modified codename',
+        desc: 'This is a modified desc',
+        keywords: 'This is a modified keyword',
+        youtube_ref: 'zqtzIZEjX0w',
+        category: 'This is a modified category'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        expect(uResponse).to.be.not.null('responded');
+        expect(uResponse.success).to.be.true('success');
+        expect(uResponse.message).to.be.equal('Updated a course successfully');
+        expect(uResponse.course).to.be.not.null('course object');
+        expect(uResponse.course.code_name).to.be.equal(request.body.code_name);
+
+        courseController.getCourse(request.body._id).then(
+          (course) => {
+            expect(course).to.be.not.null('found course');
+            expect(course.code_name).to.be.equal(request.body.code_name);
+            expect(course._id.toString()).to.be.eq(request.body._id.toString());
+            expect(course.title).to.be.equal(request.body.title);
+            expect(course.keywords).to.be.equal(request.body.keywords);
+            expect(course.youtube_ref).to.be.equal(request.body.youtube_ref);
+            expect(course.category).to.be.equal(request.body.category);
+            done();
+          }
+        ).catch(
+          (e) => {
+            done(e);
+          }
+        );
+    }).catch((e) => {
+      done(e);
+    });
+  });
+
+  it('should return false when update course without id', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        title: 'This is a modified title',
+        code_name: 'This is a modified codename',
+        desc: 'This is a modified desc',
+        keywords: 'This is a modified keyword',
+        youtube_ref: 'zqtzIZEjX0w',
+        category: 'This is a modified category'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('Please specify a course id');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  });
+  it('should return false when update course without title', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        code_name: 'This is a modified codename',
+        desc: 'This is a modified desc',
+        keywords: 'This is a modified keyword',
+        youtube_ref: 'zqtzIZEjX0w',
+        category: 'This is a modified category'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('title is required');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  });
+
+  it('should return false when update course without description', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        code_name: 'This is a modified codename',
+        title: 'This is a test title',
+        keywords: 'This is a modified keyword',
+        youtube_ref: 'zqtzIZEjX0w',
+        category: 'This is a modified category'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('desc is required');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  });
+  it('should return false when update course without keywords', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        code_name: 'This is a modified codename',
+        title: 'This is a test title',
+        desc: 'This is a modified desc',
+        youtube_ref: 'zqtzIZEjX0w',
+        category: 'This is a modified category'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+      done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('keywords is required');
+      done(); 
+    }).catch((e) => {
+      done(e);
+    });
+  });
+  it('should return false when update course without youtube reference', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        code_name: 'This is a modified codename',
+        title: 'This is a test title',
+        desc: 'This is a modified desc',
+        keywords: 'This is a modified keyword',
+        category: 'This is a modified category'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('youtube reference is required');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  });
+  it('should return false when update course without category', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'POST',
+      url: '/courses',
+      body: {
+        code_name: 'This is a modified codename',
+        title: 'This is a test title',
+        desc: 'This is a modified desc',
+        keywords: 'This is a modified keyword',
+        youtube_ref: 'zqtzIZEjX0w'
+      }
+    });
+
+    courseController.updateCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('category is required');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  });
+
+  it('should return false when deleting a course without id', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'DELETE',
+      url: '/courses',
+      body: {
+      }
+    });
+    courseController.deleteCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('Failed to delete a course');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  })
+
+  it('should return false when deleting a course with an invalid id', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'DELETE',
+      url: '/courses',
+      body: {
+        _id: '1234556'
+      }
+    });
+    courseController.deleteCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        done('should not be here');
+    }).catch((e) => {
+      expect(e).to.be.not.null('responded');
+      expect(e.success).to.be.false('return false');
+      expect(e.message).to.be.equal('Failed to delete a course');
+      done();
+    }).catch((e) => {
+      done(e);
+    });
+  })
+
+  it('should return true and retreive after deleting a course', (done) => {
+    const request = httpMocks.createRequest({
+      method: 'DELETE',
+      url: '/courses',
+      body: {
+        _id: aCourseId
+      }
+    });
+    courseController.deleteCourse(request.body).then(
+      (uResponse: UserCourseResponse) => {
+        expect(uResponse).to.be.not.null('responded');
+        expect(uResponse.success).to.be.true('return true');
+        expect(uResponse.message).to.be.equal('Successfully deleted a course');
+        expect(uResponse.course._id.toString()).to.be.equal(request.body._id.toString());
+        
+        courseController.getCourse(uResponse.course._id).then(
+          (course) => {
+            expect(course).to.be.null('sholud not get a deleted course');
+            done();
+          }
+        ).catch(
+          (e) => {
+            done(e);
+            // assert(false, e.message);
+          }
+        );
+    }).catch((e) => {
+      done(e);
+    });
+  })
 });
