@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 describe('API Test', () => {
   before( (done) => {
     CourseDB.remove({}, (err) => {
-      const items: Course [] = require('./testdata.json');
+      const items: Course [] = require('./courses.json');
 
       CourseDB.collection.insert(items, () => {
         done();
