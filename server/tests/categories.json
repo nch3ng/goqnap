@@ -1,0 +1,27 @@
+[
+    {
+        "name": "freshman",
+        "img": "assets/images/freshman.jpg",
+        "level": 1
+    },
+    {
+        "name": "sophomore",
+        "level": 2,
+        "img": "assets/images/sophomore.jpg"
+    },
+    {
+        "name": "junior",
+        "level": 3,
+        "img": "assets/images/junior.jpg"
+    },
+    {
+        "name": "senior",
+        "level": 4,
+        "img": "assets/images/senior.jpg"
+    },
+    {
+        "name": "webinar",
+        "level": 5,
+        "img": "assets/images/webinar.jpg"
+    }
+]

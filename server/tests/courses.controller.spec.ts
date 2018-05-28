@@ -24,7 +24,7 @@ chai.use(require('dirty-chai'));
 
 const prepareData = (done) => {
   // console.log('Preparing testing');
-  const items: Course [] = require('./testdata.json');
+  const items: Course [] = require('./course.json');
 
   CourseDB.collection.insert(items, () => {
     // console.log('inserted');
