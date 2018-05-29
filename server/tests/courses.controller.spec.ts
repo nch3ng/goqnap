@@ -239,7 +239,7 @@ describe('Courses', () => {
       url: '/courses',
       body: {
         title: 'Transfer files from Windows',
-        code_name: 'QNP110',
+        code_name: 'QNP341',
         desc: 'In this video, we will teach you about the few and easy steps on how to transfer your files from your PC to your QNAP NAS.',
         keywords: 'samba smb qfinder ip address find',
         youtube_ref: 'J5yhBpsPSFU',
@@ -249,7 +249,6 @@ describe('Courses', () => {
 
     return courseController.addCourse(request.body).then(
       (uResponse: UserCourseResponse) => {
-        
     }).catch((e) => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
@@ -276,7 +275,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('title is required');
-    });;
+    });
   });
 
   it('should return false if no code name given', () => {
@@ -298,7 +297,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('code name is required');
-    });;
+    });
   });
 
   it('should return false if no description given', () => {
@@ -342,7 +341,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('keywords is required');
-    });;
+    });
   });
 
   it('should return false if no youtube reference given', () => {
@@ -364,7 +363,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('youtube reference is required');
-    });;
+    });
   });
 
   it('should return false if no category given', () => {
@@ -386,7 +385,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('no success');
       expect(e.message).to.be.equal('category is required');
-    });;
+    });
   });
 
   it('should return false if youtube reference does not exist', () => {
@@ -523,7 +522,6 @@ describe('Courses', () => {
 
     courseController.updateCourse(request.body).then(
       (uResponse: UserCourseResponse) => {
-        
     }).catch((e) => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('return false');
@@ -553,7 +551,7 @@ describe('Courses', () => {
       expect(e).to.be.not.null('responded');
       expect(e.success).to.be.false('return false');
       expect(e.message).to.be.equal('keywords is required');
-      done(); 
+      done();
     }).catch((e) => {
       done(e);
     });
@@ -627,7 +625,7 @@ describe('Courses', () => {
     }).catch((e) => {
       done(e);
     });
-  })
+  });
 
   it('should return false when deleting a course with an invalid id', (done) => {
     const request = httpMocks.createRequest({
@@ -648,7 +646,7 @@ describe('Courses', () => {
     }).catch((e) => {
       done(e);
     });
-  })
+  });
 
   it('should return true and retreive after deleting a course', (done) => {
     const request = httpMocks.createRequest({
@@ -664,7 +662,6 @@ describe('Courses', () => {
         expect(uResponse.success).to.be.true('return true');
         expect(uResponse.message).to.be.equal('Successfully deleted a course');
         expect(uResponse.course._id.toString()).to.be.equal(request.body._id.toString());
-        
         courseController.getCourse(uResponse.course._id).then(
           (course) => {
             expect(course).to.be.null('sholud not get a deleted course');
@@ -679,5 +676,5 @@ describe('Courses', () => {
     }).catch((e) => {
       done(e);
     });
-  })
+  });
 });

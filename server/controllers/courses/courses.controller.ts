@@ -5,6 +5,8 @@ import CourseDB from '../../models/schemas/courses.schema';
 import * as YouTube from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 
+const propertyOf = <TObj>(name: keyof TObj) => name;
+
 @Route('courses')
 export class CoursesController extends Controller {
   desc = true;
@@ -129,12 +131,14 @@ export class CoursesController extends Controller {
       const course = new CourseDB();
       Object.assign(course, requestBody);
       const paramChecked = this.checkAddCourseParams(requestBody);
-      if(paramChecked) {
+      if (paramChecked) {
         reject(new ErrorResponse(false, paramChecked + ' is required'));
+        return;
       }
+
       CourseDB.findOne({code_name: course.code_name}).then(
-        (course) => {
-          if (course) {
+        (res_course) => {
+          if (res_course) {
             reject(new ErrorResponse(false, 'Code name exists'));
             return;
           }
@@ -171,10 +175,10 @@ export class CoursesController extends Controller {
     Object.assign(course, requestBody);
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const paramChecked = this.checkAddCourseParams(requestBody);
-      if(paramChecked) {
+      if (paramChecked) {
         reject(new ErrorResponse(false, paramChecked + ' is required'));
       }
-      if(!course._id) {
+      if (!course._id) {
         reject(new ErrorResponse(false, 'Please specify a course id'));
         return;
       }
@@ -194,7 +198,7 @@ export class CoursesController extends Controller {
     public async deleteCourse(@Path() id: String, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
       // console.log('Delete a course id');
       return new Promise<UserCourseResponse>((resolve, reject) => {
-        if(!id) {
+        if (!id) {
           reject(new ErrorResponse(false, 'Please specify a course id'));
           return;
         }
@@ -275,31 +279,44 @@ export class CoursesController extends Controller {
   }
 
   private checkAddCourseParams(requestBody: UserCourseRequest) {
-
     let return_str: string = null;
-    if(!requestBody.title) {
-      return_str = 'title';
+    // const properties = Object.getOwnPropertyNames(requestBody);
+    const properties = [
+      { prop: 'title', text: 'title'},
+      { prop: 'code_name', text: 'code name'},
+      { prop: 'desc', text: 'desc'},
+      { prop: 'keywords', text: 'keywords'},
+      { prop: 'category', text: 'category'},
+      { prop: 'youtube_ref', text: 'youtube reference'}
+    ];
+    for (const prop of properties) {
+      if (!requestBody[prop.prop]) {
+        return_str = prop.text;
+      }
     }
+    // if (!requestBody.title) {
+    //   return_str = 'title';
+    // }
 
-    if(!requestBody.code_name) {
-      return_str = 'code name';
-    }
+    // if (!requestBody.code_name) {
+    //   return_str = 'code name';
+    // }
 
-    if(!requestBody.desc) {
-      return_str = 'desc';
-    } 
+    // if (!requestBody.desc) {
+    //   return_str = 'desc';
+    // }
 
-    if(!requestBody.keywords) {
-      return_str = 'keywords';
-    } 
+    // if (!requestBody.keywords) {
+    //   return_str = 'keywords';
+    // }
 
-    if(!requestBody.category) {
-      return_str = 'category';
-    }
+    // if (!requestBody.category) {
+    //   return_str = 'category';
+    // }
 
-    if(!requestBody.youtube_ref) {
-      return_str =  'youtube reference';
-    }
+    // if (!requestBody.youtube_ref) {
+    //   return_str =  'youtube reference';
+    // }
 
     return return_str;
   }
