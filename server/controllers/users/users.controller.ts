@@ -3,6 +3,8 @@ import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Contro
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
 import { ErrorResponse } from '../../models/response.model';
+import TokenDB from '../../models/schemas/token.schema';
+import * as crypto from 'crypto';
 
 @Security('JWT')
 @Route('users')
@@ -35,8 +37,10 @@ export class UserController extends Controller {
     return new Promise<UserCreationResponse>((resolve, reject) => {
       UserDB.create({ email: requestBody.email }, (error, user) => {
         if (error) {
+          console.log(error);
           reject(new ErrorResponse(false, error));
         }
+        // const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
 
         resolve(new UserCreationResponse(true, 'Successfully created a user'));
       });
