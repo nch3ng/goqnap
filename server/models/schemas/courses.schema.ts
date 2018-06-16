@@ -20,6 +20,7 @@ const courseSchema = new mongoose.Schema({
   },
   youtube_ref: {
     type: String,
+    unique: true,
     require: true
   },
   category: {
