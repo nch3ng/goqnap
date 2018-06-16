@@ -30,12 +30,14 @@ describe('Authentication', () => {
 
   after( () => {
     return new Promise( (resolve) => {
-      connection.close(() => {
-        connection.db.dropDatabase( () => {
+      connection.db.dropDatabase( () => {
+        console.log('Drop Database');
+        connection.db.close( () => {
+          console.log('close');
           setTimeout( () => {
             resolve();
           }, 0);
-        });
+        })          
       });
     });
   });
@@ -57,7 +59,6 @@ describe('Authentication', () => {
         // console.log(token);
       }
     ).catch((e) => {
-
     });
   });
 
@@ -71,13 +72,64 @@ describe('Authentication', () => {
       }
     });
     return authController.login(request.body).then( (uResponse: UserLoginResponse) => {
-      expect(uResponse).to.be.not.null('user exist');
+      expect(uResponse).to.be.not.null('user exists');
       expect(uResponse.message).to.be.equal('You are logged in.');
       expect(uResponse.token).to.be.exist('token');
       expect(uResponse.user).to.be.not.null('user object');
       expect(uResponse.user.email).to.be.equal('test@test.com');
       expect(uResponse.user.name).to.be.equal('test');
       token = uResponse.token;
+    });
+  });
+
+  it ('it should change password if pass with valid password', () => {
+    const request = httpMocks.createRequest({
+      method: 'GET',
+      url: '/change-password',
+      body: {
+        email: 'test@test.com',
+        oldPassword: '123456',
+        password: '1234'
+      }
+    });
+    return authController.changePassword(request.body).then((uResponse: UserLoginResponse) => {
+      expect(uResponse).to.be.not.null('user exists');
+      expect(uResponse.success).to.be.true('Changed password');
+      expect(uResponse.message).to.be.equal('Successfully changed password');
+
+      const loginRequest = httpMocks.createRequest({
+        method: 'GET',
+        url: '/login',
+        body: {
+          email: 'test@test.com',
+          password: '1234'
+        }
+      });
+      return authController.login(loginRequest.body).then( (loginResponse: UserLoginResponse) => {
+        expect(loginResponse).to.be.not.null('user exists');
+        expect(loginResponse.message).to.be.equal('You are logged in.');
+        expect(loginResponse.token).to.be.exist('token');
+        expect(loginResponse.user).to.be.not.null('user object');
+        expect(loginResponse.user.email).to.be.equal('test@test.com');
+        expect(loginResponse.user.name).to.be.equal('test');
+        token = loginResponse.token;
+      });
+    })
+  });
+  it ('it should not change password if pass with invalid password', () => {
+    const request = httpMocks.createRequest({
+      method: 'GET',
+      url: '/change-password',
+      body: {
+        email: 'test@test.com',
+        password: '1256',
+        oldPassword: '1213131'
+      }
+    });
+    return authController.changePassword(request.body).then((uResponse: UserLoginResponse) => { 
+    }).catch((e) => {
+      expect(e.success).to.be.false('Password incorrect');
+      expect(e.message).to.be.equal('Incorrect password');
     });
   });
 

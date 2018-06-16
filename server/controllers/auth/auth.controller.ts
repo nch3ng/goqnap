@@ -1,4 +1,4 @@
-import { UserRegisterRequest, UserRegisterResponse, User } from './../../models/user.model';
+import { UserRegisterRequest, UserRegisterResponse, User, UserChangePasswordRequest, UserChangePasswordResponse } from './../../models/user.model';
 import UserDB from '../../models/schemas/users.schema';
 const env = process.env.NODE_ENV || 'development';
 // logger = require('../../logger');
@@ -56,7 +56,9 @@ export class AuthController {
     const token = user.generateJwt();
     return new Promise<UserRegisterResponse> ((resolve, reject) => {
       user.save((err) => {
+        // console.log('register');
         if (err) {
+          // console.log(err);
           reject(new UserRegisterResponse(false, 'Email exists'));
         }
         // console.log(token);
@@ -71,6 +73,30 @@ export class AuthController {
   public checkState(): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve) => {
       resolve(new UserLoginResponse(true, 'You are authorized.'));
+    });
+  }
+
+  @Security('JWT')
+  @Post('change-password')
+  public changePassword(@Body() requestBody: UserChangePasswordRequest): Promise<UserChangePasswordResponse> {
+    return new Promise<UserChangePasswordResponse> ((resolve, reject) => {
+      UserDB.findOne({'email' : requestBody.email}, (error, user) => {
+        if (error) {
+          return reject(new UserLoginResponse(false, error));
+        }
+        if (!user.validPassword(requestBody.oldPassword)) {
+          reject(new UserLoginResponse(false, 'Incorrect password'));
+        }
+        else {
+          user.setPassword(requestBody.password);
+
+          user.save((err) => {
+
+            // console.log(token);
+            resolve(new UserChangePasswordResponse(true, 'Successfully changed password'));
+          });
+        }
+      });
     });
   }
 }

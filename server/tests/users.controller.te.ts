@@ -62,6 +62,5 @@ describe('Users', () => {
         console.log(e);
       }
     );
-    
   });
 }); 

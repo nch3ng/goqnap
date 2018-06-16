@@ -6,6 +6,9 @@ export class User {
   salt: string;
   hash: string;
   name: string;
+  createdAt: Date;
+  lastLoginAt: Date;
+
 
   isPasswordCreated(): boolean {
     if (this.salt && this.hash) {
@@ -21,11 +24,17 @@ export interface UserCreationRequest {
   email: string;
 }
 
+
+
 export class UserLoginRequest implements UserCreationRequest {
   email: string;
   password: string;
 }
 
+
+export class UserChangePasswordRequest extends UserLoginRequest {
+  oldPassword: string;
+}
 export interface IUserLoginResponse {
   success: boolean;
   message: string;
@@ -93,4 +102,6 @@ export class UserLoginResponse implements IUserLoginResponse {
 }
 
 export class UserRegisterResponse extends UserLoginResponse {
+}
+export class UserChangePasswordResponse extends UserLoginResponse {
 }

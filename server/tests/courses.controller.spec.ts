@@ -60,8 +60,8 @@ describe('Courses', () => {
 
   after( () => {
     return new Promise( (resolve) => {
-      connection.close(() => {
-        connection.db.dropDatabase( () => {
+      connection.db.dropDatabase( () => {
+        connection.close(() => {
           setTimeout( () => {
             // console.log('drop db');
             resolve();
