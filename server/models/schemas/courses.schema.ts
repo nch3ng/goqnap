@@ -8,7 +8,6 @@ const courseSchema = new mongoose.Schema({
   },
   code_name: {
     type: String,
-    unique: true,
     required: true
   },
   desc: {
@@ -63,8 +62,15 @@ const courseSchema = new mongoose.Schema({
   }
 });
 
-courseSchema.index({'$**': 'text'});
+courseSchema.index({title: 'text', code_name: 'text', desc: 'text', keywords: 'text', category: 'text'}, { unique: false });
 
+// courseSchema.ensureIndexes(() => {
+//   console.log('ensure index');
+// });
 const CourseDB = mongoose.model<ICourse>('Course', courseSchema);
+CourseDB.on('index', function(error) {
+  // "_id index cannot be sparse"
+  console.log(error);
+});
 
 export default CourseDB;

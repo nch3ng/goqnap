@@ -25,11 +25,13 @@ chai.use(require('dirty-chai'));
 const prepareData = (done) => {
   // console.log('Preparing testing');
   const items: Course [] = require('./courses.json');
-
   CourseDB.collection.insert(items, () => {
     // console.log('inserted');
+    CourseDB.collection.createIndex({desc: 'text', title: 'text', code_name: 'text', category: 'text'})
     CourseDB.findOne().limit(1).then(
       (item: Course) => {
+        // console.log(item);
+        
         aCourseId = item._id;
         youtubeRef = item.youtube_ref;
         // console.log('done');
@@ -74,8 +76,9 @@ describe('Courses', () => {
   it('should get all courses', () => {
     const promise = courseController.getCourses();
     return promise.then((courses: Course []) => {
+      // console.log(courses);
       expect(courses).to.be.not.empty('all courses');
-      expect(courses.length).to.equal(9);
+      expect(courses.length).to.equal(36);
       expect(courses[0]).to.have.property('title');
       expect(courses[0]).to.have.property('code_name');
       expect(courses[0]).to.have.property('category');
@@ -112,12 +115,14 @@ describe('Courses', () => {
   it('should get a course by Id', (done) => {
     courseController.getCourse(aCourseId).then(
       (course) => {
+        // console.log(aCourseId)
         expect(course).to.be.not.null('a course');
         done();
       }
     ).catch(
       (err) => {
         // should not be here
+        console.log(err);
         done(err);
       }
     );
@@ -140,7 +145,7 @@ describe('Courses', () => {
   it('should 4 courses by a valid search keyword \'backup\'', () => {
     return courseController.search('backup').then(
       (courses) => {
-        expect(courses.length).to.be.equal(4);
+        expect(courses.length).to.be.equal(6);
       }
     ).catch(
       (err) => {
@@ -225,6 +230,7 @@ describe('Courses', () => {
         ).catch(
           (e) => {
             console.error(e);
+            console.log('aaadaedadad');
             // assert(false, e.message);
           }
         );

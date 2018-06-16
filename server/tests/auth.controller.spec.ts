@@ -31,9 +31,7 @@ describe('Authentication', () => {
   after( () => {
     return new Promise( (resolve) => {
       connection.db.dropDatabase( () => {
-        console.log('Drop Database');
         connection.db.close( () => {
-          console.log('close');
           setTimeout( () => {
             resolve();
           }, 0);
