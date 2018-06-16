@@ -10,6 +10,7 @@ const logger = require('../helpers/logger');
 const env = process.env.NODE_ENV || 'development';
 let gracefulShutdown;
 
+console.log(global.dbURI);
 mongoose.connect(global.dbURI, { useMongoClient: true });
 
 // CONNECTION EVENTS
