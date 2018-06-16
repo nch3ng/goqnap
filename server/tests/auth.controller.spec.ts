@@ -80,7 +80,7 @@ describe('Authentication', () => {
     });
   });
 
-  it ('it should change password if pass with valid password', () => {
+  it ('should change password if pass with valid password', () => {
     const request = httpMocks.createRequest({
       method: 'GET',
       url: '/change-password',
@@ -114,7 +114,7 @@ describe('Authentication', () => {
       });
     })
   });
-  it ('it should not change password if pass with invalid password', () => {
+  it ('should not change password if pass with invalid password', () => {
     const request = httpMocks.createRequest({
       method: 'GET',
       url: '/change-password',

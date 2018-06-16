@@ -70,7 +70,7 @@ courseSchema.index({title: 'text', code_name: 'text', desc: 'text', keywords: 't
 const CourseDB = mongoose.model<ICourse>('Course', courseSchema);
 CourseDB.on('index', function(error) {
   // "_id index cannot be sparse"
-  console.log(error);
+  // console.log(error);
 });
 
 export default CourseDB;

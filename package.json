@@ -10,7 +10,7 @@
     "test-win": "set NODE_ENV=testing && mocha -r ts-node/register server/**/*.spec.ts --timeout 15000 --exit",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "start:dev": "nodemon --exec ./node_modules/.bin/ts-node -- ./server/server.ts",
+    "start:dev": "export NODE_ENV=development; nodemon --exec ./node_modules/.bin/ts-node -- ./server/server.ts",
     "deploy:production": "pm2 deploy production setup; pm2 deploy production",
     "routes": "rm -rf ./server/routes; mkdir ./server/routes; ./node_modules/.bin/tsoa routes",
     "swagger": "./node_modules/.bin/tsoa swagger"
