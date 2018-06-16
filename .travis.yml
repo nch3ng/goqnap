@@ -23,7 +23,7 @@ after_script:
 - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 env:
   matrix:
-  - port=3000 NODE_ENV=testing secret=test-environment-secret expiry=2 DB_ADDRESS=127.0.0.1 DB=mydb_test DB_USERNAME=travis DB_PASSWORD=test
+  - port=3000 NODE_ENV=testing secret=test-environment-secret expiry=2 DB_TEST_ADDRESS=127.0.0.1 DB=mydb_test DB_TEST_USERNAME=travis DB_TEST_PASSWORD=test
   global:
   - CC_TEST_REPORTER_ID=742205729651651616ea73723112f1ea84b253ced03739b10fa6ad3ca4187e7c
   - secure: BdbMd7znm4qj1KSYQguasYEUc9IMhWGH7E16isyKfyWdaIh6gKlnbxRC7Ac+MuXNSsUEoxgI1QahJ7/vhTXjUQhhn+vtj/1bbt5zLxA7FVrQH6p3C5cIbZTPEWiKCu4rBK7PwQ7hLKJI5eYSJ2sdFHosMt9wojj0IazMGEeqz7szIRNYtWtMoD28tFFbpxomPQEpF5Cqb0xC7QQ58AsSUKg3tZ2Nt/yf0mItLpfziBHreEr42UuD7DAF2yNQzRazNCcZR2ns4JZyPrQWcAkQrXrKU+5yloQSWN5gQ63gAYA92vUvteRMR6pM8nOrkruDk59ezY029wjKl1tsT2CMgZkjAPYM7SwXbUvorVubysTCxc6UHFHEQXJBev7CNi1h4KRJ0HmwQpbvy1y7dcrQGqgT2qrtBYGIqBGPZTfr+cAIGS/tlp4VG2+u3EBAObRD0+mLrBQ63BF8FV0VzgEVhE96Prrb6wHr+eV7s1kqckw0hDHc1sxPI31N5VwQkaKYUD0jPBp7vK0UmcNGXG/WGA11OXOQCF5ZC3DsMvdII9AZWxjTGX8dUM7a5/UCJrH6N40Ilyl7Mplw16pQzIrr2+ZEeqeldEohT815jgj7iTGGnHUpUmIv2dMgtJzpoLXVg8rFukWJ6x3WUlvGosIS7pEalg6QWQoatffUG4ucpfQ=
