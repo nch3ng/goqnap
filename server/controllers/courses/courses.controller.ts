@@ -15,26 +15,26 @@ export class CoursesController extends Controller {
   category = null;
   dbQuery = {};
 
-  @Get('updatekeywords')
-  public async updateKeywords() {
-    return new Promise<Course []>((resolve, reject) => {
-      const promise = CourseDB.find({});
-      promise.then(
-        (courses) => {
-          for (const course of courses) {
-            const keywords = course.keywords.split(' ');
-            course.keywords = keywords.join(',');
-            console.log(course.keywords);
-            course.save(function (err) {
-              if (err) return console.log(err);
-              console.log('done!');
-            });
-          }
-        }
-      );
-      resolve([]);
-    });
-  }
+  // @Get('updatekeywords')
+  // public async updateKeywords() {
+  //   return new Promise<Course []>((resolve, reject) => {
+  //     const promise = CourseDB.find({});
+  //     promise.then(
+  //       (courses) => {
+  //         for (const course of courses) {
+  //           const keywords = course.keywords.split(' ');
+  //           course.keywords = keywords.join(',');
+  //           console.log(course.keywords);
+  //           course.save(function (err) {
+  //             if (err) return console.log(err);
+  //             console.log('done!');
+  //           });
+  //         }
+  //       }
+  //     );
+  //     resolve([]);
+  //   });
+  // }
 
   @Get()
   public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
