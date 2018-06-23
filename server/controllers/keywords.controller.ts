@@ -4,10 +4,23 @@ import KeywordDB from '../models/schemas/keywords';
 
 @Route('keywords')
 export class KeywordsController extends Controller {
+
+  limit = 0;
   @Get('')
   public async all(@Query() limit?: number): Promise<KeywordModel []> {
     return new Promise<KeywordModel []>((resolve, reject) => {
-      KeywordDB.find({}).then(
+      let promise;
+      if (limit) {
+        this.limit = limit;
+      }
+
+      if (this.limit == 0) {
+        promise = KeywordDB.find({}).sort('-times');
+      } else {
+        promise = KeywordDB.find({}).sort('-times').limit(limit);
+      }
+
+      promise.then(
         (keywords: KeywordModel []) => {
           if (!keywords) {
             resolve([]);

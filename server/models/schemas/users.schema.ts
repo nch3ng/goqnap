@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema({
   },
   name: String,
   hash: String,
-  salt: String
+  salt: String,
+  lastLoginAt: Date
 });
 
 userSchema.methods.setPassword = function(password){

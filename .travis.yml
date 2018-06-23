@@ -4,7 +4,7 @@ node_js:
 services:
 - mongodb
 # before_install:
-# - npm i -g npm@6.0.1
+# - npm i npm@latest -g
 before_script:
 - mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 - npm install
