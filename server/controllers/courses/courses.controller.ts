@@ -4,6 +4,7 @@ import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses.schema';
 import * as YouTube from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
+import KeywordDB from '../../models/schemas/keywords';
 
 const propertyOf = <TObj>(name: keyof TObj) => name;
 
@@ -70,6 +71,7 @@ export class CoursesController extends Controller {
       const queryStr = query;
       // console.log('search ' + queryStr);
       if (queryStr) {
+        this.recordKeyword(queryStr);
         const promise = CourseDB.find({$text: {$search: queryStr}});
         promise.then(
           searched_courses => resolve(searched_courses)).catch(
@@ -297,6 +299,28 @@ export class CoursesController extends Controller {
         this.desc = false;
       }
     }
+  }
+
+  private recordKeyword(keyword) {
+    KeywordDB.findOne({text: keyword}).then(
+      (key) => {
+        if (key) {
+          console.log('found it');
+          key.times = key.times + 1;
+        }
+        else {
+          console.log('not found it');
+          key = new KeywordDB({text: keyword, times: 1});
+        }
+
+        key.save((err) => {
+          if (err) return console.log(err);
+
+          console.log('saved');
+          // saved!
+        });
+      }
+    );
   }
 
   private checkAddCourseParams(requestBody: UserCourseRequest) {
