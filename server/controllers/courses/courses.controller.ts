@@ -65,6 +65,19 @@ export class CoursesController extends Controller {
       }
     });
   }
+  @Security('JWT')
+  @Get('clickStatus')
+  public async clickStatus(@Query() date?: Date) {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      CourseClickDB.find({}).sort('-clickedAt').then(
+        (courseClicks) => {
+          resolve(courseClicks);
+        }
+      ).catch((e) => {
+        reject([]);
+      })
+    });
+  }
 
   @Post('{id}/clicked')
   public async courseClicked(@Path() id: string): Promise<GeneralResponse> {

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const courseClickSchema = new mongoose.Schema({
   code_name: String,
   course_id: { type: Schema.Types.ObjectId, ref: 'CourseDB' },
-  clickedAt: { type: Date, default: Date.now() }
+  clickedAt: { type: Date}
 });
 
 courseClickSchema.pre('save', function (next) {
