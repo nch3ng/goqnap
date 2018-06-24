@@ -1,3 +1,4 @@
+import { GeneralResponse } from './../../models/response.model';
 import { Course } from './../../models/course.model';
 import { Category } from './../../models/category.model';
 import { Controller, Get, Route } from 'tsoa-nc';
@@ -29,7 +30,7 @@ export class CategoryController {
   _category = 'freshman';
 
   constructor(category?: string) {
-    console.log(category);
+    // console.log(category);
     if (category) {
       this._category = category;
     }
@@ -40,6 +41,24 @@ export class CategoryController {
 
   get category() {
     return this._category;
+  }
+
+  @Get('{category}/clicked')
+  public async clicked(category?: string): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve,reject) => {
+    CategoryDB.findOneAndUpdate(
+      { 
+        name: category
+      },{
+        $inc: { times: 1}
+      }
+    ).then(()=>{
+      resolve(new GeneralResponse(true, 'Success'));
+    }).catch(
+      (err) => {
+        reject(new ErrorResponse(false, err));
+      });
+    });
   }
 
   @Get('{category}/courses')

@@ -2,6 +2,7 @@ import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put,
 import { KeywordModel } from '../models/keyword.model';
 import KeywordDB from '../models/schemas/keywords';
 
+@Security('JWT')
 @Route('keywords')
 export class KeywordsController extends Controller {
 
