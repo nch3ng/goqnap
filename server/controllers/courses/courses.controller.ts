@@ -1,3 +1,4 @@
+import { GeneralResponse } from './../../models/response.model';
 import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa-nc';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
@@ -5,6 +6,7 @@ import CourseDB from '../../models/schemas/courses.schema';
 import * as YouTube from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 import KeywordDB from '../../models/schemas/keywords';
+import CourseClickDB from '../../models/schemas/course.click.schema';
 
 const propertyOf = <TObj>(name: keyof TObj) => name;
 
@@ -15,27 +17,6 @@ export class CoursesController extends Controller {
   limit = 0;
   category = null;
   dbQuery = {};
-
-  // @Get('updatekeywords')
-  // public async updateKeywords() {
-  //   return new Promise<Course []>((resolve, reject) => {
-  //     const promise = CourseDB.find({});
-  //     promise.then(
-  //       (courses) => {
-  //         for (const course of courses) {
-  //           const keywords = course.keywords.split(' ');
-  //           course.keywords = keywords.join(',');
-  //           console.log(course.keywords);
-  //           course.save(function (err) {
-  //             if (err) return console.log(err);
-  //             console.log('done!');
-  //           });
-  //         }
-  //       }
-  //     );
-  //     resolve([]);
-  //   });
-  // }
 
   @Get()
   public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
@@ -82,6 +63,31 @@ export class CoursesController extends Controller {
       } else {
         resolve([]);
       }
+    });
+  }
+
+  @Post('{id}/clicked')
+  public async courseClicked(@Path() id: string): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      this.getCourse(id).then(
+        (course) => {
+          if (course) {
+            const courseClick = new CourseClickDB({ course_id: id, code_name: course.code_name});
+            courseClick.save((err) => {
+              if (err) {
+                reject(new ErrorResponse(false, err))
+              }
+              else {
+                resolve(new GeneralResponse(true, 'Success'))
+              }
+            });
+          }
+        }
+      ).catch(
+        (err) => {
+          reject(new ErrorResponse(false, err))
+        }
+      );
     });
   }
 
