@@ -67,14 +67,51 @@ export class CoursesController extends Controller {
   }
   @Security('JWT')
   @Get('clickStatus')
-  public async clickStatus(@Query() date?: Date) {
+  public async clickStatus(@Query() date?: string) {
     return new Promise<GeneralResponse>((resolve, reject) => {
-      CourseClickDB.find({}).sort('-clickedAt').then(
+
+      const last7days = new Date().getTime() - 7 * 60 * 60 * 24 * 1000;
+      const last30days = new Date().getTime() - 30 * 60 * 60 * 24 * 1000;
+      // const promise = ourseClickDB.find({
+      //   clickedAt: {
+      //     '$gte': new Date(last7days)
+      //   }
+      // }).sort('-clickedAt');
+      const promise = CourseClickDB.aggregate([
+        { 
+          $match: {
+            clickedAt: {
+              '$gte': new Date(last7days)
+            }
+          }
+        },
+        {
+          $group: {
+            '_id' : "$course_id",
+            'count': { $sum: 1 }
+          }
+        },
+        {
+          $lookup: {
+              from: "courses",
+              localField: "_id",
+              foreignField: "_id",
+              as: "courses"
+          }
+        },
+        {
+          $sort: {
+            count: -1
+          }
+        }
+      ]);
+
+      promise.then(
         (courseClicks) => {
           resolve(courseClicks);
         }
       ).catch((e) => {
-        reject([]);
+        reject(new ErrorResponse(false, e));
       })
     });
   }
