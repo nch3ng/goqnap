@@ -94,6 +94,7 @@ export class CoursesController extends Controller {
       if (endDate) {
         request[i]['$match']['clickedAt']['$lte'] = new Date(endDate);
       }
+      i += 1;
     }
 
     request[i] = {
@@ -117,7 +118,7 @@ export class CoursesController extends Controller {
         count: -1
       }
     }
-    console.log(request);
+    // console.log(request);
     return request;
   }
   @Security('JWT')
