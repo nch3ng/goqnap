@@ -7,6 +7,7 @@ import * as YouTube from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
+import * as moment from 'moment';
 
 const propertyOf = <TObj>(name: keyof TObj) => name;
 
@@ -65,46 +66,69 @@ export class CoursesController extends Controller {
       }
     });
   }
-  @Security('JWT')
-  @Get('clickStatus')
-  public async clickStatus(@Query() date?: string) {
-    return new Promise<GeneralResponse>((resolve, reject) => {
 
-      const last7days = new Date().getTime() - 7 * 60 * 60 * 24 * 1000;
-      const last30days = new Date().getTime() - 30 * 60 * 60 * 24 * 1000;
-      // const promise = ourseClickDB.find({
-      //   clickedAt: {
-      //     '$gte': new Date(last7days)
-      //   }
-      // }).sort('-clickedAt');
-      const promise = CourseClickDB.aggregate([
-        { 
-          $match: {
-            clickedAt: {
-              '$gte': new Date(last7days)
-            }
-          }
-        },
-        {
-          $group: {
-            '_id' : "$course_id",
-            'count': { $sum: 1 }
-          }
-        },
-        {
-          $lookup: {
-              from: "courses",
-              localField: "_id",
-              foreignField: "_id",
-              as: "courses"
-          }
-        },
-        {
-          $sort: {
-            count: -1
+  private isDateValid(dateStr) {
+    return moment(dateStr).isValid();
+  }
+
+  private getClickPromise(startDate, endDate) {
+    let request = [];
+    let i = 0;
+    if (!this.isDateValid(startDate)) {
+      startDate = null;
+    }
+    if (!this.isDateValid(endDate)) {
+      endDate = null;
+    }
+    if (startDate || endDate) {
+      request[i] = { 
+        $match: {
+          clickedAt: {
+            
           }
         }
-      ]);
+      }
+      if (startDate) {
+        request[i]['$match']['clickedAt']['$gte'] = new Date(startDate);
+      }
+      if (endDate) {
+        request[i]['$match']['clickedAt']['$lte'] = new Date(endDate);
+      }
+    }
+
+    request[i] = {
+      $group: {
+        '_id' : "$course_id",
+        'count': { $sum: 1 }
+      }
+    }
+    i += 1;
+    request[i] = {
+      $lookup: {
+        from: "courses",
+        localField: "_id",
+        foreignField: "_id",
+        as: "courses"
+      }
+    }
+    i += 1;
+    request[i] = {
+      $sort: {
+        count: -1
+      }
+    }
+    console.log(request);
+    return request;
+  }
+  @Security('JWT')
+  @Get('clickStatus')
+  public async clickStatus(@Query() startDate?: string, @Query() endDate?:string) {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      const last7days = new Date().getTime() - 7 * 60 * 60 * 24 * 1000;
+      const last30days = new Date().getTime() - 30 * 60 * 60 * 24 * 1000;
+      
+      const request = this.getClickPromise(startDate, endDate);
+      const promise = CourseClickDB.aggregate(request);
 
       promise.then(
         (courseClicks) => {

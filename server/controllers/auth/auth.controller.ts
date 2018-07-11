@@ -24,9 +24,16 @@ export class AuthController {
         // console.log(user);
         if (!user) {
           reject(new UserLoginResponse(false, 'User does not exist'));
+          return;
         } else {
           if (!user.validPassword(requestBody.password)) {
             reject(new UserLoginResponse(false, 'Incorrect password'));
+            return;
+          }
+
+          if (!process.env.secret || !process.env.expiry ) {
+            reject(new UserLoginResponse(false, 'Something went wrong, please contact site administrator'));
+            return;
           }
 
           user.salt = '';
