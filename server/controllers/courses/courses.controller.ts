@@ -89,10 +89,14 @@ export class CoursesController extends Controller {
         }
       }
       if (startDate) {
-        request[i]['$match']['clickedAt']['$gte'] = new Date(startDate);
+        const sD = new Date(startDate);
+        sD.setHours(-7,0,0,0);
+        request[i]['$match']['clickedAt']['$gte'] = new Date(sD);
       }
       if (endDate) {
-        request[i]['$match']['clickedAt']['$lte'] = new Date(endDate);
+        const eD = new Date(endDate);
+        eD.setHours(16,59,59,999);
+        request[i]['$match']['clickedAt']['$lte'] = new Date(eD);
       }
       i += 1;
     }
@@ -118,6 +122,7 @@ export class CoursesController extends Controller {
         count: -1
       }
     }
+    // console.log(request[0]);
     // console.log(request);
     return request;
   }
