@@ -260,6 +260,7 @@ export class CoursesController extends Controller {
             reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
             return;
           }
+          course.category = course.category.toLowerCase();
           course.publishedDate = youtube_info.publishedDate;
           course.commentCount = youtube_info.commentCount;
           course.duration = youtube_info.duration;
