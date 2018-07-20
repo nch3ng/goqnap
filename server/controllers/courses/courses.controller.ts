@@ -90,12 +90,12 @@ export class CoursesController extends Controller {
       }
       if (startDate) {
         const sD = new Date(startDate);
-        sD.setHours(-7,0,0,0);
+        sD.setHours(0,0,0,0);
         request[i]['$match']['clickedAt']['$gte'] = new Date(sD);
       }
       if (endDate) {
         const eD = new Date(endDate);
-        eD.setHours(16,59,59,999);
+        eD.setHours(23,59,59,999);
         request[i]['$match']['clickedAt']['$lte'] = new Date(eD);
       }
       i += 1;
@@ -132,7 +132,8 @@ export class CoursesController extends Controller {
     return new Promise<GeneralResponse>((resolve, reject) => {
       const last7days = new Date().getTime() - 7 * 60 * 60 * 24 * 1000;
       const last30days = new Date().getTime() - 30 * 60 * 60 * 24 * 1000;
-      
+      console.log(startDate);
+      console.log(endDate);
       const request = this.getClickPromise(startDate, endDate);
       const promise = CourseClickDB.aggregate(request);
 
