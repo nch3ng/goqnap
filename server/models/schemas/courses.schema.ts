@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import * as mongoosePaginate from 'mongoose-paginate';
 import { ICourse } from '../interfaces/course.interface';
 
 const courseSchema = new mongoose.Schema({
@@ -61,12 +62,10 @@ const courseSchema = new mongoose.Schema({
     default: 0
   }
 });
+courseSchema.plugin(mongoosePaginate);
 
 courseSchema.index({title: 'text', code_name: 'text', desc: 'text', keywords: 'text', category: 'text'}, { unique: false });
 
-// courseSchema.ensureIndexes(() => {
-//   console.log('ensure index');
-// });
 const CourseDB = mongoose.model<ICourse>('Course', courseSchema);
 CourseDB.on('index', function(error) {
   // "_id index cannot be sparse"

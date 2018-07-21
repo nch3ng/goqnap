@@ -18,13 +18,15 @@ export class CoursesController extends Controller {
   limit = 0;
   category = null;
   dbQuery = {};
+  page = 1;
 
   @Get()
-  public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string): Promise<Course []> {
+  public async getCourses(@Query() limit?: number, @Query() orderBy?: string, @Query() category?: string, @Query() page?: number): Promise<Course []> {
 
     this.setOrder(orderBy);
     this.setLimit(limit);
     this.setCategory(category);
+    this.setPage(page);
 
     return new Promise<Course []>((resolve, reject) => {
       const sort = this.getOrder();
@@ -32,10 +34,12 @@ export class CoursesController extends Controller {
       if (this.category) {
         this.dbQuery = { category: this.category };
       }
+
       if (this.limit === 0) {
         promise = CourseDB.find(this.dbQuery).sort(sort);
       } else {
-        promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit);
+        promise = CourseDB.paginate(this.dbQuery, { sort: sort, page: this.page, limit: this.limit});
+        // promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit);
       }
       promise.then(
         (all_courses) => {
@@ -386,6 +390,14 @@ export class CoursesController extends Controller {
       } else {
         this.desc = false;
       }
+    }
+  }
+
+  private setPage(page: number) {
+    if (page) {
+      this.page = page;
+    } else {
+      this.page = 1;
     }
   }
 
