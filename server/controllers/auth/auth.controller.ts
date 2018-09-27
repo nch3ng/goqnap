@@ -5,7 +5,7 @@ const env = process.env.NODE_ENV || 'development';
 
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
-import { Route, Post, Body, Get, Security } from 'tsoa-nc';
+import { Route, Post, Body, Get, Security } from 'tsoa';
 import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
 
 @Route('')

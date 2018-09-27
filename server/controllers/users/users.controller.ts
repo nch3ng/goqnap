@@ -1,5 +1,5 @@
 import { UserCreationResponse } from './../../models/user.model';
-import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Controller } from 'tsoa-nc';
+import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Controller } from 'tsoa';
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
 import { ErrorResponse } from '../../models/response.model';

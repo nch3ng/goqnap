@@ -1,7 +1,7 @@
 import { GeneralResponse } from './../../models/response.model';
 import { Course } from './../../models/course.model';
 import { Category } from './../../models/category.model';
-import { Controller, Get, Route } from 'tsoa-nc';
+import { Controller, Get, Route } from 'tsoa';
 import CategoryDB from '../../models/schemas/categories';
 import CourseDB from '../../models/schemas/courses.schema';
 import { ErrorResponse } from '../../models/response.model';
@@ -70,7 +70,7 @@ export class CategoryController {
       if (category) {
         this.category = category;
       }
-      const promise = CourseDB.find({'category': this._category});
+      const promise = CourseDB.find({'category': this._category}).sort('code_name');
 
       promise.then(
         (cat_courses: Course []) => {

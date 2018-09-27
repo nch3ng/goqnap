@@ -1,6 +1,6 @@
 import { GeneralResponse } from './../../models/response.model';
 import { Course } from './../../models/course.model';
-import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa-nc';
+import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses.schema';
 import * as YouTube from 'youtube-node';
@@ -8,6 +8,7 @@ import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
+import * as nodeExcel from 'excel-export';
 
 const propertyOf = <TObj>(name: keyof TObj) => name;
 
@@ -150,6 +151,25 @@ export class CoursesController extends Controller {
       })
     });
   }
+  @Security('JWT')
+  @Get('export')
+  public async exportExcel(){
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      let conf;
+      conf.cols = [{
+        caption: 'Sl.',
+        type: 'number',
+        width: 3
+      }];
+      let arr = [];
+      arr.push([1]);
+      conf.rows = arr;
+
+      const result = nodeExcel.execute(conf);
+      resolve(result)
+    });
+  }
+
 
   @Post('{id}/clicked')
   public async courseClicked(@Path() id: string): Promise<GeneralResponse> {
