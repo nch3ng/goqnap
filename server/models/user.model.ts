@@ -1,4 +1,7 @@
-import { UserCreationRequest, IUserLoginResponse } from './user.model';
+export interface UserCreationRequest {
+  email: string;
+}
+
 export class User {
   _id: string;
   email: string;
@@ -8,7 +11,7 @@ export class User {
   name: string;
   createdAt: Date;
   lastLoginAt: Date;
-
+  validated: boolean;
 
   isPasswordCreated(): boolean {
     if (this.salt && this.hash) {
@@ -20,9 +23,6 @@ export class User {
 }
 
 
-export interface UserCreationRequest {
-  email: string;
-}
 
 
 
@@ -43,10 +43,12 @@ export interface IUserLoginResponse {
 export class UserCreationResponse implements IUserLoginResponse {
   success: boolean;
   message: string;
+  token: string;
 
-  constructor(success: boolean, message: string) {
+  constructor(success: boolean, message: string, token?: string) {
     this.success = success;
     this.message = message;
+    this.token = token;
   }
 }
 
