@@ -1,5 +1,6 @@
 import { UserLoginResponse, AuthResponseError } from '../models/user.model';
 import { ErrorResponse } from '../models/response.model';
+import * as ResponseCode from '../codes/response'
 
 export function errorHandler(error, req, res, next) {
   if (res.statusCode === 401) {
@@ -10,7 +11,7 @@ export function errorHandler(error, req, res, next) {
     if (error instanceof ErrorResponse || error instanceof UserLoginResponse) {
       res.status(500).json(error);
     } else {
-      res.status(500).json(new ErrorResponse(false, 'Oops, unknown error happrned.'));
+      res.status(500).json(new ErrorResponse(false, 'Oops, unknown error happrned.', ResponseCode.GENERAL_ERROR));
     }
   }
   next();

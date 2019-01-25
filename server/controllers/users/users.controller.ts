@@ -8,6 +8,7 @@ import * as crypto from 'crypto';
 import Mail from '../../helpers/mail';
 import { IResponse } from '../../models/interfaces/response.interface';
 import { Token } from '../../models/token';
+import * as ResponseCode from '../../codes/response';
 
 @Route('users')
 export class UsersController extends Controller {
@@ -40,12 +41,12 @@ export class UserController extends Controller {
       UserDB.create({ email: requestBody.email, isVerified: false, hasPasswordBeenSet: false }, (error, user) => {
         if (error) {
           console.log(error);
-          reject(new ErrorResponse(false, error));
+          reject(new ErrorResponse(false, error, ResponseCode.USER_CREATION_FAIL));
         }
         const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
 
         email_token.save((err) => {
-          if (err) return reject(new ErrorResponse(false, error));
+          if (err) return reject(new ErrorResponse(false, error, ResponseCode.USER_CREATION_FAIL));
           // saved!
 
           const mail = new Mail();
@@ -66,13 +67,13 @@ export class UserController extends Controller {
         (user: User) => {
           if (!user) {
             this.setStatus(500);
-            reject(new ErrorResponse(false, 'No user found'));
+            reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND));
           }
           resolve(user);
         }
       ).catch(
         (error) => {
-          reject(new ErrorResponse(false, error));
+          reject(new ErrorResponse(false, error, ResponseCode.USER_NOT_FOUND));
         });
     });
   }
@@ -88,34 +89,40 @@ export class UserController extends Controller {
         }
       ).catch(
         (error) => {
-          reject(new ErrorResponse(false, error));
+          reject(new ErrorResponse(false, error, ResponseCode.USER_DELETION_FAIL));
       });
     });
   }
 
-  @Get('verification/{id}')
+  @Post('verification/{id}')
   public async verification(@Path() id: string, @Query() token?: string): Promise<GeneralResponse> {
     return new Promise<GeneralResponse>((resolve, reject) => {
       const promise = UserDB.findOne({ _id: id }).select('-salt -hash');
       promise.then(
         (user: User) => {
           if (!user) {
-            reject(new ErrorResponse(false, 'No user found'));
+            reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND));
           }
           // Need to resolve
-          console.log(user);
           TokenDB.findOne({ token: token }).then(
             (token: Token) => {
-              if (!token) reject(new ErrorResponse(false, 'Token is invalid'));
+
+              if (!token) { 
+                console.log('Token is invalid');
+                reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID));
+              }
               
-              resolve(new GeneralResponse(true, 'get the confirmation'));
+              resolve(new GeneralResponse(true, 'User Verified'));
             }
           ).catch(
-            (error: any) => { reject(new ErrorResponse(false, 'Token is invalid')); }
+            (error: any) => { 
+              console.log('Catch error');
+              reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID)); 
+            }
           )
         }
       ).catch(
-        (error: any) => { reject(new ErrorResponse(false, 'No user found')); }
+        (error: any) => { reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND)); }
       );    
       // resolve(new GeneralResponse(true, 'get the confirmation'));
     });

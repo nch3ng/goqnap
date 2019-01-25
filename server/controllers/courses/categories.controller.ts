@@ -5,6 +5,7 @@ import { Controller, Get, Route } from 'tsoa';
 import CategoryDB from '../../models/schemas/categories';
 import CourseDB from '../../models/schemas/courses.schema';
 import { ErrorResponse } from '../../models/response.model';
+import * as ResponseCode from '../../codes/response';
 
 @Route('categories')
 export class CategoriesController extends Controller {
@@ -17,7 +18,7 @@ export class CategoriesController extends Controller {
       promise.then(
         categories => resolve(categories)).catch(
         (err) => {
-          reject(new ErrorResponse(false, err));
+          reject(new ErrorResponse(false, err, ResponseCode.GENERAL_ERROR));
         }
       );
     });
@@ -56,7 +57,7 @@ export class CategoryController {
       resolve(new GeneralResponse(true, 'Success'));
     }).catch(
       (err) => {
-        reject(new ErrorResponse(false, err));
+        reject(new ErrorResponse(false, err, ResponseCode.GENERAL_ERROR));
       });
     });
   }
@@ -65,7 +66,7 @@ export class CategoryController {
   public async getCoursesByCategory(category?: string): Promise<Course []> {
     return new Promise<Course []>((resolve, reject) => {
       if (!category && !this.category) {
-        reject(new ErrorResponse(false, 'Please determine a category'));
+        reject(new ErrorResponse(false, 'Please determine a category', ResponseCode.GENERAL_ERROR));
       }
       if (category) {
         this.category = category;
@@ -77,7 +78,7 @@ export class CategoryController {
           resolve(cat_courses);
         }).catch(
         (err) => {
-          reject(new ErrorResponse(false, err));
+          reject(new ErrorResponse(false, err, ResponseCode.GENERAL_ERROR));
         }
       );
     });
