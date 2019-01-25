@@ -2,9 +2,7 @@ import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 
-const env = process.env.NODE_ENV || 'development';
-
-const Schema = mongoose.Schema;
+// const env = process.env.NODE_ENV || 'development';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -15,7 +13,15 @@ const userSchema = new mongoose.Schema({
   name: String,
   hash: String,
   salt: String,
-  lastLoginAt: Date
+  lastLoginAt: Date,
+  isVerified:  {
+    type:Boolean,
+    default: false
+  }, 
+  hasPasswordBeenSet: {
+    type:Boolean,
+    default: false
+  }
 });
 
 userSchema.methods.setPassword = function(password){

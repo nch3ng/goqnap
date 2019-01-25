@@ -37,7 +37,7 @@ export class UserController extends Controller {
   public async create(@Body() requestBody: UserCreationRequest): Promise<UserCreationResponse> {
     console.log(requestBody);
     return new Promise<UserCreationResponse>((resolve, reject) => {
-      UserDB.create({ email: requestBody.email }, (error, user) => {
+      UserDB.create({ email: requestBody.email, isVerified: false, hasPasswordBeenSet: false }, (error, user) => {
         if (error) {
           console.log(error);
           reject(new ErrorResponse(false, error));
@@ -49,7 +49,7 @@ export class UserController extends Controller {
           // saved!
 
           const mail = new Mail();
-          mail.send();
+          mail.sendConfirmation(user.email, email_token._userId, email_token.token);
         });
         resolve(new UserCreationResponse(true, 'Successfully created a user', email_token));
       });
@@ -93,8 +93,8 @@ export class UserController extends Controller {
     });
   }
 
-  @Get('confirmation/{id}')
-  public async confirmation(@Path() id: string, @Query() token?: string): Promise<GeneralResponse> {
+  @Get('verification/{id}')
+  public async verification(@Path() id: string, @Query() token?: string): Promise<GeneralResponse> {
     return new Promise<GeneralResponse>((resolve, reject) => {
       const promise = UserDB.findOne({ _id: id }).select('-salt -hash');
       promise.then(

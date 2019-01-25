@@ -11,7 +11,8 @@ export class User {
   name: string;
   createdAt: Date;
   lastLoginAt: Date;
-  validated: boolean;
+  isVerified: boolean;
+  hasPasswordBeenSet: boolean;
 
   isPasswordCreated(): boolean {
     if (this.salt && this.hash) {
