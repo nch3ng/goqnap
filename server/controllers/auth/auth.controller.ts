@@ -1,12 +1,17 @@
 import { UserRegisterRequest, UserRegisterResponse, User, UserChangePasswordRequest, UserChangePasswordResponse } from './../../models/user.model';
 import UserDB from '../../models/schemas/users.schema';
+import TokenDB from '../../models/schemas/token.schema';
+import * as ResCode from '../../codes/response';
+
 const env = process.env.NODE_ENV || 'development';
 // logger = require('../../logger');
 
 import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
-import { Route, Post, Body, Get, Security } from 'tsoa';
+import { Route, Post, Body, Get, Security, Query } from 'tsoa';
 import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
+import { Token } from '../../models/token';
+import { ErrorResponse, GeneralResponse } from '../../models/response.model';
 
 @Route('')
 export class AuthController {
@@ -103,6 +108,24 @@ export class AuthController {
             resolve(new UserChangePasswordResponse(true, 'Successfully changed password'));
           });
         }
+      });
+    });
+  }
+
+  @Get('check-tmp-state')
+  public checkTmpState(@Query() token?: string): Promise<UserLoginResponse> {
+    return new Promise<UserLoginResponse> ((resolve, reject) => {
+      console.log('check temp state', token);
+      TokenDB.findOne({ token: token }).then(
+        (token: Token) => {
+          console.log(token)
+          if(token) { 
+            return resolve(new GeneralResponse(true, 'You are temporarily authorized.', ResCode.GENEROR_SUCCESS));
+          }
+          return reject(new ErrorResponse(false, "No token provided", ResCode.TOKEN_IS_NOT_PROVIDED));
+        }
+      ).catch(err => {
+        return reject(new ErrorResponse(false, "No token provided", ResCode.TOKEN_IS_NOT_PROVIDED));
       });
     });
   }

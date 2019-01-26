@@ -13,7 +13,7 @@ class Mail {
     }
     sgMail.send(msg, false, (err) => {
       if(err) console.error(err);
-      else console.log("Sent email");
+      else console.log("Sent email to " + email + ": " + process.env.HOST + '/user/verification/' + user_id + '?token=' + token);
     });
   }
 }

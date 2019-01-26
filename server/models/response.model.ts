@@ -23,10 +23,12 @@ export class UserCourseResponse implements IResponse {
 export class GeneralResponse implements IGeneralResponse {
   success: boolean;
   message: string;
+  code: number;
  
-  constructor(success: boolean, message: string) {
+  constructor(success: boolean, message: string, code: number) {
     this.success = success;
     this.message = message;
+    this.code = code;
   }
 }
 

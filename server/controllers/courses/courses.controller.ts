@@ -9,6 +9,7 @@ import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
 import * as nodeExcel from 'excel-export';
+import * as ResCode from '../../codes/response';
 
 const propertyOf = <TObj>(name: keyof TObj) => name;
 
@@ -46,7 +47,7 @@ export class CoursesController extends Controller {
         (all_courses) => {
           resolve(all_courses);
         }).catch((error) => {
-        reject(new ErrorResponse(false, error));
+        reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
       });
     });
   }
@@ -147,7 +148,7 @@ export class CoursesController extends Controller {
           resolve(courseClicks);
         }
       ).catch((e) => {
-        reject(new ErrorResponse(false, e));
+        reject(new ErrorResponse(false, e, ResCode.GENERAL_ERROR));
       })
     });
   }
@@ -180,17 +181,17 @@ export class CoursesController extends Controller {
             const courseClick = new CourseClickDB({ course_id: id, code_name: course.code_name});
             courseClick.save((err) => {
               if (err) {
-                reject(new ErrorResponse(false, err))
+                reject(new ErrorResponse(false, err, ResCode.GENERAL_ERROR))
               }
               else {
-                resolve(new GeneralResponse(true, 'Success'))
+                resolve(new GeneralResponse(true, 'Success', ResCode.GENEROR_SUCCESS))
               }
             });
           }
         }
       ).catch(
         (err) => {
-          reject(new ErrorResponse(false, err))
+          reject(new ErrorResponse(false, err, ResCode.GENERAL_ERROR))
         }
       );
     });
@@ -202,7 +203,7 @@ export class CoursesController extends Controller {
       const promise = CourseDB.findOne({_id: id});
       promise.then(
         acourse => resolve(acourse)).catch(
-        error => reject(new ErrorResponse(false, 'Couldn\'t find the course.'))
+        error => reject(new ErrorResponse(false, 'Couldn\'t find the course.', ResCode.GENERAL_ERROR))
       );
     });
   }
@@ -214,18 +215,18 @@ export class CoursesController extends Controller {
       youTube.setKey(process.env.YOUTUBE_KEY);
       youTube.getById(youtubeRef, (error, info) => {
         if (error) {
-          reject(new ErrorResponse(false, error));
+          reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
         } else {
           const item = info.items[0];
           // console.log(item);
           if (!item) {
-            reject(new ErrorResponse(false, 'Cannot retreive the youtube info.'));
+            reject(new ErrorResponse(false, 'Cannot retreive the youtube info.', ResCode.GENERAL_ERROR));
           } else {
             const promise = this.getFindAndUpdateYoutubePromise(youtubeRef, item);
             promise.then(
               (updated_course) => {
                 resolve(updated_course);
-          }).catch(err => reject(new ErrorResponse(false, err))); }
+          }).catch(err => reject(new ErrorResponse(false, err, ResCode.GENERAL_ERROR))); }
         }
       });
     });
@@ -237,7 +238,7 @@ export class CoursesController extends Controller {
       youTube.setKey(process.env.YOUTUBE_KEY);
       youTube.getById(youtubeRef, (error, info) => {
         if (error) {
-          reject(new ErrorResponse(false, error));
+          reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
         } else {
           const item = info.items[0];
           if (item) {
@@ -251,7 +252,7 @@ export class CoursesController extends Controller {
                               item.snippet.publishedAt)
             );
           } else  {
-            reject(new ErrorResponse(false, 'There\'s no youtube video found'));
+            reject(new ErrorResponse(false, 'There\'s no youtube video found', ResCode.GENERAL_ERROR));
           }
         }
       });
@@ -266,14 +267,14 @@ export class CoursesController extends Controller {
       Object.assign(course, requestBody);
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
-        reject(new ErrorResponse(false, paramChecked + ' is required'));
+        reject(new ErrorResponse(false, paramChecked + ' is required', ResCode.GENERAL_ERROR));
         return;
       }
 
       CourseDB.findOne({code_name: course.code_name}).then(
         (res_course) => {
           if (res_course) {
-            reject(new ErrorResponse(false, 'Code name exists'));
+            reject(new ErrorResponse(false, 'Code name exists', ResCode.GENERAL_ERROR));
             return;
           }
         }
@@ -282,7 +283,7 @@ export class CoursesController extends Controller {
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
           if (!youtube_info) {
-            reject(new ErrorResponse(false, 'The youtube reference does not exist.'));
+            reject(new ErrorResponse(false, 'The youtube reference does not exist.', ResCode.GENERAL_ERROR));
             return;
           }
           course.category = course.category.toLowerCase();
@@ -295,11 +296,11 @@ export class CoursesController extends Controller {
           course.watched = youtube_info.watched;
           course.save(function (error) {
             if (error) {
-              reject(new ErrorResponse(false, error));
+              reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
             } else { resolve(new UserCourseResponse(true, 'Create a course successfully', course)); }
           });
         }
-      ).catch(error1 => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
+      ).catch(error1 => reject(new ErrorResponse(false, 'The youtube reference does not exist.', ResCode.GENERAL_ERROR)));
     });
   }
 
@@ -311,20 +312,20 @@ export class CoursesController extends Controller {
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
-        reject(new ErrorResponse(false, paramChecked + ' is required'));
+        reject(new ErrorResponse(false, paramChecked + ' is required', ResCode.GENERAL_ERROR));
       }
       if (!course._id) {
-        reject(new ErrorResponse(false, 'Please specify a course id'));
+        reject(new ErrorResponse(false, 'Please specify a course id', ResCode.GENERAL_ERROR));
         return;
       }
       this.getYoutubeInfo_not_saving(course.youtube_ref).then(
         (youtube_info: YoutubeInfo) => {
-          if (!youtube_info) { reject(new ErrorResponse(false, 'The youtube reference does not exist.')); }
+          if (!youtube_info) { reject(new ErrorResponse(false, 'The youtube reference does not exist.', ResCode.GENERAL_ERROR)); }
           const course_promise = this.getFindAndUpdatePromise(course, youtube_info);
           course_promise.then((updated_course) => resolve(new UserCourseResponse(true, 'Updated a course successfully', updated_course))).catch(
-            (error) => reject(new ErrorResponse(false, 'Updated course failed.')));
+            (error) => reject(new ErrorResponse(false, 'Updated course failed.', ResCode.GENERAL_ERROR)));
         }
-      ).catch((error1) => reject(new ErrorResponse(false, 'The youtube reference does not exist.')));
+      ).catch((error1) => reject(new ErrorResponse(false, 'The youtube reference does not exist.', ResCode.GENERAL_ERROR)));
     });
   }
 
@@ -334,7 +335,7 @@ export class CoursesController extends Controller {
       // console.log('Delete a course id');
       return new Promise<UserCourseResponse>((resolve, reject) => {
         if (!id) {
-          reject(new ErrorResponse(false, 'Please specify a course id'));
+          reject(new ErrorResponse(false, 'Please specify a course id', ResCode.GENERAL_ERROR));
           return;
         }
         const promise = CourseDB.findOneAndRemove({ _id: id});
@@ -344,7 +345,7 @@ export class CoursesController extends Controller {
             resolve(new UserCourseResponse(true, 'Successfully deleted a course', course));
           },
           (error) => {
-            reject(new ErrorResponse(false, 'Failed to delete a course'));
+            reject(new ErrorResponse(false, 'Failed to delete a course', ResCode.GENERAL_ERROR));
           }
         );
       });

@@ -46,7 +46,7 @@ export class UserController extends Controller {
         const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
 
         email_token.save((err) => {
-          if (err) return reject(new ErrorResponse(false, error, ResponseCode.USER_CREATION_FAIL));
+          if (err) return reject(new ErrorResponse(false, err, ResponseCode.USER_CREATION_FAIL));
           // saved!
 
           const mail = new Mail();
@@ -103,29 +103,102 @@ export class UserController extends Controller {
           if (!user) {
             reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND));
           }
+          else {
+            if (user.isVerified && !user.hasPasswordBeenSet) {
+              return resolve(new GeneralResponse(true, 'Password hasn\'t been created', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
+            } else if (user.isVerified && user.hasPasswordBeenSet) {
+              return resolve(new GeneralResponse(true, 'User is verified and already set the password', ResponseCode.GENEROR_SUCCESS))
+            }
           // Need to resolve
-          TokenDB.findOne({ token: token }).then(
-            (token: Token) => {
+            TokenDB.findOne({ token: token }).then(
+              (token: Token) => {
 
-              if (!token) { 
-                console.log('Token is invalid');
-                reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID));
+                if (!token) { 
+                  console.log('Token is invalid');
+                  return reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID));
+                }
+
+                UserDB.findOneAndUpdate({ _id: id }, {$set: {
+                  isVerified: true
+                }}).then(
+                  () => {
+                    console.log('updated');
+                  }
+                );
+                
+                return resolve(new GeneralResponse(true, 'User Verified but need to create a password', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
+                
               }
-              
-              resolve(new GeneralResponse(true, 'User Verified'));
-            }
-          ).catch(
-            (error: any) => { 
-              console.log('Catch error');
-              reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID)); 
-            }
-          )
+            ).catch(
+              (error: any) => { 
+                console.log('Catch error', error);
+                return reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID)); 
+              }
+            )
+          }
         }
       ).catch(
-        (error: any) => { reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND)); }
+        (error: any) => { return reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND)); }
       );    
       // resolve(new GeneralResponse(true, 'get the confirmation'));
     });
   }
 
+  @Post('resend_verification/{id}')
+  public async resendVerification(@Path() id: string, @Query() token?: string): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      const promise = UserDB.findOne({ _id: id }).select('-salt -hash');
+      promise.then(
+        (user: User) => {
+          if (!user) {
+            reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND));
+          } else {
+            const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
+
+            email_token.save((err) => {
+              if (err) return reject(new ErrorResponse(false, err, ResponseCode.GENERAL_ERROR));
+                // saved!
+
+              const mail = new Mail();
+              mail.sendConfirmation(user.email, email_token._userId, email_token.token);
+              return resolve(new GeneralResponse(true, 'Email has been sent out', ResponseCode.GENEROR_SUCCESS));
+            });
+          }
+        });
+    });
+  }
+
+  @Post('create_password/{id}')
+  public async create_password(@Body() requestBody: { password: string }, @Path() id: string, @Query() token?: string): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      console.log(requestBody.password)
+      if (!requestBody.password) {
+        return reject(new ErrorResponse(false, 'NOT OK', ResponseCode.GENERAL_ERROR));
+      }
+      const promise = UserDB.findOne({ _id: id }).select('-salt -hash');
+      promise.then(
+        (user: any) => {
+          if (user) {
+
+            TokenDB.findOne({ token: token }).then(
+              (token: Token) => {
+
+                if (!token) { 
+                  console.log('Token is invalid');
+                  return reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID));
+                }
+
+                user.hasPasswordBeenSet = true;
+                user.setPassword(requestBody.password);
+                user.save();
+                return resolve(new GeneralResponse(true, 'OK', ResponseCode.GENEROR_SUCCESS));
+              }
+            );
+          } else{
+            return reject(new ErrorResponse(false, 'NOT OK', ResponseCode.USER_NOT_FOUND));
+          }
+        }
+      );
+    })
+  }
 }
