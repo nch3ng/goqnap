@@ -8,7 +8,9 @@ export function errorHandler(error, req, res, next) {
       res.json(error);
     }
   } else if (res.statusCode === 500  || res.statusCode === 200) {
-    if (error instanceof ErrorResponse || error instanceof UserLoginResponse) {
+    if (error instanceof ErrorResponse || 
+        error instanceof UserLoginResponse || 
+        error instanceof AuthResponseError) {
       res.status(500).json(error);
     } else {
       res.status(500).json(new ErrorResponse(false, 'Oops, unknown error happrned.', ResponseCode.GENERAL_ERROR));

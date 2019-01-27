@@ -13,7 +13,7 @@ import * as ResponseCode from '../../codes/response';
 @Route('users')
 export class UsersController extends Controller {
 
-  @Security('JWT')
+  @Security('JWT', ['super admin', 'admin'])
   @Get()
   public async all(): Promise<User []> {
     return new Promise<User []>((resolve, reject) => {
@@ -33,15 +33,26 @@ export class UsersController extends Controller {
 
 @Route('user')
 export class UserController extends Controller {
-  @Security('JWT')
+  @Security('JWT', ['super admin'])
   @Post()
   public async create(@Body() requestBody: UserCreationRequest): Promise<UserCreationResponse> {
-    console.log(requestBody);
     return new Promise<UserCreationResponse>((resolve, reject) => {
+      if (!requestBody.email) {
+        return reject(new ErrorResponse(false, 'Email can not be empty', ResponseCode.USER_CREATION_FAIL));
+      }
+
+      if (!requestBody.name) {
+        return reject(new ErrorResponse(false, 'Name can not be empty', ResponseCode.USER_CREATION_FAIL));
+      }
       UserDB.create({ email: requestBody.email, name: requestBody.name, isVerified: false, hasPasswordBeenSet: false }, (error, user) => {
         if (error) {
-          console.log(error);
-          reject(new ErrorResponse(false, error.errors, ResponseCode.USER_CREATION_FAIL));
+          // console.log(error);
+          if(error.code == ResponseCode.DUPLICATE_RECORD){
+            reject(new ErrorResponse(false, 'The user already exists', ResponseCode.USER_CREATION_FAIL));
+          }
+          else {
+            reject(new ErrorResponse(false, error.message, ResponseCode.USER_CREATION_FAIL));
+          }
         }
         const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
 
@@ -78,7 +89,7 @@ export class UserController extends Controller {
     });
   }
 
-  @Security('JWT')
+  @Security('JWT', ['super admin'])
   @Delete('{id}')
   public async delete(@Path() id: string): Promise<UserCreationResponse> {
     return new Promise<UserCreationResponse>((resolve, reject) => {

@@ -89,18 +89,23 @@ export class UserLoginResponse implements IUserLoginResponse {
   success: boolean;
   message: string;
   token?: string;
-  user?: User;
+  user?: any;
   decoded?: Decoded;
 
-  constructor(success: boolean, message: string, token?: string, user?: User, decoded?: Decoded) {
+  constructor(success: boolean, message: string, token?: string, payload?: any, decoded?: Decoded) {
     this.success = success;
     this.message = message;
+
     if (token) {
       this.token = token;
     }
 
-    if (user) {
-      this.user = user;
+    if (payload) {
+      this.user = payload;
+    }
+
+    if (decoded) {
+      this.decoded = decoded;
     }
   }
 }

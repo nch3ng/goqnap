@@ -8,24 +8,24 @@ export function expressAuthentication(request: express.Request, securityName: st
     const token = request.body.token || request.query.token || request.headers['x-access-token'];
     // console.log(token);
     return new Promise((resolve, reject) => {
-      // console.log('promise');
-
+      // console.log('[expressAuthentication]: ', scopes);
       if (!token) {
           reject(new AuthResponseError(false, 'No token provided'));
       }
       jwt.verify(token, process.env.secret, (err: any, decoded: any) => {
+        // console.log('[expressAuthentication]: ', decoded);
         if (err) {
-          reject(new AuthResponseError(false, err.message, err));
+          return reject(new AuthResponseError(false, err.message, err));
         } else {
           // Check if JWT contains all required scopes
           if (scopes) {
             for (const scope of scopes) {
               if (!decoded.scopes.includes(scope)) {
-                reject(new AuthResponseError(false, 'JWT does not contain required scope.'));
+                return reject(new AuthResponseError(false, 'You are not authorized.'));
               }
             }
           }
-          resolve(new UserLoginResponse(true, 'You are authorized', null, null, decoded));
+          return resolve(new UserLoginResponse(true, 'You are authorized', null, null, decoded));
         }
       });
     });

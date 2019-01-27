@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
   hasPasswordBeenSet: {
     type:Boolean,
     default: false
+  },
+  role: {
+    type: String,
+    default: 'normal'
   }
 });
 

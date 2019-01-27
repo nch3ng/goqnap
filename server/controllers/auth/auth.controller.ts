@@ -43,14 +43,26 @@ export class AuthController {
 
           user.salt = '';
           user.hash = '';
+          const role = [];
+          role.push(user.role);
           const token = jwt.sign({
             userID: user._id,
             email: user.email,
-            name: user.name
+            name: user.name,
+            scopes: role
           }, process.env.secret, {
             expiresIn : 60 * 60 * process.env.expiry
           });
-          resolve(new UserLoginResponse(true, 'You are logged in.', token, <User>{ name: user.name, email: user.email}));
+          resolve(new UserLoginResponse(true, 
+                                        'You are logged in.', 
+                                        token, 
+                                        { 
+                                          name: user.name, 
+                                          email: user.email,
+                                          role: user.role,
+                                          isVerified: user.isVerified,
+                                          hasPasswordBeenSet: user.hasPasswordBeenSet
+                                        }));
         }
       });
     });
