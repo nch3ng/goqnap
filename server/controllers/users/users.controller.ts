@@ -38,10 +38,10 @@ export class UserController extends Controller {
   public async create(@Body() requestBody: UserCreationRequest): Promise<UserCreationResponse> {
     console.log(requestBody);
     return new Promise<UserCreationResponse>((resolve, reject) => {
-      UserDB.create({ email: requestBody.email, isVerified: false, hasPasswordBeenSet: false }, (error, user) => {
+      UserDB.create({ email: requestBody.email, name: requestBody.name, isVerified: false, hasPasswordBeenSet: false }, (error, user) => {
         if (error) {
           console.log(error);
-          reject(new ErrorResponse(false, error, ResponseCode.USER_CREATION_FAIL));
+          reject(new ErrorResponse(false, error.errors, ResponseCode.USER_CREATION_FAIL));
         }
         const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
 
@@ -181,7 +181,7 @@ export class UserController extends Controller {
           if (user) {
 
             TokenDB.findOne({ token: token }).then(
-              (token: Token) => {
+              (token: any) => {
 
                 if (!token) { 
                   console.log('Token is invalid');
@@ -191,6 +191,9 @@ export class UserController extends Controller {
                 user.hasPasswordBeenSet = true;
                 user.setPassword(requestBody.password);
                 user.save();
+
+                token.remove();
+                
                 return resolve(new GeneralResponse(true, 'OK', ResponseCode.GENEROR_SUCCESS));
               }
             );

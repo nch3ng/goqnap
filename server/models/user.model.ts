@@ -1,5 +1,6 @@
 export interface UserCreationRequest {
   email: string;
+  name: string;
 }
 
 export class User {
@@ -27,7 +28,7 @@ export class User {
 
 
 
-export class UserLoginRequest implements UserCreationRequest {
+export class UserLoginRequest {
   email: string;
   password: string;
 }
