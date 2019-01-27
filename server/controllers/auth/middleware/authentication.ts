@@ -18,12 +18,16 @@ export function expressAuthentication(request: express.Request, securityName: st
           return reject(new AuthResponseError(false, err.message, err));
         } else {
           // Check if JWT contains all required scopes
-          if (scopes) {
+          if (scopes && scopes.length !== 0) {
+            let valid = false;
+            
             for (const scope of scopes) {
-              if (!decoded.scopes.includes(scope)) {
-                return reject(new AuthResponseError(false, 'You are not authorized.'));
+              if (decoded.scopes.includes(scope)) {
+                valid = true;
               }
             }
+            if (!valid)
+              return reject(new AuthResponseError(false, 'You are not authorized.'));
           }
           return resolve(new UserLoginResponse(true, 'You are authorized', null, null, decoded));
         }

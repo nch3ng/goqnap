@@ -2,16 +2,16 @@ import { UserRegisterRequest, UserRegisterResponse, User, UserChangePasswordRequ
 import UserDB from '../../models/schemas/users.schema';
 import TokenDB from '../../models/schemas/token.schema';
 import * as ResCode from '../../codes/response';
+import * as crypto from 'crypto';
 
 const env = process.env.NODE_ENV || 'development';
 // logger = require('../../logger');
-
-import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import { Route, Post, Body, Get, Security, Query } from 'tsoa';
 import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
 import { Token } from '../../models/token';
 import { ErrorResponse, GeneralResponse } from '../../models/response.model';
+import Mail from '../../helpers/mail';
 
 @Route('')
 export class AuthController {
@@ -73,10 +73,13 @@ export class AuthController {
     const user = new UserDB();
     // console.log('Register: ');
     // console.log(requestBody);
+
     user.name = requestBody.name;
     user.email = requestBody.email;
 
     user.setPassword(requestBody.password);
+    user.hasPasswordBeenSet = true;
+    user.isVerified = false;
     const token = user.generateJwt();
     return new Promise<UserRegisterResponse> ((resolve, reject) => {
       user.save((err) => {
@@ -87,6 +90,16 @@ export class AuthController {
         }
         // console.log(token);
         const decoded = jwt.verify(token, process.env.secret);
+
+        const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
+        email_token.save((err) => {
+          if (err) return reject(new ErrorResponse(false, err, ResCode.USER_CREATION_FAIL));
+          // saved!
+
+          const mail = new Mail();
+          mail.sendConfirmation(user.email, email_token._userId, email_token.token);
+        });
+        
         resolve(new UserRegisterResponse(true, 'Successfully registered', token, user, decoded));
       });
     });

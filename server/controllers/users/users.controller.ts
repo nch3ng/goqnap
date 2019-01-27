@@ -1,12 +1,11 @@
 import { UserCreationResponse } from './../../models/user.model';
-import { Post, Body, SuccessResponse, Route, Get, Path, Delete, Security, Controller, Query } from 'tsoa';
+import { Post, Body, Route, Get, Path, Delete, Security, Controller, Query } from 'tsoa';
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
 import { ErrorResponse, GeneralResponse } from '../../models/response.model';
 import TokenDB from '../../models/schemas/token.schema';
 import * as crypto from 'crypto';
 import Mail from '../../helpers/mail';
-import { IResponse } from '../../models/interfaces/response.interface';
 import { Token } from '../../models/token';
 import * as ResponseCode from '../../codes/response';
 
@@ -131,13 +130,17 @@ export class UserController extends Controller {
 
                 UserDB.findOneAndUpdate({ _id: id }, {$set: {
                   isVerified: true
-                }}).then(
-                  () => {
-                    console.log('updated');
+                }}, null, (err, user) => {
+                  if (err) return reject(new ErrorResponse(false, 'Something went wrong', ResponseCode.GENERAL_ERROR));
+                  
+                  if (user.hasPasswordBeenSet) {
+                    return resolve(new GeneralResponse(true, 'User Verified, and password has neem created', ResponseCode.GENEROR_SUCCESS));
+                  } else {
+                    return resolve(new GeneralResponse(true, 'User Verified but need to create a password', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
                   }
-                );
+                });
                 
-                return resolve(new GeneralResponse(true, 'User Verified but need to create a password', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
+                
                 
               }
             ).catch(
