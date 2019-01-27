@@ -259,7 +259,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('JWT')
+  @Security('JWT', ['super admin', 'admin'])
   @Post()
   public addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse | ErrorResponse> {
     return new Promise<UserCourseResponse | ErrorResponse>((resolve, reject) => {
@@ -304,7 +304,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('JWT')
+  @Security('JWT', ['super admin', 'admin'])
   @Put()
   public async updateCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     const course = new Course();
@@ -329,7 +329,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('JWT')
+  @Security('JWT', ['super admin', 'admin'])
   @Delete('{id}')
     public async deleteCourse(@Path() id: String, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
       // console.log('Delete a course id');
@@ -460,29 +460,6 @@ export class CoursesController extends Controller {
         return_str = prop.text;
       }
     }
-    // if (!requestBody.title) {
-    //   return_str = 'title';
-    // }
-
-    // if (!requestBody.code_name) {
-    //   return_str = 'code name';
-    // }
-
-    // if (!requestBody.desc) {
-    //   return_str = 'desc';
-    // }
-
-    // if (!requestBody.keywords) {
-    //   return_str = 'keywords';
-    // }
-
-    // if (!requestBody.category) {
-    //   return_str = 'category';
-    // }
-
-    // if (!requestBody.youtube_ref) {
-    //   return_str =  'youtube reference';
-    // }
 
     return return_str;
   }
