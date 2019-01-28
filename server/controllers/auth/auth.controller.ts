@@ -1,3 +1,4 @@
+import { PASSWORD_HAS_NOT_BEEN_CREATED } from './../../codes/response';
 import { UserRegisterRequest, UserRegisterResponse, User, UserChangePasswordRequest, UserChangePasswordResponse } from './../../models/user.model';
 import UserDB from '../../models/schemas/users.schema';
 import TokenDB from '../../models/schemas/token.schema';
@@ -22,7 +23,6 @@ export class AuthController {
     return new Promise<UserLoginResponse>((resolve, reject) => {
 
       UserDB.findOne({'email' : requestBody.email}, (error, user) => {
-
         if (error) {
           return reject(new UserLoginResponse(false, error));
         }
@@ -32,6 +32,10 @@ export class AuthController {
           reject(new UserLoginResponse(false, 'User does not exist'));
           return;
         } else {
+
+          if (!user.hasPasswordBeenSet) {
+            return reject(new UserLoginResponse(false, 'Password has not set yet'));
+          }
           if (!user.validPassword(requestBody.password)) {
             reject(new UserLoginResponse(false, 'Incorrect password'));
             return;
@@ -109,13 +113,13 @@ export class AuthController {
   @Post('fbLogin')
   public fbLogin(@Body() requestBody: any):Promise<any> {
     return new Promise<any> ((resolve, reject) => {
-      console.log("[FacebookLogin]");
-      console.log("[FacebookLogin]", requestBody);
-      console.log("[FacebookLogin]", process.env.FB_APP_SECRET);
+      // console.log("[FacebookLogin]");
+      // console.log("[FacebookLogin]", requestBody);
+      // console.log("[FacebookLogin]", process.env.FB_APP_SECRET);
       FB.options({'appSecret': process.env.FB_APP_SECRET});
       FB.options({'scope': "public_profile,email,gender"});
       FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
-        console.log(res);
+        // console.log(res);
         UserDB.findOne({'email' : res.email}, (error, user) => {
 
           if (error) {
@@ -124,7 +128,39 @@ export class AuthController {
   
           // console.log(user);
           if (!user) {
-            reject(new UserLoginResponse(false, 'User does not exist'));
+            UserDB.create({ email: res.email, name: res.name, isVerified: true, hasPasswordBeenSet: false }, (error, user) => {
+              if (error) {
+                // console.log(error);
+                return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
+              }
+
+              TokenDB.create({_userId: user._id, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
+                if (error) {
+                  // console.log(error);
+                 return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
+                }
+                return resolve(new UserLoginResponse(true, "Need to create password", null, {
+                  code: ResCode.PASSWORD_HAS_NOT_BEEN_CREATED,
+                  token:token.token,
+                  uid: token._userId
+                }, null));
+              })
+            });
+            return;
+          }
+
+          if (!user.hasPasswordBeenSet) {
+            TokenDB.create({_userId: user._id, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
+              if (error) {
+                // console.log(error);
+               return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
+              }
+              resolve(new UserLoginResponse(true, "Need to create password", null, {
+                code: ResCode.PASSWORD_HAS_NOT_BEEN_CREATED,
+                token:token.token,
+                uid: token._userId
+              }, null));
+            });
             return;
           }
 

@@ -89,7 +89,7 @@ export class UserLoginResponse implements IUserLoginResponse {
   success: boolean;
   message: string;
   token?: string;
-  user?: any;
+  payload?: any;
   decoded?: Decoded;
 
   constructor(success: boolean, message: string, token?: string, payload?: any, decoded?: Decoded) {
@@ -101,7 +101,7 @@ export class UserLoginResponse implements IUserLoginResponse {
     }
 
     if (payload) {
-      this.user = payload;
+      this.payload = payload;
     }
 
     if (decoded) {
