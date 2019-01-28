@@ -19,6 +19,8 @@
     
   },
   "exclude":[
-    "src/**"
+    "src/**",
+    "server/**",
+    "ecosystem.config.js"
   ] 
 }
