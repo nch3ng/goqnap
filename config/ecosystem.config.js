@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name      : 'goqnapcom',
-    script    : 'dist/server.js',
+    script    : 'dist/server/server.js',
     env: {
       NODE_ENV: 'true'
     },
