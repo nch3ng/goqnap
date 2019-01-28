@@ -73,9 +73,9 @@ describe('Authentication', () => {
       expect(uResponse).to.be.not.null('user exists');
       expect(uResponse.message).to.be.equal('You are logged in.');
       expect(uResponse.token).to.be.exist('token');
-      expect(uResponse.user).to.be.not.null('user object');
-      expect(uResponse.user.email).to.be.equal('test@test.com');
-      expect(uResponse.user.name).to.be.equal('test');
+      expect(uResponse.payload).to.be.not.null('user object');
+      expect(uResponse.payload.email).to.be.equal('test@test.com');
+      expect(uResponse.payload.name).to.be.equal('test');
       token = uResponse.token;
     });
   });
@@ -107,9 +107,9 @@ describe('Authentication', () => {
         expect(loginResponse).to.be.not.null('user exists');
         expect(loginResponse.message).to.be.equal('You are logged in.');
         expect(loginResponse.token).to.be.exist('token');
-        expect(loginResponse.user).to.be.not.null('user object');
-        expect(loginResponse.user.email).to.be.equal('test@test.com');
-        expect(loginResponse.user.name).to.be.equal('test');
+        expect(loginResponse.payload).to.be.not.null('user object');
+        expect(loginResponse.payload.email).to.be.equal('test@test.com');
+        expect(loginResponse.payload.name).to.be.equal('test');
         token = loginResponse.token;
       });
     })
