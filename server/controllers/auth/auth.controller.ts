@@ -12,6 +12,7 @@ import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
 import { Token } from '../../models/token';
 import { ErrorResponse, GeneralResponse } from '../../models/response.model';
 import Mail from '../../helpers/mail';
+import FB, { FacebookApiException } from 'fb';
 
 @Route('')
 export class AuthController {
@@ -99,12 +100,67 @@ export class AuthController {
           const mail = new Mail();
           mail.sendConfirmation(user.email, email_token._userId, email_token.token);
         });
-        
+
         resolve(new UserRegisterResponse(true, 'Successfully registered', token, user, decoded));
       });
     });
   }
 
+  @Post('fbLogin')
+  public fbLogin(@Body() requestBody: any):Promise<any> {
+    return new Promise<any> ((resolve, reject) => {
+      console.log("[FacebookLogin]");
+      console.log("[FacebookLogin]", requestBody);
+      console.log("[FacebookLogin]", process.env.FB_APP_SECRET);
+      FB.options({'appSecret': process.env.FB_APP_SECRET});
+      FB.options({'scope': "public_profile,email,gender"});
+      FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
+        console.log(res);
+        UserDB.findOne({'email' : res.email}, (error, user) => {
+
+          if (error) {
+            return reject(new UserLoginResponse(false, error));
+          }
+  
+          // console.log(user);
+          if (!user) {
+            reject(new UserLoginResponse(false, 'User does not exist'));
+            return;
+          }
+
+          user.salt = '';
+          user.hash = '';
+          const role = [];
+          role.push(user.role);
+          const token = jwt.sign({
+            userID: user._id,
+            email: user.email,
+            name: user.name,
+            scopes: role
+          }, process.env.secret, {
+            expiresIn : 60 * 60 * process.env.expiry
+          });
+          resolve(
+            new UserLoginResponse(true, 
+                                    'You are logged in.', 
+                                    token, 
+                                    { 
+                                      name: user.name, 
+                                      email: user.email,
+                                      role: user.role,
+                                      isVerified: user.isVerified,
+                                      hasPasswordBeenSet: user.hasPasswordBeenSet
+                                    }));
+        });
+      });
+      // const signedRequestValue = requestBody.signedRequest;
+      // const signedRequest  = FB.parseSignedRequest(signedRequestValue);
+      // if(signedRequest) {
+      //   console.log(signedRequest);
+      // }
+      // resolve(new UserLoginResponse(true, 'You are authorized.'));
+    });
+  }
   @Security('JWT')
   @Get('check-state')
   public checkState(): Promise<UserLoginResponse> {
