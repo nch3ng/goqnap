@@ -14,6 +14,7 @@ import { Token } from '../../models/token';
 import { ErrorResponse, GeneralResponse } from '../../models/response.model';
 import Mail from '../../helpers/mail';
 import FB, { FacebookApiException } from 'fb';
+import Log from '../../models/log';
 
 @Route('')
 export class AuthController {
@@ -58,6 +59,11 @@ export class AuthController {
           }, process.env.secret, {
             expiresIn : 60 * 60 * process.env.expiry
           });
+          Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
+            console.log(res);
+          }, (reason) => {
+            console.log(reason);
+          })
           resolve(new UserLoginResponse(true, 
                                         'You are logged in.', 
                                         token, 
@@ -104,6 +110,12 @@ export class AuthController {
           const mail = new Mail();
           mail.sendConfirmation(user.email, email_token._userId, email_token.token);
         });
+
+        Log.create({message: `${user.name} registered in.`, userId: user._id, action: 'login'}).then((res) => {
+          console.log(res);
+        }, (reason) => {
+          console.log(reason);
+        })
 
         resolve(new UserRegisterResponse(true, 'Successfully registered', token, user, decoded));
       });
@@ -176,6 +188,13 @@ export class AuthController {
           }, process.env.secret, {
             expiresIn : 60 * 60 * process.env.expiry
           });
+
+          Log.create({message: `${user.name} is logged in via Facebook.`, userId: user._id, action: 'login'}).then((res) => {
+            console.log(res);
+          }, (reason) => {
+            console.log(reason);
+          });
+
           resolve(
             new UserLoginResponse(true, 
                                     'You are logged in.', 
@@ -220,7 +239,11 @@ export class AuthController {
           user.setPassword(requestBody.password);
 
           user.save((err) => {
-
+            Log.create({message: `${user.name} has changed passwoord`, userId: user._id, action: 'change password'}).then((res) => {
+              console.log(res);
+            }, (reason) => {
+              console.log(reason);
+            })
             // console.log(token);
             resolve(new UserChangePasswordResponse(true, 'Successfully changed password'));
           });

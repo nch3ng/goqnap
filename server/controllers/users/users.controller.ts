@@ -8,6 +8,7 @@ import * as crypto from 'crypto';
 import Mail from '../../helpers/mail';
 import { Token } from '../../models/token';
 import * as ResponseCode from '../../codes/response';
+import Log from '../../models/log';
 
 @Route('users')
 export class UsersController extends Controller {
@@ -62,6 +63,12 @@ export class UserController extends Controller {
           const mail = new Mail();
           mail.sendConfirmation(user.email, email_token._userId, email_token.token);
         });
+
+        Log.create({message: ` Admin${user.name} has created a user: ${user.email}`, userId: null, action: 'create user'}).then((res) => {
+          console.log(res);
+        }, (reason) => {
+          console.log(reason);
+        })
         resolve(new UserCreationResponse(true, 'Successfully created a user', email_token));
       });
     });
@@ -232,6 +239,11 @@ export class UserController extends Controller {
           return reject(new GeneralResponse(false, "Oops, something went wrong!", ResponseCode.GENERAL_ERROR));
         }
         else {
+          Log.create({message: `Set ${user.name}'s role to ${requestBody.role}`, userId: user._id, action: 'change role'}).then((res) => {
+            console.log(res);
+          }, (reason) => {
+            console.log(reason);
+          })
           return resolve(new GeneralResponse(true, "Successfully set role", ResponseCode.GENERAL_SUCCESS, user));
         }
       })
