@@ -237,7 +237,7 @@ export class AuthController {
         (token: Token) => {
           console.log(token)
           if(token) { 
-            return resolve(new GeneralResponse(true, 'You are temporarily authorized.', ResCode.GENEROR_SUCCESS));
+            return resolve(new GeneralResponse(true, 'You are temporarily authorized.', ResCode.GENERAL_SUCCESS));
           }
           return reject(new ErrorResponse(false, "No token provided", ResCode.TOKEN_IS_NOT_PROVIDED));
         }

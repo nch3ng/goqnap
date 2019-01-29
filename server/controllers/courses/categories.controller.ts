@@ -54,7 +54,7 @@ export class CategoryController {
         $inc: { times: 1}
       }
     ).then(()=>{
-      resolve(new GeneralResponse(true, 'Success', ResponseCode.GENEROR_SUCCESS));
+      resolve(new GeneralResponse(true, 'Success', ResponseCode.GENERAL_SUCCESS));
     }).catch(
       (err) => {
         reject(new ErrorResponse(false, err, ResponseCode.GENERAL_ERROR));

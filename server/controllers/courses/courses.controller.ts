@@ -184,7 +184,7 @@ export class CoursesController extends Controller {
                 reject(new ErrorResponse(false, err, ResCode.GENERAL_ERROR))
               }
               else {
-                resolve(new GeneralResponse(true, 'Success', ResCode.GENEROR_SUCCESS))
+                resolve(new GeneralResponse(true, 'Success', ResCode.GENERAL_SUCCESS))
               }
             });
           }

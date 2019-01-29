@@ -16,6 +16,7 @@ import './controllers/auth/middleware/authentication';
 import './controllers/auth/auth.controller';
 import './controllers/users/users.controller';
 import './controllers/keywords.controller';
+import './controllers/roles/roles.controller';
 // End of Controllers
 import { RegisterRoutes } from './routes/routes';
 import { errorHandler } from './helpers/error.handler';

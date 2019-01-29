@@ -24,11 +24,15 @@ export class GeneralResponse implements IGeneralResponse {
   success: boolean;
   message: string;
   code: number;
+  payload: any
  
-  constructor(success: boolean, message: string, code: number) {
+  constructor(success: boolean, message: string, code: number, payload?: any) {
     this.success = success;
     this.message = message;
     this.code = code;
+    if (payload) {
+      this.payload = payload;
+    }
   }
 }
 

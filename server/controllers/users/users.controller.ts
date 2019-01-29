@@ -1,5 +1,5 @@
 import { UserCreationResponse } from './../../models/user.model';
-import { Post, Body, Route, Get, Path, Delete, Security, Controller, Query } from 'tsoa';
+import { Post, Body, Route, Get, Path, Delete, Security, Controller, Query, Put } from 'tsoa';
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
 import { ErrorResponse, GeneralResponse } from '../../models/response.model';
@@ -117,7 +117,7 @@ export class UserController extends Controller {
             if (user.isVerified && !user.hasPasswordBeenSet) {
               return resolve(new GeneralResponse(true, 'Password hasn\'t been created', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
             } else if (user.isVerified && user.hasPasswordBeenSet) {
-              return resolve(new GeneralResponse(true, 'User is verified and already set the password', ResponseCode.GENEROR_SUCCESS))
+              return resolve(new GeneralResponse(true, 'User is verified and already set the password', ResponseCode.GENERAL_SUCCESS))
             }
           // Need to resolve
             TokenDB.findOne({ token: token }).then(
@@ -134,7 +134,7 @@ export class UserController extends Controller {
                   if (err) return reject(new ErrorResponse(false, 'Something went wrong', ResponseCode.GENERAL_ERROR));
                   
                   if (user.hasPasswordBeenSet) {
-                    return resolve(new GeneralResponse(true, 'User Verified, and password has neem created', ResponseCode.GENEROR_SUCCESS));
+                    return resolve(new GeneralResponse(true, 'User Verified, and password has neem created', ResponseCode.GENERAL_SUCCESS));
                   } else {
                     return resolve(new GeneralResponse(true, 'User Verified but need to create a password', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
                   }
@@ -175,7 +175,7 @@ export class UserController extends Controller {
 
               const mail = new Mail();
               mail.sendConfirmation(user.email, email_token._userId, email_token.token);
-              return resolve(new GeneralResponse(true, 'Email has been sent out', ResponseCode.GENEROR_SUCCESS));
+              return resolve(new GeneralResponse(true, 'Email has been sent out', ResponseCode.GENERAL_SUCCESS));
             });
           }
         });
@@ -208,7 +208,7 @@ export class UserController extends Controller {
 
                 token.remove();
                 
-                return resolve(new GeneralResponse(true, 'OK', ResponseCode.GENEROR_SUCCESS));
+                return resolve(new GeneralResponse(true, 'OK', ResponseCode.GENERAL_SUCCESS));
               }
             );
           } else{
@@ -217,5 +217,24 @@ export class UserController extends Controller {
         }
       );
     })
+  }
+
+  @Security('JWT', ['super admin'])
+  @Put('set_role/{id}')
+  public async set_role(@Body() requestBody: { role: string }, @Path() id: string ): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      if (!requestBody.role) {
+        return reject(new GeneralResponse(false, "Please specify the role name", ResponseCode.GENERAL_ERROR));
+      }
+
+      UserDB.findOneAndUpdate({_id: id}, { $set: { role: requestBody.role }}, (err, user) => {
+        if (err) {
+          return reject(new GeneralResponse(false, "Oops, something went wrong!", ResponseCode.GENERAL_ERROR));
+        }
+        else {
+          return resolve(new GeneralResponse(true, "Successfully set role", ResponseCode.GENERAL_SUCCESS, user));
+        }
+      })
+    });
   }
 }
