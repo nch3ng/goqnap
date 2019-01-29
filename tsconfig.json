@@ -20,6 +20,7 @@
   },
   "exclude":[
     "src/**",
-    "ecosystem.config.js"
+    "ecosystem.config.js",
+    "dist"
   ] 
 }
