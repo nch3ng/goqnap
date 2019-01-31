@@ -1,20 +1,54 @@
 import sgMail = require("@sendgrid/mail");
+import * as fs from'fs';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// const fillTemplate = function(templateString, templateVars){
+//   return new Function("return `"+templateString +"`;").call(templateVars);
+// }
+// const templateVars = {
+//   validation_address: 'http://test.com'
+// }
+
+require.extensions['.html'] = function (module, filename) {
+    module.exports = fs.readFileSync(filename, 'utf8');
+};
+
+const templateString = require('./email.html');
+// const templateString = "Hello, ${this.validation_address}";
 
 class Mail {
+
+  email: string;
+  templateVars: any;
+  constructor() {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    // this.email = fillTemplate(html_template, {validation_address: 'http://test.com'});
+  }
   sendConfirmation(email: string, user_id: string, token: string) {
+    this.templateVars = {
+      validation_address: process.env.HOST + '/user/verification/' + user_id + '?token=' + token
+    }
+    this.email = this.fillTemplate(templateString, this.templateVars);
+    // console.log(this.fillTemplate(templateString, this.templateVars));
+    
     const msg = {
       to: email,
-      from: 'QNAP College<naichen.cheng@gmail.com>',
+      from: 'QNAP College<qnapinc@gmail.com>',
       subject: 'QNAP College: Validate your email address',
       text: 'Click the link to validate your email: ' + process.env.HOST + '/user/verification/' + user_id + '?token=' + token,
-      html: 'Click the link to validate your email: <strong>' + process.env.HOST + '/user/verification/' + user_id + '?token=' + token + '<strong>'
+      // html: 'Click the link to validate your email: <strong>' + process.env.HOST + '/user/verification/' + user_id + '?token=' + token + '<strong>'
+      html: this.email
     }
     sgMail.send(msg, false, (err) => {
       if(err) console.error(err);
-      else console.log("Sent email to " + email + ": " + process.env.HOST + '/user/verification/' + user_id + '?token=' + token);
+      else { 
+        console.log("Sent email to " + email + ": " + process.env.HOST + '/user/verification/' + user_id + '?token=' + token);
+      }
     });
+  }
+
+  fillTemplate = (templateString, templateVars) => {
+    return new Function("return `"+templateString +"`;").call(templateVars);
   }
 }
 

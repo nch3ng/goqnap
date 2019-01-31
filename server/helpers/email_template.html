@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Test Email Sample</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0 " />
+<style>
+  :root {
+    font: 400 18px/1.5 "Open Sans", system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, "Fira Sans", Helvetica Neue, sans-serif;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  h1, h2, label {
+    font-family: "Nunito", system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, "Fira Sans", Helvetica Neue, sans-serif;
+    font-weight: 200;
+    color: #30304C;
+    margin-bottom: 1em;
+  }
+  
+  h1, h2 {
+    line-height: 1.25;
+  }
+  
+  p {
+    color: #807F91;
+  }
+  
+  html {
+    min-height: 100vh;
+  }
+  body {
+    height: 600px;
+  }
+  
+  .email-container {
+    background: linear-gradient(to right bottom, #F27D86, #B978C8, #9379F8) center/cover no-repeat;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding-top: 3em;
+    position: absolute;
+    width: 100%;
+    height: 600px
+  }
+  
+  header {
+    line-height: 64px;
+  }
+  
+  form {
+    width: 35rem;
+    margin: 3rem auto;
+    background-color: white;
+    border-radius: .5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    min-height: 25rem;
+    -webkit-animation: fade-in .4s ease-out forwards;
+            animation: fade-in .4s ease-out forwards;
+  }
+
+  a,
+  a:hover,
+  a:link {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  a.explicit-link {
+    color: #807F91;
+    text-decoration: underline;
+  }
+  .button {
+    border: none;
+    border-radius: .3rem;
+    padding: .7rem 2.5rem;
+    color: white;
+    font-size: 85%;
+    box-shadow: 0 17px 15px -10px rgba(0, 0, 0, 0.2);
+    outline: none;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    font-family: inherit;
+    transition: box-shadow .1s linear;
+  }
+  .button.is-purple {
+    background: linear-gradient(to right, #A972CF, #7052AC);
+  }
+  .button.is-purple:hover {
+    background: linear-gradient(to right, #9d5fc9, #654a9b);
+    box-shadow: 0 24px 20px -15px rgba(0, 0, 0, 0.2);
+  }
+  .button.is-purple:focus {
+    background: linear-gradient(to right, #924cc2, #5a4289);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  }
+  .button.is-gray {
+    background: linear-gradient(to right, #EAEFF3, #cad6e0);
+    color: #807F91;
+  }
+  .button.is-gray:hover {
+    background: linear-gradient(to right, #dae3ea, #b9cad7);
+    box-shadow: 0 24px 20px -15px rgba(0, 0, 0, 0.2);
+    color: white;
+  }
+  .button.is-gray:focus {
+    background: linear-gradient(to right, #cad6e0, #a9bece);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    color: white;
+  }
+  .button.is-red {
+    background-color: #F27D86;
+  }
+  .button.is-red:hover {
+    background-color: #f06670;
+    box-shadow: 0 24px 20px -15px rgba(0, 0, 0, 0.2);
+  }
+  .button.is-red:focus {
+    background-color: #ed4f5b;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .button.btn-validate {
+    display: inline-block;
+    margin: .5em auto;
+  }
+  
+  .microphone {
+    background-color: white;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    color: #30304C;
+    margin: 0;
+    border: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    -webkit-transform: translateY(-1.75rem);
+            transform: translateY(-1.75rem);
+    outline: none;
+    transition: all .1s linear;
+  }
+  .microphone:hover, .microphone:focus {
+    background-color: #EAEFF3;
+    box-shadow: 0 13px 15px -5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .form-group {
+    position: relative;
+  }
+  
+  .form-help {
+    margin: 0;
+    font-size: 80%;
+    color: #C0C0C8;
+  }
+  
+  .form-error {
+    margin: 0;
+    font-size: 80%;
+    color: #F27D86;
+  }
+  
+  .required {
+    color: #F27D86;
+  }
+  
+  .form-addon {
+    position: absolute;
+    right: 1rem;
+    top: .85rem;
+    color: #71CF6E;
+    opacity: 0;
+    transition: opacity .2s linear;
+  }
+  
+  .form-control {
+    border: 1px solid #fff;
+    border-radius: .3rem;
+    padding: .8rem 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+    width: 100%;
+    outline: none;
+    margin-bottom: .4rem;
+    color: #807F91;
+    font-family: inherit;
+    transition: box-shadow .1s linear;
+  }
+  .form-control:hover, .form-control:focus {
+    box-shadow: 0 7px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .form-control:valid + .form-addon {
+    opacity: 1;
+  }
+  
+ 
+  label {
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    display: block;
+  }
+  
+  .container {
+    overflow: hidden;
+  }
+  .container > .slider {
+    display: flex;
+    transition: -webkit-transform .25s ease-out;
+    transition: transform .25s ease-out;
+    transition: transform .25s ease-out, -webkit-transform .25s ease-out;
+  }
+  
+  .section {
+    padding: 2rem;
+    flex: 0 0 35rem;
+  }
+  
+  #progress-bar {
+    width: 100%;
+    height: .2rem;
+    background-color: #EAEFF3;
+    position: relative;
+  }
+  
+  #progress-bar-inner {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: width .2s ease-out;
+    background: linear-gradient(to right, #F27D86, #B978C8);
+  }
+  
+  #password-strength-meter {
+    width: 70%;
+    background-color: #EAEFF3;
+    height: .3rem;
+    margin: 1rem auto;
+  }
+  #password-strength-meter[data-strength="1"] #password-strength-meter-inner {
+    width: 25%;
+    background-color: #F27D86;
+  }
+  #password-strength-meter[data-strength="2"] #password-strength-meter-inner {
+    width: 50%;
+    background-color: orange;
+  }
+  #password-strength-meter[data-strength="3"] #password-strength-meter-inner {
+    width: 75%;
+    background-color: #C6B453;
+  }
+  #password-strength-meter[data-strength="4"] #password-strength-meter-inner {
+    width: 100%;
+    background-color: #71CF6E;
+  }
+  
+  #password-strength-meter-inner {
+    background-color: transparent;
+    height: 100%;
+    transition: width .2s ease-out, background-color .1s linear;
+  }
+  
+  #footer {
+    position: fixed;
+    bottom: 0;
+    background-color: white;
+    padding: 0 1rem;
+    font-size: 80%;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  @-webkit-keyframes fade-in {
+    0% {
+      -webkit-transform: translateY(1rem);
+              transform: translateY(1rem);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fade-in {
+    0% {
+      -webkit-transform: translateY(1rem);
+              transform: translateY(1rem);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      opacity: 1;
+    }
+  }
+    
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <form action="/" method="POST">
+      <header>
+        &nbsp;       
+        <div id="progress-bar">
+          <div id="progress-bar-inner"></div>
+        </div>
+      </header>
+      
+      
+      <div class="container">
+        <div class="slider">
+          <section class="section">
+            <h1>Welcome, You've signed up QNAP College. Please validate your email by visiting the link: </h1>
+            <a type="button" class="button is-purple btn-validate" data-action="next" target="_blank" href="${this.validation_address}">Click to Validate it!</a>
+            <p>or copy the link below to your browser's address field</p>
+            <a href="${this.validation_address}" target="_blank" class='explicit-link'>${this.validation_address}</a>
+          </section>
+        </div>
+      </div>
+    </form>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+  </div>
+</body>

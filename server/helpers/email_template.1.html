@@ -1,0 +1,294 @@
+<style>
+  :root {
+    font: 400 18px/1.5 "Open Sans", system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, "Fira Sans", Helvetica Neue, sans-serif;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  h1, h2, label {
+    font-family: "Nunito", system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, "Fira Sans", Helvetica Neue, sans-serif;
+    font-weight: 700;
+    color: #30304C;
+  }
+  
+  h1, h2 {
+    line-height: 1.25;
+  }
+  
+  p {
+    color: #807F91;
+  }
+  
+  html {
+    min-height: 100vh;
+  }
+  
+  .email-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right bottom, #F27D86, #B978C8, #9379F8) center/cover no-repeat;
+  }
+  
+  
+  form {
+    width: 35rem;
+    margin: 3rem auto;
+    background-color: white;
+    border-radius: .5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    min-height: 25rem;
+    -webkit-animation: fade-in .4s ease-out forwards;
+            animation: fade-in .4s ease-out forwards;
+  }
+  
+  .button {
+    border: none;
+    border-radius: .3rem;
+    padding: .7rem 2.5rem;
+    color: white;
+    font-size: 85%;
+    box-shadow: 0 17px 15px -10px rgba(0, 0, 0, 0.2);
+    outline: none;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    font-family: inherit;
+    transition: box-shadow .1s linear;
+  }
+  .button.is-purple {
+    background: linear-gradient(to right, #A972CF, #7052AC);
+  }
+  .button.is-purple:hover {
+    background: linear-gradient(to right, #9d5fc9, #654a9b);
+    box-shadow: 0 24px 20px -15px rgba(0, 0, 0, 0.2);
+  }
+  .button.is-purple:focus {
+    background: linear-gradient(to right, #924cc2, #5a4289);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  }
+  .button.is-gray {
+    background: linear-gradient(to right, #EAEFF3, #cad6e0);
+    color: #807F91;
+  }
+  .button.is-gray:hover {
+    background: linear-gradient(to right, #dae3ea, #b9cad7);
+    box-shadow: 0 24px 20px -15px rgba(0, 0, 0, 0.2);
+    color: white;
+  }
+  .button.is-gray:focus {
+    background: linear-gradient(to right, #cad6e0, #a9bece);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    color: white;
+  }
+  .button.is-red {
+    background-color: #F27D86;
+  }
+  .button.is-red:hover {
+    background-color: #f06670;
+    box-shadow: 0 24px 20px -15px rgba(0, 0, 0, 0.2);
+  }
+  .button.is-red:focus {
+    background-color: #ed4f5b;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .microphone {
+    background-color: white;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    color: #30304C;
+    margin: 0;
+    border: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    -webkit-transform: translateY(-1.75rem);
+            transform: translateY(-1.75rem);
+    outline: none;
+    transition: all .1s linear;
+  }
+  .microphone:hover, .microphone:focus {
+    background-color: #EAEFF3;
+    box-shadow: 0 13px 15px -5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .form-group {
+    position: relative;
+  }
+  
+  .form-help {
+    margin: 0;
+    font-size: 80%;
+    color: #C0C0C8;
+  }
+  
+  .form-error {
+    margin: 0;
+    font-size: 80%;
+    color: #F27D86;
+  }
+  
+  .required {
+    color: #F27D86;
+  }
+  
+  .form-addon {
+    position: absolute;
+    right: 1rem;
+    top: .85rem;
+    color: #71CF6E;
+    opacity: 0;
+    transition: opacity .2s linear;
+  }
+  
+  .form-control {
+    border: 1px solid #fff;
+    border-radius: .3rem;
+    padding: .8rem 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+    width: 100%;
+    outline: none;
+    margin-bottom: .4rem;
+    color: #807F91;
+    font-family: inherit;
+    transition: box-shadow .1s linear;
+  }
+  .form-control:hover, .form-control:focus {
+    box-shadow: 0 7px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+  .form-control:valid + .form-addon {
+    opacity: 1;
+  }
+  
+  label {
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    display: block;
+  }
+  
+  .container {
+    overflow: hidden;
+  }
+  .container > .slider {
+    display: flex;
+    transition: -webkit-transform .25s ease-out;
+    transition: transform .25s ease-out;
+    transition: transform .25s ease-out, -webkit-transform .25s ease-out;
+  }
+  
+  .section {
+    padding: 2rem;
+    flex: 0 0 35rem;
+  }
+  
+  #progress-bar {
+    width: 100%;
+    height: .2rem;
+    background-color: #EAEFF3;
+    position: relative;
+  }
+  
+  #progress-bar-inner {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: width .2s ease-out;
+    background: linear-gradient(to right, #F27D86, #B978C8);
+  }
+  
+  #password-strength-meter {
+    width: 70%;
+    background-color: #EAEFF3;
+    height: .3rem;
+    margin: 1rem auto;
+  }
+  #password-strength-meter[data-strength="1"] #password-strength-meter-inner {
+    width: 25%;
+    background-color: #F27D86;
+  }
+  #password-strength-meter[data-strength="2"] #password-strength-meter-inner {
+    width: 50%;
+    background-color: orange;
+  }
+  #password-strength-meter[data-strength="3"] #password-strength-meter-inner {
+    width: 75%;
+    background-color: #C6B453;
+  }
+  #password-strength-meter[data-strength="4"] #password-strength-meter-inner {
+    width: 100%;
+    background-color: #71CF6E;
+  }
+  
+  #password-strength-meter-inner {
+    background-color: transparent;
+    height: 100%;
+    transition: width .2s ease-out, background-color .1s linear;
+  }
+  
+  #footer {
+    position: fixed;
+    bottom: 0;
+    background-color: white;
+    padding: 0 1rem;
+    font-size: 80%;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  @-webkit-keyframes fade-in {
+    0% {
+      -webkit-transform: translateY(1rem);
+              transform: translateY(1rem);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fade-in {
+    0% {
+      -webkit-transform: translateY(1rem);
+              transform: translateY(1rem);
+      opacity: 0;
+    }
+    100% {
+      -webkit-transform: translateY(0);
+              transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  </style>
+  <div class="email-container">
+    <form action="/" method="POST">
+      <header>
+        <button type="button" class="microphone" data-mute>
+          <svg width="20" height="20">
+            <use xlink:href="#muted"></use>
+          </svg>
+        </button>
+        
+        <div id="progress-bar">
+          <div id="progress-bar-inner"></div>
+        </div>
+      </header>
+      
+      
+      <div class="container">
+        <div class="slider">
+          <section class="section" data-section data-message="Hey there! Welcome to the sign up form for our amazing app. I will assist you to create a new account. If you don't want my help, you can mute me at any time with the button that is on top of the form. To start, click the button below.">
+            <h1>Hey there! Welcome to our amazing app. Are you ready to sign up?</h1>
+            <button type="button" class="button is-purple" data-action="next">Yes, let's start!</button>
+          </section>
+        </div>
+      </div>
+    </form>
+  </div>

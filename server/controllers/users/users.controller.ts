@@ -48,12 +48,13 @@ export class UserController extends Controller {
         if (error) {
           // console.log(error);
           if(error.code == ResponseCode.DUPLICATE_RECORD){
-            reject(new ErrorResponse(false, 'The user already exists', ResponseCode.USER_CREATION_FAIL));
+            return reject(new ErrorResponse(false, 'The user already exists', ResponseCode.USER_CREATION_FAIL));
           }
           else {
-            reject(new ErrorResponse(false, error.message, ResponseCode.USER_CREATION_FAIL));
+            return reject(new ErrorResponse(false, error.message, ResponseCode.USER_CREATION_FAIL));
           }
         }
+
         const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
 
         email_token.save((err) => {
@@ -69,7 +70,7 @@ export class UserController extends Controller {
         }, (reason) => {
           console.log(reason);
         })
-        resolve(new UserCreationResponse(true, 'Successfully created a user', email_token));
+        return resolve(new UserCreationResponse(true, 'Successfully created a user', email_token));
       });
     });
   }
