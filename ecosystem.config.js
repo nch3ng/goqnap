@@ -25,7 +25,7 @@ module.exports = {
       'post-setup': 'npm install --unsafe-perm',
       'pre-deploy-local' : '',
       'pre-deploy' : 'npm run routes; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5',
-      'post-deploy' : 'cp ~/environment/goqnap/.env ./;sudo pm2 startOrRestart ecosystem.config.js --env production;sudo cp ../../qnapusa/public/ . -a; sudo chown -R deploy:deploy node_modules',
+      'post-deploy' : 'cp ~/environment/goqnap/.env ./; cp ./server/helpers/email.html dist/helpers/;sudo pm2 restart ecosystem.config.js --env production;sudo cp ../../qnapusa/public/ . -a; sudo chown -R deploy:deploy node_modules',
     }
   }
 };
