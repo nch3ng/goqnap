@@ -20,12 +20,23 @@ export function expressAuthentication(request: express.Request, securityName: st
           // Check if JWT contains all required scopes
           if (scopes && scopes.length !== 0) {
             let valid = false;
-            
-            for (const scope of scopes) {
-              if (decoded.scopes.includes(scope)) {
-                valid = true;
+            // console.log(typeof parseInt(scopes[0]))
+            const level:any = parseInt(scopes[0]);
+            console.log('level: ', level);
+            console.log(decoded.scopes);
+            if (typeof level === 'number' ){
+              if (decoded.scopes && decoded.scopes.level) {
+                // console.log('User level: ', decoded.scopes.level);
+                // console.log('Security level: ', level);
+                if (decoded.scopes.level >= level)
+                  valid = true;
               }
-            }
+            } 
+            // for (const scope of scopes) {
+            //   if (decoded.scopes.includes(scope)) {
+            //     valid = true;
+            //   }
+            // }
             if (!valid)
               return reject(new AuthResponseError(false, 'You are not authorized.'));
           }

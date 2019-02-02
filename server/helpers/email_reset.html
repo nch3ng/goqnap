@@ -1,0 +1,39 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="box-sizing: border-box; font: 400 18px/1.5 'Open Sans', system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, 'Fira Sans', Helvetica Neue, sans-serif; min-height: 100vh;">
+<head>
+<title>Reset Your Password</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0 ">
+
+</head>
+<body style="box-sizing: border-box; height: 600px;">
+  <div class="email-container" style="box-sizing: border-box; background: linear-gradient(to right bottom, #F27D86, #B978C8, #9379F8) center/cover no-repeat; top: 0; left: 0; margin: 0; padding-top: 3em; position: absolute; width: 100%; height: 600px;">
+    <form action="/" method="POST" style="box-sizing: border-box; width: 35rem; margin: 3rem auto; background-color: white; border-radius: .5rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); text-align: center; position: relative; min-height: 25rem; -webkit-animation: fade-in .4s ease-out forwards; animation: fade-in .4s ease-out forwards;">
+      <header style="box-sizing: border-box; line-height: 64px;">
+        &nbsp;       
+        <div id="progress-bar" style="box-sizing: border-box; width: 100%; height: .2rem; background-color: #EAEFF3; position: relative;">
+          <div id="progress-bar-inner" style="box-sizing: border-box; height: 100%; position: absolute; left: 0; top: 0; transition: width .2s ease-out; background: linear-gradient(to right, #F27D86, #B978C8);"></div>
+        </div>
+      </header>
+      
+      
+      <div class="container" style="box-sizing: border-box; overflow: hidden;">
+        <div class="slider" style="box-sizing: border-box; display: flex; transition: -webkit-transform .25s ease-out; transition: transform .25s ease-out; transition: transform .25s ease-out, -webkit-transform .25s ease-out;">
+          <section class="section" style="box-sizing: border-box; padding: 2rem; flex: 0 0 35rem;">
+            <h1 style="box-sizing: border-box; font-family: 'Nunito', system-ui, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, 'Fira Sans', Helvetica Neue, sans-serif; font-weight: 200; color: #30304C; margin-bottom: 1em; line-height: 1.25;">Hi, Your password has been reset, please click the link to create new password: </h1>
+            <a type="button" class="button is-purple btn-validate" data-action="next" target="_blank" href="${this.validation_address}" style="box-sizing: border-box; text-decoration: none; border: none; border-radius: .3rem; padding: .7rem 2.5rem; color: white; font-size: 85%; box-shadow: 0 17px 15px -10px rgba(0, 0, 0, 0.2); outline: none; text-transform: uppercase; margin-top: 1rem; font-family: inherit; transition: box-shadow .1s linear; background: linear-gradient(to right, #A972CF, #7052AC); display: inline-block; margin: .5em auto;">Click to create the password!</a>
+            <p style="box-sizing: border-box; color: #807F91;">or copy the link below to your browser's address field</p>
+            <a href="${this.validation_address}" target="_blank" class="explicit-link" style="box-sizing: border-box; color: #807F91; text-decoration: underline;">${this.validation_address}</a>
+          </section>
+        </div>
+      </div>
+    </form>
+    <div style="box-sizing: border-box;">&nbsp;</div>
+    <div style="box-sizing: border-box;">&nbsp;</div>
+    <div style="box-sizing: border-box;">&nbsp;</div>
+    <div style="box-sizing: border-box;">&nbsp;</div>
+  </div>
+</body></html>

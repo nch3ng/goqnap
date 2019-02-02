@@ -10,7 +10,7 @@ import { reject } from 'q';
 @Route('roles')
 export class RolesController extends Controller {
 
-  @Security('JWT', ['super admin', 'admin'])
+  @Security('JWT', ['9'])
   @Get()
   public async all(): Promise<Role []> {
     return new Promise<Role []>((resolve, reject) => {
@@ -30,7 +30,7 @@ export class RolesController extends Controller {
 
 @Route('role')
 export class RoleController extends Controller {
-  @Security('JWT', ['super admin'])
+  @Security('JWT', ['super '])
   @Post()
   public async create(@Body() requestBody: any): Promise<any> {
     console.log("Create role: ", requestBody)
@@ -66,7 +66,7 @@ export class RoleController extends Controller {
     });
   }
 
-  @Security('JWT', ['super admin'])
+  @Security('JWT', ['10'])
   @Delete('{name}')
   public async delete(@Path() name: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
@@ -74,7 +74,7 @@ export class RoleController extends Controller {
     });
   }
 
-  @Security('JWT', ['super admin'])
+  @Security('JWT', ['10'])
   @Put('{name}')
   public async update(@Path() name: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {

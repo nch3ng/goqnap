@@ -1,5 +1,5 @@
 import { UserCreationResponse } from './../../models/user.model';
-import { Post, Body, Route, Get, Path, Delete, Security, Controller, Query, Put } from 'tsoa';
+import { Post, Body, Route, Get, Path, Delete, Security, Controller, Query, Put, Request } from 'tsoa';
 import { UserCreationRequest, User } from '../../models/user.model';
 import UserDB from './../../models/schemas/users.schema';
 import { ErrorResponse, GeneralResponse } from '../../models/response.model';
@@ -9,15 +9,19 @@ import Mail from '../../helpers/mail';
 import { Token } from '../../models/token';
 import * as ResponseCode from '../../codes/response';
 import Log from '../../models/log';
+import * as express from 'express';
 
 @Route('users')
 export class UsersController extends Controller {
 
-  @Security('JWT', ['super admin', 'admin'])
+  @Security('JWT', ['9'])
   @Get()
-  public async all(): Promise<User []> {
+  public async all(@Request() req: express.Request): Promise<User []> {
+    console.log('get all users');
+    const level = req.user.decoded.scopes.level
+    console.log(req.user.decoded.scopes);
     return new Promise<User []>((resolve, reject) => {
-      const promise = UserDB.find({}).select('-salt -hash');
+      const promise = UserDB.find({ 'role.level': { $lte: level } }).select('-salt -hash');
       promise.then(
         (users: User []) => {
           if (!users) {
@@ -33,7 +37,7 @@ export class UsersController extends Controller {
 
 @Route('user')
 export class UserController extends Controller {
-  @Security('JWT', ['super admin'])
+  @Security('JWT', ['10'])
   @Post()
   public async create(@Body() requestBody: UserCreationRequest): Promise<UserCreationResponse> {
     return new Promise<UserCreationResponse>((resolve, reject) => {
@@ -44,7 +48,15 @@ export class UserController extends Controller {
       if (!requestBody.name) {
         return reject(new ErrorResponse(false, 'Name can not be empty', ResponseCode.USER_CREATION_FAIL));
       }
-      UserDB.create({ email: requestBody.email, name: requestBody.name, isVerified: false, hasPasswordBeenSet: false }, (error, user) => {
+      UserDB.create({ 
+        email: requestBody.email, 
+        name: requestBody.name, 
+        isVerified: false, 
+        hasPasswordBeenSet: false,
+        role: {
+          name: 'normal',
+          level: 1
+        } }, (error, user) => {
         if (error) {
           // console.log(error);
           if(error.code == ResponseCode.DUPLICATE_RECORD){
@@ -96,7 +108,7 @@ export class UserController extends Controller {
     });
   }
 
-  @Security('JWT', ['super admin'])
+  @Security('JWT', ['10'])
   @Delete('{id}')
   public async delete(@Path() id: string): Promise<UserCreationResponse> {
     return new Promise<UserCreationResponse>((resolve, reject) => {
@@ -227,15 +239,20 @@ export class UserController extends Controller {
     })
   }
 
-  @Security('JWT', ['super admin'])
+  @Security('JWT', ['10'])
   @Put('set_role/{id}')
   public async set_role(@Body() requestBody: { role: string }, @Path() id: string ): Promise<GeneralResponse> {
+    const roles = {
+      'super admin': 10,
+      'admin': 9,
+      'normal': 1
+    }
     return new Promise<GeneralResponse>((resolve, reject) => {
       if (!requestBody.role) {
         return reject(new GeneralResponse(false, "Please specify the role name", ResponseCode.GENERAL_ERROR));
       }
 
-      UserDB.findOneAndUpdate({_id: id}, { $set: { role: requestBody.role }}, (err, user) => {
+      UserDB.findOneAndUpdate({_id: id}, { $set: { role: { name: requestBody.role, level: roles[requestBody.role] }}}, (err, user) => {
         if (err) {
           return reject(new GeneralResponse(false, "Oops, something went wrong!", ResponseCode.GENERAL_ERROR));
         }

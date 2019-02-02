@@ -13,7 +13,7 @@ require.extensions['.html'] = function (module, filename) {
     module.exports = fs.readFileSync(filename, 'utf8');
 };
 
-const templateString = require('./email.html');
+// const templateString = require('./email.html');
 // const templateString = "Hello, ${this.validation_address}";
 
 class Mail {
@@ -24,7 +24,13 @@ class Mail {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     // this.email = fillTemplate(html_template, {validation_address: 'http://test.com'});
   }
-  sendConfirmation(email: string, user_id: string, token: string) {
+  sendConfirmation(email: string, user_id: string, token: string, type?: string) {
+    let templateString: string;
+    if (!type || type == 'validation')
+      templateString = require('./email_validation.html');
+    else {
+      templateString = require('./email_reset.html');
+    }
     this.templateVars = {
       validation_address: process.env.HOST + '/user/verification/' + user_id + '?token=' + token
     }

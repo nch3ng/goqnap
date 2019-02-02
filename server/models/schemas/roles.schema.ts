@@ -1,9 +1,18 @@
 import * as mongoose from 'mongoose';
 
-const roleSchema = new mongoose.Schema({
-  name: String,
-  level: Number,
-  desc: Number
+export const roleSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    default: 'normal'
+  },
+  level: {
+    type: Number,
+    default: 1
+  },
+  desc: {
+    type: String,
+    default: 'Normal User'
+  }
 });
 
 const Role = mongoose.model('Role', roleSchema);

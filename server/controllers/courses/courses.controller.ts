@@ -259,7 +259,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('JWT', ['super admin', 'admin'])
+  @Security('JWT', ['9'])
   @Post()
   public addCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse | ErrorResponse> {
     return new Promise<UserCourseResponse | ErrorResponse>((resolve, reject) => {
@@ -304,7 +304,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('JWT', ['super admin', 'admin'])
+  @Security('JWT', ['9'])
   @Put()
   public async updateCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     const course = new Course();
@@ -329,7 +329,7 @@ export class CoursesController extends Controller {
     });
   }
 
-  @Security('JWT', ['super admin', 'admin'])
+  @Security('JWT', ['9'])
   @Delete('{id}')
     public async deleteCourse(@Path() id: String, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
       // console.log('Delete a course id');

@@ -1,3 +1,4 @@
+import { roleSchema } from './roles.schema';
 import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
@@ -23,9 +24,17 @@ const userSchema = new mongoose.Schema({
     default: false
   },
   role: {
-    type: String,
-    default: 'normal'
+    type: roleSchema,
+    default: () => {
+      return {
+        name: 'normal',
+        level: 1,
+        desc: 'Normal User'
+      }
+    }
   }
+  
+
 });
 
 userSchema.methods.setPassword = function(password){
