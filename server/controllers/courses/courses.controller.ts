@@ -12,7 +12,7 @@ import * as nodeExcel from 'excel-export';
 import * as ResCode from '../../codes/response';
 import UserDB from '../../models/schemas/users.schema';
 
-const propertyOf = <TObj>(name: keyof TObj) => name;
+// const propertyOf = <TObj>(name: keyof TObj) => name;
 
 @Route('courses')
 export class CoursesController extends Controller {
@@ -278,7 +278,7 @@ export class CoursesController extends Controller {
     return new Promise<UserCourseResponse | ErrorResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
-      console.log(course);
+      // console.log(course);
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
         reject(new ErrorResponse(false, paramChecked + ' is required', ResCode.GENERAL_ERROR));
@@ -337,7 +337,7 @@ export class CoursesController extends Controller {
       remove: null,        // regex to remove characters
       lower: true          // result in lower case
     })
-    console.log(course);
+    // console.log(course);
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
