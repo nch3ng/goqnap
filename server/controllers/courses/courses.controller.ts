@@ -139,8 +139,8 @@ export class CoursesController extends Controller {
     return new Promise<GeneralResponse>((resolve, reject) => {
       const last7days = new Date().getTime() - 7 * 60 * 60 * 24 * 1000;
       const last30days = new Date().getTime() - 30 * 60 * 60 * 24 * 1000;
-      console.log(startDate);
-      console.log(endDate);
+      // console.log(startDate);
+      // console.log(endDate);
       const request = this.getClickPromise(startDate, endDate);
       const promise = CourseClickDB.aggregate(request);
 
@@ -211,6 +211,7 @@ export class CoursesController extends Controller {
 
   @Get('s/{slug}')
   public async getCourseBySlug(@Path() slug: string): Promise<Course> {
+    // console.log('get course by slug')
     return new Promise<Course>((resolve, reject) => {
       const promise = CourseDB.findOne({slug: slug});
       promise.then(
@@ -277,6 +278,7 @@ export class CoursesController extends Controller {
     return new Promise<UserCourseResponse | ErrorResponse>((resolve, reject) => {
       const course = new CourseDB();
       Object.assign(course, requestBody);
+      console.log(course);
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
         reject(new ErrorResponse(false, paramChecked + ' is required', ResCode.GENERAL_ERROR));
@@ -335,7 +337,7 @@ export class CoursesController extends Controller {
       remove: null,        // regex to remove characters
       lower: true          // result in lower case
     })
-    console.log('SLUG: ', course.slug)
+    console.log(course);
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
@@ -431,7 +433,8 @@ export class CoursesController extends Controller {
       favoriteCount: +youtube_info.favoriteCount,
       dislike: +youtube_info.dislike,
       like: +youtube_info.like,
-      watched: +youtube_info.watched
+      watched: +youtube_info.watched,
+      slide_link: course.slide_link
     }}, { new: true});
   }
 
@@ -503,7 +506,7 @@ export class CoursesController extends Controller {
       { prop: 'desc', text: 'desc'},
       { prop: 'keywords', text: 'keywords'},
       { prop: 'category', text: 'category'},
-      { prop: 'youtube_ref', text: 'youtube reference'}
+      { prop: 'youtube_ref', text: 'youtube reference'},
     ];
     for (const prop of properties) {
       if (!requestBody[prop.prop]) {
