@@ -60,6 +60,11 @@ const courseSchema = new mongoose.Schema({
   commentCount: {
     type: Number,
     default: 0
+  },
+  slug: {
+    type: String,
+    default: '',
+    unique: true
   }
 });
 courseSchema.plugin(mongoosePaginate);

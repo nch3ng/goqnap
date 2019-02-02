@@ -18,6 +18,7 @@ export class Course implements ICourse {
   favoriteCount?: number;
   duration?: string;
   commentCount?: number;
+  slug: string;
 
   constructor() {
     this.title = 'QNAP Tutorial Video';
@@ -33,6 +34,7 @@ export class Course implements ICourse {
     this.favoriteCount = 0;
     this.duration = '';
     this.commentCount = 0;
+    this.slug = 'qnap-tutorial-video';
   }
 }
 

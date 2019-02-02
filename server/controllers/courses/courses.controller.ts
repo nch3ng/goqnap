@@ -10,6 +10,7 @@ import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
 import * as nodeExcel from 'excel-export';
 import * as ResCode from '../../codes/response';
+import UserDB from '../../models/schemas/users.schema';
 
 const propertyOf = <TObj>(name: keyof TObj) => name;
 
@@ -208,6 +209,17 @@ export class CoursesController extends Controller {
     });
   }
 
+  @Get('s/{slug}')
+  public async getCourseBySlug(@Path() slug: string): Promise<Course> {
+    return new Promise<Course>((resolve, reject) => {
+      const promise = CourseDB.findOne({slug: slug});
+      promise.then(
+        course => resolve(course)).catch(
+        error => reject(new ErrorResponse(false, 'Couldn\'t find the course.', ResCode.GENERAL_ERROR))
+      );
+    });
+  }
+
   @Get('{youtubeRef}/youtubeinfo')
   public async getYoutubeInfo(youtubeRef: string): Promise<Course> {
     return new Promise<Course>((resolve, reject) => {
@@ -286,6 +298,8 @@ export class CoursesController extends Controller {
             reject(new ErrorResponse(false, 'The youtube reference does not exist.', ResCode.GENERAL_ERROR));
             return;
           }
+          const slugify = require('slugify');
+
           course.category = course.category.toLowerCase();
           course.publishedDate = youtube_info.publishedDate;
           course.commentCount = youtube_info.commentCount;
@@ -294,6 +308,12 @@ export class CoursesController extends Controller {
           course.dislike = youtube_info.dislike;
           course.like = youtube_info.like;
           course.watched = youtube_info.watched;
+          course.slug = slugify(course.title, {
+            replacement: '-',    // replace spaces with replacement
+            remove: null,        // regex to remove characters
+            lower: true          // result in lower case
+          })
+
           course.save(function (error) {
             if (error) {
               reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
@@ -309,6 +329,13 @@ export class CoursesController extends Controller {
   public async updateCourse(@Body() requestBody: UserCourseRequest, @Header('x-access-token') authorization: string): Promise<UserCourseResponse> {
     const course = new Course();
     Object.assign(course, requestBody);
+    const slugify = require('slugify');
+    course.slug = slugify(course.title, {
+      replacement: '-',    // replace spaces with replacement
+      remove: null,        // regex to remove characters
+      lower: true          // result in lower case
+    })
+    console.log('SLUG: ', course.slug)
     return new Promise<UserCourseResponse>((resolve, reject) => {
       const paramChecked = this.checkAddCourseParams(requestBody);
       if (paramChecked) {
@@ -351,6 +378,28 @@ export class CoursesController extends Controller {
       });
   }
 
+  @Security('JWT', ['10'])
+  @Post('create-slugs') 
+  public async createSlugs(@Header('x-access-token') authorization: string): Promise<GeneralResponse> {
+    const slugify = require('slugify');
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      CourseDB.find({}, (err, courses: any) => {
+        if(err) return reject(new GeneralResponse(false, 'Failed', ResCode.GENERAL_ERROR))
+
+        courses.map((course) => {
+          const slug = slugify(course.title, {
+            replacement: '-',    // replace spaces with replacement
+            remove: null,        // regex to remove characters
+            lower: true          // result in lower case
+          });
+          course.slug = slug;
+          course.save().then();
+        })
+      })
+      resolve(new GeneralResponse(true, 'Done', ResCode.GENERAL_SUCCESS));
+    });
+  }
+
   private getFindAndUpdateYoutubePromise(youtubeRef: string, item: any): Promise<Course> {
     return CourseDB.findOneAndUpdate(
       { youtube_ref: youtubeRef },
@@ -373,6 +422,7 @@ export class CoursesController extends Controller {
       code_name: course.code_name,
       keywords: course.keywords,
       desc: course.desc,
+      slug: course.slug,
       youtube_ref: course.youtube_ref,
       category: course.category,
       publishedDate: youtube_info.publishedDate,
