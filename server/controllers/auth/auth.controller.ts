@@ -70,6 +70,7 @@ export class AuthController {
                                         'You are logged in.', 
                                         token, 
                                         { 
+                                          _id: user._id,
                                           name: user.name, 
                                           email: user.email,
                                           role: user.role,
@@ -204,6 +205,7 @@ export class AuthController {
                                     'You are logged in.', 
                                     token, 
                                     { 
+                                      _id: user._id,
                                       name: user.name, 
                                       email: user.email,
                                       role: user.role,
@@ -302,6 +304,7 @@ export class AuthController {
                                     'You are logged in.', 
                                     token, 
                                     { 
+                                      _id: user._id,
                                       name: user.name, 
                                       email: user.email,
                                       role: user.role,

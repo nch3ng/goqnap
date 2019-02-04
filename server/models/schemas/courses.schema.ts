@@ -69,7 +69,13 @@ const courseSchema = new mongoose.Schema({
   slide_link: {
     type: String,
     default: ''
+  },
+  comments: {
+    type: Array,
+    default: []
   }
+}, {
+  usePushEach: true
 });
 courseSchema.plugin(mongoosePaginate);
 

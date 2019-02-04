@@ -20,6 +20,7 @@ export class Course implements ICourse {
   commentCount?: number;
   slug: string;
   slide_link: string;
+  comments: number [];
 
   constructor() {
     this.title = 'QNAP Tutorial Video';
@@ -37,6 +38,7 @@ export class Course implements ICourse {
     this.commentCount = 0;
     this.slug = 'qnap-tutorial-video';
     this.slide_link = '';
+    this.comments = []
   }
 }
 

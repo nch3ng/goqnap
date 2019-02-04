@@ -10,6 +10,7 @@ import { Token } from '../../models/token';
 import * as ResponseCode from '../../codes/response';
 import Log from '../../models/log';
 import * as express from 'express';
+import { resolve } from 'dns';
 
 @Route('users')
 export class UsersController extends Controller {
@@ -17,9 +18,9 @@ export class UsersController extends Controller {
   @Security('JWT', ['9'])
   @Get()
   public async all(@Request() req: express.Request): Promise<User []> {
-    console.log('get all users');
+    // console.log('get all users');
     const level = req.user.decoded.scopes.level
-    console.log(req.user.decoded.scopes);
+    // console.log(req.user.decoded.scopes);
     return new Promise<User []>((resolve, reject) => {
       const promise = UserDB.find({ 'role.level': { $lte: level } }).select('-salt -hash');
       promise.then(
@@ -266,5 +267,22 @@ export class UserController extends Controller {
         }
       })
     });
+  }
+
+  @Get('abvn/{id}')
+  public async get_abvn(@Path() id: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      console.log(id)
+      UserDB.findOne({_id: id}, (err, user) => {
+        if (err) return reject(new GeneralResponse(false, 'error', ResponseCode.GENERAL_ERROR))
+        let name = 'John Doe';
+        if (user)
+          name = user.name;
+
+        return resolve({
+          name: user.name.split(" ").map((n)=>n[0]).join("")
+        })
+      })
+    })
   }
 }
