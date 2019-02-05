@@ -1,9 +1,10 @@
 import { GeneralResponse } from './../../models/response.model';
 import { Comment } from './../../models/comment.model';
-import { Route, Controller, Get, Security, Request, Path } from 'tsoa';
+import { Route, Controller, Get, Security, Request, Path, Post } from 'tsoa';
 import * as express from 'express';
 import CommentDB from '../../models/schemas/comments';
 import * as ResponseCode from '../../codes/response';
+import CourseDB from '../../models/schemas/courses.schema';
 
 @Route('comments')
 export class CommentsController extends Controller {
@@ -28,5 +29,30 @@ export class CommentsController extends Controller {
           return resolve([]);
       })
     })
+  }
+
+  @Security('JWT', ['9'])
+  @Post('check')
+  checkComments(): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      CommentDB.find({}).then((comments) => {
+        for (let i = 0; i < comments.length; i++) {
+          console.log(comments[i].course_id)
+          CourseDB.findOne({_id: comments[i].course_id}).then((course) => {
+
+            if (!course) {
+              console.log('course doesn\'t exist')
+              comments[i].remove().then((comment) => {
+                console.log('removed');
+              })
+            }
+            else{
+            }
+          })
+        }
+
+        resolve(new GeneralResponse(true, "", ResponseCode.GENERAL_SUCCESS));
+      })
+    });
   }
 }

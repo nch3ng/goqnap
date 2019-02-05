@@ -1,5 +1,5 @@
 import { UserLoginResponse, AuthResponseError } from '../models/user.model';
-import { ErrorResponse } from '../models/response.model';
+import { ErrorResponse, GeneralResponse } from '../models/response.model';
 import * as ResponseCode from '../codes/response'
 
 export function errorHandler(error, req, res, next) {
@@ -8,7 +8,8 @@ export function errorHandler(error, req, res, next) {
       res.json(error);
     }
   } else if (res.statusCode === 500  || res.statusCode === 200) {
-    if (error instanceof ErrorResponse || 
+    if (error instanceof GeneralResponse ||
+        error instanceof ErrorResponse || 
         error instanceof UserLoginResponse || 
         error instanceof AuthResponseError) {
       res.status(500).json(error);

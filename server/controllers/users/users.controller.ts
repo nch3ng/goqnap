@@ -19,7 +19,7 @@ export class UsersController extends Controller {
   @Get()
   public async all(@Request() req: express.Request): Promise<User []> {
     // console.log('get all users');
-    const level = req.user.decoded.scopes.level
+    const level = req.user.decoded.scopes.level;
     // console.log(req.user.decoded.scopes);
     return new Promise<User []>((resolve, reject) => {
       const promise = UserDB.find({ 'role.level': { $lte: level } }).select('-salt -hash');

@@ -3,7 +3,7 @@ import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses.schema';
-import * as YouTube from 'youtube-node';
+import { YouTube } from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
@@ -226,9 +226,9 @@ export class CoursesController extends Controller {
     return new Promise<Course>((resolve, reject) => {
       const youTube = new YouTube();
       youTube.setKey(process.env.YOUTUBE_KEY);
-      youTube.getById(youtubeRef, (error, info) => {
+      youTube.getById(youtubeRef, (error: Error, info) => {
         if (error) {
-          reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
+          reject(new ErrorResponse(false, error.message, ResCode.GENERAL_ERROR));
         } else {
           const item = info.items[0];
           // console.log(item);
@@ -249,11 +249,11 @@ export class CoursesController extends Controller {
     return new Promise<YoutubeInfo>((resolve, reject) => {
       const youTube = new YouTube();
       youTube.setKey(process.env.YOUTUBE_KEY);
-      youTube.getById(youtubeRef, (error, info) => {
+      youTube.getById(youtubeRef, (error: Error, info) => {
         if (error) {
-          reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
+          reject(new ErrorResponse(false, error.message, ResCode.GENERAL_ERROR));
         } else {
-          const item = info.items[0];
+          const item:any = info.items[0];
           if (item) {
             resolve(
               new YoutubeInfo( item.contentDetails.duration,

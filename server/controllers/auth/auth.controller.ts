@@ -139,6 +139,10 @@ export class AuthController {
       FB.options({'scope': "public_profile,email,gender"});
       FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
         // console.log(res);
+        if (res.error) {
+          return reject(new ErrorResponse(false, 'Invalid Facebook Login', ResCode.GENERAL_ERROR));
+        }
+
         UserDB.findOne({'email' : res.email}, (error, user) => {
 
           if (error) {
@@ -223,7 +227,6 @@ export class AuthController {
       // console.log("[googleLogin]");
       // console.log("[googleLogin]", requestBody);
       const token = requestBody.accessToken;
-      // console.log("[googleLogin]", process.env.FB_APP_SECRET);
       const google_client_id = process.env.GOOGLE_CLIENT_ID;
       const client = new OAuth2Client(google_client_id);
       async function verify() {
@@ -316,7 +319,11 @@ export class AuthController {
         //const domain = payload['hd'];
       }
 
-      verify().catch(console.error);
+      verify().catch(
+        (error) => {
+          console.log('Catch Error!');
+          console.log(error);
+        });
     });
   }
 
