@@ -52,7 +52,7 @@ export class AuthController {
           user.hash = '';
           const role = [];
           role.push(user.role);
-          console.log(user.role);
+          // console.log(user.role);
           const token = jwt.sign({
             userID: user._id,
             email: user.email,
@@ -119,7 +119,7 @@ export class AuthController {
         });
 
         Log.create({message: `${user.name} registered in.`, userId: user._id, action: 'login'}).then((res) => {
-          console.log(res);
+          // console.log(res);
         }, (reason) => {
           console.log(reason);
         })
@@ -199,9 +199,9 @@ export class AuthController {
           });
 
           Log.create({message: `${user.name} is logged in via Facebook.`, userId: user._id, action: 'login'}).then((res) => {
-            console.log(res);
+            // console.log(res);
           }, (reason) => {
-            console.log(reason);
+            // console.log(reason);
           });
 
           resolve(
@@ -247,17 +247,14 @@ export class AuthController {
             return reject(new UserLoginResponse(false, error));
           }
   
-          // console.log(user);
           if (!user) {
             UserDB.create({ email: email, name: name, isVerified: true, hasPasswordBeenSet: false, role: {name: 'normal', level: 1} }, (error, user) => {
               if (error) {
-                // console.log(error);
                 return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
               }
 
               TokenDB.create({_userId: user._id, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
                 if (error) {
-                  // console.log(error);
                  return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
                 }
                 return resolve(new UserLoginResponse(true, "Need to create password", null, {
@@ -273,7 +270,6 @@ export class AuthController {
           if (!user.hasPasswordBeenSet) {
             TokenDB.create({_userId: user._id, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
               if (error) {
-                // console.log(error);
                return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
               }
               resolve(new UserLoginResponse(true, "Need to create password", null, {
@@ -297,9 +293,9 @@ export class AuthController {
           });
 
           Log.create({message: `${user.name} is logged in via Google.`, userId: user._id, action: 'login'}).then((res) => {
-            console.log(res);
+            // console.log(res);
           }, (reason) => {
-            console.log(reason);
+            // console.log(reason);
           });
 
           resolve(
@@ -351,7 +347,7 @@ export class AuthController {
 
           user.save((err) => {
             Log.create({message: `${user.name} has changed passwoord`, userId: user._id, action: 'change password'}).then((res) => {
-              console.log(res);
+              // console.log(res);
             }, (reason) => {
               console.log(reason);
             })
@@ -384,7 +380,7 @@ export class AuthController {
               mail.sendConfirmation(user.email, email_token._userId, email_token.token, 'reset');
 
               Log.create({message: `${user.name} reset email has been sent`, userId: user._id, action: 'reset password'}).then((res) => {
-                console.log(res);
+                // console.log(res);
               }, (reason) => {
                 console.log(reason);
               })
@@ -401,7 +397,6 @@ export class AuthController {
   @Get('check-tmp-state')
   public checkTmpState(@Query() token?: string): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve, reject) => {
-      console.log('check temp state', token);
       TokenDB.findOne({ token: token }).then(
         (token: Token) => {
           console.log(token)

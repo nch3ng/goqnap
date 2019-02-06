@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"qnapusa.tokens"},{"v":2,"key":{"createdAt":1},"name":"createdAt_1","ns":"qnapusa.tokens","expireAfterSeconds":30,"background":true}],"uuid":"02e8b45479194e4380d8cca4afd537de"}

@@ -225,7 +225,6 @@ describe('Courses', () => {
             expect(course.keywords).to.be.equal(request.body.keywords);
             expect(course.youtube_ref).to.be.equal(request.body.youtube_ref);
             expect(course.category).to.be.equal(request.body.category);
-
           }
         ).catch(
           (e) => {

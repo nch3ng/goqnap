@@ -3,15 +3,16 @@ import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses.schema';
-import { YouTube } from 'youtube-node';
+// import { YouTube } from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
 import * as nodeExcel from 'excel-export';
 import * as ResCode from '../../codes/response';
-import UserDB from '../../models/schemas/users.schema';
+// import UserDB from '../../models/schemas/users.schema';
 
+const YouTube = require('youtube-node');
 // const propertyOf = <TObj>(name: keyof TObj) => name;
 
 @Route('courses')
@@ -479,18 +480,18 @@ export class CoursesController extends Controller {
     KeywordDB.findOne({text: keyword}).then(
       (key) => {
         if (key) {
-          console.log('found it');
+          // console.log('found it');
           key.times = key.times + 1;
         }
         else {
-          console.log('not found it');
+          // console.log('not found it');
           key = new KeywordDB({text: keyword, times: 1});
         }
 
         key.save((err) => {
           if (err) return console.log(err);
 
-          console.log('saved');
+          // console.log('saved');
           // saved!
         });
       }

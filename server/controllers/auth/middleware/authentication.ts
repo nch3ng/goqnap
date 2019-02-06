@@ -22,8 +22,8 @@ export function expressAuthentication(request: express.Request, securityName: st
             let valid = false;
             // console.log(typeof parseInt(scopes[0]))
             const level:any = parseInt(scopes[0]);
-            console.log('level: ', level);
-            console.log(decoded.scopes);
+            // console.log('level: ', level);
+            // console.log(decoded.scopes);
             if (typeof level === 'number' ){
               if (decoded.scopes && decoded.scopes.level) {
                 // console.log('User level: ', decoded.scopes.level);

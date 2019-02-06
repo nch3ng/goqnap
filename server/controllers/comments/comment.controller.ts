@@ -31,7 +31,7 @@ export class CommentController extends Controller {
 
           const verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + recpatcha_secret + "&response=" + requestBody.recaptchaToken + "&remoteip=" + req.connection.remoteAddress;
           
-          console.log(verificationUrl);
+          // console.log(verificationUrl);
 
           request(verificationUrl,function(error,response,body) {
             body = JSON.parse(body);
@@ -87,7 +87,7 @@ export class CommentController extends Controller {
 
             
             if(course.comments === null) {
-              console.log(typeof course.comments);
+              // console.log(typeof course.comments);
               course.comments.push(comment._id)
             } else {
               // let comments;
@@ -131,12 +131,12 @@ export class CommentController extends Controller {
       promise.then((comment) => {
         if (comment) {
           const p = CourseDB.findOne({_id: comment.course_id})
-          console.log(comment);
+          // console.log(comment);
           p.then((course) => {
             
 
             if (course && course.comments) {
-              console.log(course.comments);
+            //  console.log (course.comments);
               for (let i = 0; i < course.comments.length; i++) {
                 if (course.comments[i] == cid) {
                   course.comments.slice(i, 1);
@@ -144,7 +144,7 @@ export class CommentController extends Controller {
               }
 
               course.save().then(() => {
-                console.log('Removed comment from the course');
+                // console.log('Removed comment from the course');
               });
             }
             resolve(new GeneralResponse(true, 'Successfully deleted the comment', ResponseCode.GENERAL_SUCCESS));

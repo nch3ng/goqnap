@@ -8,7 +8,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as path from 'path';
 import * as morgan from 'morgan';
-import * as cookieParser from 'cookie-parser';
+// import * as cookieParser from 'cookie-parser';
 // Controllers for tsoa routes
 import './controllers/courses/courses.controller';
 import './controllers/courses/categories.controller';
@@ -26,8 +26,9 @@ import { errorHandler } from './helpers/error.handler';
 
 const logger = require('./helpers/logger');
 const app = express();
-const env = process.env.NODE_ENV || 'development';
+// const env = process.env.NODE_ENV || 'development';
 const port = process.env.port || 3000;
+console.log("STARTING....");
 
 require('./models/db');
 

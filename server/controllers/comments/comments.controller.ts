@@ -37,13 +37,13 @@ export class CommentsController extends Controller {
     return new Promise<GeneralResponse>((resolve, reject) => {
       CommentDB.find({}).then((comments) => {
         for (let i = 0; i < comments.length; i++) {
-          console.log(comments[i].course_id)
+          // console.log(comments[i].course_id)
           CourseDB.findOne({_id: comments[i].course_id}).then((course) => {
 
             if (!course) {
-              console.log('course doesn\'t exist')
+              // console.log('course doesn\'t exist')
               comments[i].remove().then((comment) => {
-                console.log('removed');
+                // console.log('removed');
               })
             }
             else{
