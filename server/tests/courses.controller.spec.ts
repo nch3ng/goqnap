@@ -229,7 +229,6 @@ describe('Courses', () => {
         ).catch(
           (e) => {
             console.error(e);
-            console.log('aaadaedadad');
             // assert(false, e.message);
           }
         );

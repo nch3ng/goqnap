@@ -1,11 +1,11 @@
-import { PASSWORD_HAS_NOT_BEEN_CREATED } from './../../codes/response';
+// import { PASSWORD_HAS_NOT_BEEN_CREATED } from './../../codes/response';
 import { UserRegisterRequest, UserRegisterResponse, User, UserChangePasswordRequest, UserChangePasswordResponse } from './../../models/user.model';
 import UserDB from '../../models/schemas/users.schema';
 import TokenDB from '../../models/schemas/token.schema';
 import * as ResCode from '../../codes/response';
 import * as crypto from 'crypto';
 
-const env = process.env.NODE_ENV || 'development';
+// const env = process.env.NODE_ENV || 'development';
 // logger = require('../../logger');
 import * as jwt from 'jsonwebtoken';
 import { Route, Post, Body, Get, Security, Query, Path } from 'tsoa';
