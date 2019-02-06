@@ -16,7 +16,7 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: example
       DB_ADDRESS: db:27017
-      DB: qnapcollege-test
+      DB: qnapcollege-dev
       YOUTUBE_KEY: AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic
       secret: mdjaFKWUfykLFpslTeSdbzT3CBwF68wKEZ1deTBmAHL3YtLqqIAAbn8Ti45Ywbn
       expiry: 1
