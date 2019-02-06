@@ -16,13 +16,11 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: example
       DB_ADDRESS: db:27017
-      DB: qnapcollege-test
+      DB: qnapcollege-dev
       YOUTUBE_KEY: AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic
       secret: mdjaFKWUfykLFpslTeSdbzT3CBwF68wKEZ1deTBmAHL3YtLqqIAAbn8Ti45Ywbn
       expiry: 1
       user_expiry: 120
-      SENDGRID_API_KEY: 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
-      SENDGRID_KEYID: H2TUEisNQNG6AjfCxMLdTA
       HOST: http://localhost:4200
       FB_APP_SECRET: f49c8c6a12028b46ea8d47ea27b223ec
       GOOGLE_CLIENT_ID: 230327847455-22t14dhl2qde7n6c48c0r7c1keqengqb.apps.googleusercontent.com
@@ -72,8 +70,6 @@ services:
       secret: mdjaFKWUfykLFpslTeSdbzT3CBwF68wKEZ1deTBmAHL3YtLqqIAAbn8Ti45Ywbn
       expiry: 1
       user_expiry: 120
-      SENDGRID_API_KEY: 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
-      SENDGRID_KEYID: H2TUEisNQNG6AjfCxMLdTA
       HOST: http://localhost:4200
       FB_APP_SECRET: f49c8c6a12028b46ea8d47ea27b223ec
       GOOGLE_CLIENT_ID: 230327847455-22t14dhl2qde7n6c48c0r7c1keqengqb.apps.googleusercontent.com
