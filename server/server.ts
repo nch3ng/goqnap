@@ -26,7 +26,7 @@ import { errorHandler } from './helpers/error.handler';
 
 const logger = require('./helpers/logger');
 const app = express();
-// const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'development';
 const port = process.env.port || 3000;
 console.log("STARTING....");
 
@@ -62,7 +62,7 @@ const httpServer = http.createServer(app);
 logger.info('CORS-enabled for all origins.  Listen: ' + port);
 httpServer.listen(port);
 
-if (process.env.ssl_enable) {
+if (process.env.ssl_enable && env == 'production') {
   const ssl_port = process.env.ssl_port || 9000;
   const credentials = {
     key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
