@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name      : 'goqnapcom',
+    name      : 'goqnapcom-staging',
     script    : 'dist/server.js',
     env: {
       NODE_ENV: 'production'
