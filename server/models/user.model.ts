@@ -58,6 +58,8 @@ export class UserRegisterRequest implements UserCreationRequest {
   email: string;
   password: string;
   name: string;
+  firstName: string;
+  lastName: string;
 }
 export class AuthResponseError {
   success: boolean;

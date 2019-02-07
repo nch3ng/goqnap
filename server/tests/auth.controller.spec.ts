@@ -45,7 +45,8 @@ describe('Authentication', () => {
       method: 'GET',
       url: '/signup',
       body: {
-        name: 'test',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'test@test.com',
         password:  '123456'
       }
@@ -75,7 +76,9 @@ describe('Authentication', () => {
       expect(uResponse.token).to.be.exist('token');
       expect(uResponse.payload).to.be.not.null('user object');
       expect(uResponse.payload.email).to.be.equal('test@test.com');
-      expect(uResponse.payload.name).to.be.equal('test');
+      expect(uResponse.payload.firstName).to.be.equal('John');
+      expect(uResponse.payload.lastName).to.be.equal('Doe');
+      expect(uResponse.payload.name).to.be.equal('John Doe');
       token = uResponse.token;
     });
   });
@@ -109,7 +112,7 @@ describe('Authentication', () => {
         expect(loginResponse.token).to.be.exist('token');
         expect(loginResponse.payload).to.be.not.null('user object');
         expect(loginResponse.payload.email).to.be.equal('test@test.com');
-        expect(loginResponse.payload.name).to.be.equal('test');
+        expect(loginResponse.payload.name).to.be.equal('John Doe');
         token = loginResponse.token;
       });
     })
