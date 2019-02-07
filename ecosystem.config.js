@@ -36,7 +36,7 @@ module.exports = {
       repo: 'git@github.com:qqnc/goqnap.git',
       path: '/var/www/goqnap/staging',
       env: {
-        NODE_ENV: 'production'
+        NODE_ENV: 'staging'
       },
       'pre-setup': 'sudo rm -rf /var/www/staging/source',
       'post-setup': 'npm install --unsafe-perm',
