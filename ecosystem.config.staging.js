@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name      : 'goqnapcom',
+    name      : 'goqnapcom-staging',
     script    : 'dist/server.js',
     env: {
       NODE_ENV: 'development'
@@ -34,7 +34,7 @@ module.exports = {
       winkey: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
       key: '~/.ssh/id_rsa_deploy_google_cloud',
       user: 'deploy',
-      host: ['35.239.145.166', 'staging-go.natecheng.me'],
+      host: ['go.qnap.com'],
       ref: 'origin/master',
       repo: 'git@github.com:qqnc/goqnap.git',
       path: '/var/www/goqnap/staging',
@@ -45,7 +45,7 @@ module.exports = {
       'post-setup': 'npm install --unsafe-perm',
       'pre-deploy-local' : '',
       'pre-deploy' : 'npm run routes; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5',
-      'post-deploy' : 'cp ~/environment/goqnap/staging/.env ./; cp ./server/helpers/email*.html dist/helpers/;sudo pm2 restart ecosystem.config.js --env staging;sudo cp ../../../qnapusa/public/ . -a; sudo chown -R deploy:deploy node_modules',
+      'post-deploy' : 'cp ~/environment/goqnap/staging/.env ./; cp ./server/helpers/email*.html dist/helpers/;sudo pm2 restart ecosystem.config.staging.js --env staging;sudo cp ../../../qnapusa/public/ . -a; sudo chown -R deploy:deploy node_modules',
     }
   }
 };
