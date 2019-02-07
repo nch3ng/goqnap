@@ -62,7 +62,7 @@ export class AuthController {
             expiresIn : 60 * 60 * process.env.expiry
           });
           Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
-            console.log(res);
+            // console.log(res);
           }, (reason) => {
             console.log(reason);
           })
@@ -72,6 +72,8 @@ export class AuthController {
                                         { 
                                           _id: user._id,
                                           name: user.name, 
+                                          firstName: user.firstName,
+                                          lastName: user.lastName,
                                           email: user.email,
                                           role: user.role,
                                           isVerified: user.isVerified,
@@ -88,7 +90,9 @@ export class AuthController {
     // console.log('Register: ');
     // console.log(requestBody);
 
-    user.name = requestBody.name;
+    user.name = requestBody.firstName + ' ' + requestBody.lastName; 
+    user.firstName = requestBody.firstName;
+    user.lastName = requestBody.lastName;
     user.email = requestBody.email;
 
     user.setPassword(requestBody.password);
@@ -138,7 +142,7 @@ export class AuthController {
       FB.options({'appSecret': process.env.FB_APP_SECRET});
       FB.options({'scope': "public_profile,email,gender"});
       FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
-        // console.log(res);
+        console.log(res);
         if (res.error) {
           return reject(new ErrorResponse(false, 'Invalid Facebook Login', ResCode.GENERAL_ERROR));
         }
@@ -213,6 +217,8 @@ export class AuthController {
                                       name: user.name, 
                                       email: user.email,
                                       role: user.role,
+                                      firstName: user.firstName,
+                                      lastName: user.lastName,
                                       isVerified: user.isVerified,
                                       hasPasswordBeenSet: user.hasPasswordBeenSet
                                     }));
@@ -237,10 +243,14 @@ export class AuthController {
             //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
         });
         const payload = ticket.getPayload();
+        // console.log(payload)
         const userid = payload['sub'];
 
         const email = payload['email'];
         const name = payload['name'];
+        const firstName = payload['given_name'];
+        const lastName = payload['family_name'];
+        const picture = payload['picture'];
         UserDB.findOne({'email' : email}, (error, user) => {
 
           if (error) {
@@ -248,7 +258,7 @@ export class AuthController {
           }
   
           if (!user) {
-            UserDB.create({ email: email, name: name, isVerified: true, hasPasswordBeenSet: false, role: {name: 'normal', level: 1} }, (error, user) => {
+            UserDB.create({ email: email, firstName: firstName, lastName: lastName, name: name, isVerified: true, hasPasswordBeenSet: false, role: {name: 'normal', level: 1} }, (error, user) => {
               if (error) {
                 return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
               }
@@ -306,6 +316,8 @@ export class AuthController {
                                       _id: user._id,
                                       name: user.name, 
                                       email: user.email,
+                                      firstName: user.firstName,
+                                      lastName: user.lastName,
                                       role: user.role,
                                       isVerified: user.isVerified,
                                       hasPasswordBeenSet: user.hasPasswordBeenSet

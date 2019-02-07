@@ -11,7 +11,18 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
-  name: String,
+  firstName: { 
+    type: String,
+    default: 'John'
+  },
+  lastName: { 
+    type: String,
+    default: 'Doe'
+  },
+  name: {
+    type: String,
+    default: 'John Doe'
+  },
   hash: String,
   salt: String,
   lastLoginAt: Date,

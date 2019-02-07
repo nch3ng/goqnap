@@ -5,6 +5,7 @@ import * as express from 'express';
 import CommentDB from '../../models/schemas/comments';
 import * as ResponseCode from '../../codes/response';
 import CourseDB from '../../models/schemas/courses.schema';
+import UserDB from '../../models/schemas/users.schema';
 
 @Route('comments')
 export class CommentsController extends Controller {
@@ -48,7 +49,16 @@ export class CommentsController extends Controller {
             }
             else{
             }
-          })
+          });
+          console.log('owner id', comments[i].owener_id);
+
+          UserDB.findOne({_id: comments[i].owener_id}).then((user) => {
+            if(!user) {
+              comments[i].remove().then((comment) => {
+                console.log('removed');
+              })
+            }
+          });
         }
 
         resolve(new GeneralResponse(true, "", ResponseCode.GENERAL_SUCCESS));
