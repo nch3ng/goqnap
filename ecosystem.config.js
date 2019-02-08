@@ -41,7 +41,7 @@ module.exports = {
       env: {
         NODE_ENV: 'staging'
       },
-      'pre-setup': 'sudo rm -rf /var/www/goqnap/staging/source',
+      'pre-setup': 'rm -rf /var/www/goqnap/staging/source',
       'post-setup': 'npm install --unsafe-perm',
       'pre-deploy-local' : '',
       'pre-deploy' : 'npm run routes; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5',
