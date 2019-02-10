@@ -34,7 +34,7 @@ module.exports = {
       winkey: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
       key: '~/.ssh/id_rsa',
       user: 'deploy',
-      host: ['staging-go.natecheng.me'],
+      host: ['68.4.6.13', 'staging-go.natecheng.me', '192.168.86.25'],
       ref: 'origin/master',
       repo: 'git@github.com:qqnc/goqnap.git',
       path: '/var/www/goqnap/staging',
