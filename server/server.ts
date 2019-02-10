@@ -62,13 +62,22 @@ const httpServer = http.createServer(app);
 logger.info('CORS-enabled for all origins.  Listen: ' + port);
 httpServer.listen(port);
 
-if (process.env.ssl_enable && env == 'production') {
-  const ssl_port = process.env.ssl_port || 9000;
-  const credentials = {
-    key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
-    cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),
-    ca: fs.readFileSync('/root/twca/uca.cer', 'utf8')
-  };
+if (process.env.ssl_enable) {
+  let ssl_port = process.env.ssl_port || 9000;
+  let credentials;
+  if (env == 'production') {
+    
+    credentials = {
+      key: fs.readFileSync('/root/twca/qnap_com.key', 'utf8'),
+      cert: fs.readFileSync('/root/twca/qnap_com.cer', 'utf8'),
+      ca: fs.readFileSync('/root/twca/uca.cer', 'utf8')
+    };
+  } else {
+    credentials = {
+      key: fs.readFileSync('/home/deploy/natecheng.me.key', 'utf8'),
+      cert: fs.readFileSync('/home/deploy/natecheng.me.cer', 'utf8')
+    };
+  }
 
   const httpsServer = https.createServer(credentials, app);
   logger.info('CORS-enabled for all origins.  Listen: ' + ssl_port);
