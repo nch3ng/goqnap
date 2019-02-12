@@ -15,7 +15,7 @@ export function errorHandler(error, req, res, next) {
       res.status(500).json(error);
     } else {
       // console.log(error);
-      res.status(500).json(new ErrorResponse(false, 'Oops, unknown error happrned.', ResponseCode.GENERAL_ERROR));
+      res.status(500).json(new ErrorResponse(false, error.message, ResponseCode.GENERAL_ERROR));
     }
   }
   next();

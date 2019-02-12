@@ -1,4 +1,4 @@
-import { Route, Controller, Get, Security, Request, Post, Body, Path, Delete } from 'tsoa';
+import { Route, Controller, Security, Request, Post, Body, Path, Delete } from 'tsoa';
 import * as express from 'express';
 import CommentDB from '../../models/schemas/comments';
 import { GeneralResponse } from '../../models/response.model';

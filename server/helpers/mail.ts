@@ -26,22 +26,30 @@ class Mail {
   }
   sendConfirmation(email: string, user_id: string, token: string, type?: string) {
     let templateString: string;
+    let reset:string = '';
+    let subject = "QNAP College: Validate your email address";
+    let text = 'Click the link to validate your email: ';
     if (!type || type == 'validation')
       templateString = require('./email_validation.html');
     else {
       templateString = require('./email_reset.html');
+      reset += '&reset=1'
+      subject = "QNAP College: Create your password";
+      text = "Click link to create your password";
     }
     this.templateVars = {
-      validation_address: process.env.HOST + '/user/verification/' + user_id + '?token=' + token
+      validation_address: process.env.HOST + '/user/verification/' + user_id + '?token=' + token + reset
     }
     this.email = this.fillTemplate(templateString, this.templateVars);
     // console.log(this.fillTemplate(templateString, this.templateVars));
     
+    
+
     const msg = {
       to: email,
-      from: 'QNAP College<qnapinc@gmail.com>',
-      subject: 'QNAP College: Validate your email address',
-      text: 'Click the link to validate your email: ' + process.env.HOST + '/user/verification/' + user_id + '?token=' + token,
+      from: 'QNAP College<natecheng@qnap.com>',
+      subject: subject,
+      text: text + ': ' + process.env.HOST + '/user/verification/' + user_id + '?token=' + token + reset,
       // html: 'Click the link to validate your email: <strong>' + process.env.HOST + '/user/verification/' + user_id + '?token=' + token + '<strong>'
       html: this.email
     }

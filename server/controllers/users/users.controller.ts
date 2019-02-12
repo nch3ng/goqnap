@@ -126,8 +126,9 @@ export class UserController extends Controller {
   }
 
   @Post('verification/{id}')
-  public async verification(@Path() id: string, @Query() token?: string): Promise<GeneralResponse> {
+  public async verification(@Path() id: string, @Query() token?: string, @Query() reset?: number): Promise<GeneralResponse> {
     return new Promise<GeneralResponse>((resolve, reject) => {
+      const ifReset = reset;
       const promise = UserDB.findOne({ _id: id }).select('-salt -hash');
       promise.then(
         (user: User) => {
@@ -135,11 +136,6 @@ export class UserController extends Controller {
             reject(new ErrorResponse(false, 'No user found', ResponseCode.USER_NOT_FOUND));
           }
           else {
-            if (user.isVerified && !user.hasPasswordBeenSet) {
-              return resolve(new GeneralResponse(true, 'Password hasn\'t been created', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
-            } else if (user.isVerified && user.hasPasswordBeenSet) {
-              return resolve(new GeneralResponse(true, 'User is verified and already set the password', ResponseCode.GENERAL_SUCCESS))
-            }
           // Need to resolve
             TokenDB.findOne({ token: token }).then(
               (token: Token) => {
@@ -147,21 +143,32 @@ export class UserController extends Controller {
                 if (!token) { 
                   console.log('Token is invalid');
                   return reject(new ErrorResponse(false, 'Token is invalid', ResponseCode.TOKEN_IS_INVALID));
-                }
-
-                UserDB.findOneAndUpdate({ _id: id }, {$set: {
-                  isVerified: true
-                }}, null, (err, user) => {
-                  if (err) return reject(new ErrorResponse(false, 'Something went wrong', ResponseCode.GENERAL_ERROR));
-                  
-                  if (user.hasPasswordBeenSet) {
-                    return resolve(new GeneralResponse(true, 'User Verified, and password has neem created', ResponseCode.GENERAL_SUCCESS));
-                  } else {
-                    return resolve(new GeneralResponse(true, 'User Verified but need to create a password', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
+                } else {
+                  if (ifReset) {
+                    user.hasPasswordBeenSet = false;
+                    console.log("should reset!")
                   }
-                });
-                
-                
+
+                  if (user.isVerified && !user.hasPasswordBeenSet) {
+                    return resolve(new GeneralResponse(true, 'Password hasn\'t been created', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
+                  } else if (user.isVerified && user.hasPasswordBeenSet) {
+                    return resolve(new GeneralResponse(true, 'User is verified and already set the password', ResponseCode.GENERAL_SUCCESS))
+                  } else {
+
+                    UserDB.findOneAndUpdate({ _id: id }, {$set: {
+                      isVerified: true
+                    }}, null, (err, user) => {
+                      if (err) return reject(new ErrorResponse(false, 'Something went wrong', ResponseCode.GENERAL_ERROR));
+                      
+                      if (user.hasPasswordBeenSet) {
+                        return resolve(new GeneralResponse(true, 'User Verified, and password habeen created', ResponseCode.GENERAL_SUCCESS));
+                      } else {
+                        return resolve(new GeneralResponse(true, 'User Verified but need to create a password', ResponseCode.PASSWORD_HAS_NOT_BEEN_CREATED));
+                      }
+                    });
+                  }
+                  
+                }
                 
               }
             ).catch(

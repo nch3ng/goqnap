@@ -1,6 +1,8 @@
 export interface UserCreationRequest {
   email: string;
-  name: string;
+  name?: string;
+  firstName: string;
+  lastName: string;
 }
 
 export class User {
@@ -57,7 +59,7 @@ export class UserCreationResponse implements IUserLoginResponse {
 export class UserRegisterRequest implements UserCreationRequest {
   email: string;
   password: string;
-  name: string;
+  name?: string;
   firstName: string;
   lastName: string;
 }
