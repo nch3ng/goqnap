@@ -24,7 +24,7 @@ else {
   username = process.env.DB_USERNAME;
   password = process.env.DB_PASSWORD;
   address = process.env.DB_ADDRESS;
-  extra = '';
+  extra = '?authSource=admin';
 }
 
 export const global = {
