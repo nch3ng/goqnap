@@ -14,8 +14,8 @@ module.exports = {
   }],
   deploy: {
     production: {
-      key: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
-      mackey: '~/.ssh/id_rsa_deploy_google_cloud',
+      winkey: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
+      key: '~/.ssh/id_rsa_deploy_google_cloud',
       user: 'deploy',
       host: ['go.qnap.com'],
       ref: 'origin/master',
@@ -24,7 +24,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production'
       },
-      'pre-setup': 'sudo rm -rf /var/www/production/source',
+      'pre-setup': 'sudo rm -rf /var/www/goqnap/production/source',
       'post-setup': 'npm install --unsafe-perm',
       'pre-deploy-local' : '',
       'pre-deploy' : 'npm run routes; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5',
