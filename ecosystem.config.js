@@ -14,8 +14,8 @@ module.exports = {
   }],
   deploy: {
     production: {
-      key: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
-      mackey: '~/.ssh/id_rsa_deploy_google_cloud',
+      winkey: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
+      key: '~/.ssh/id_rsa_deploy_google_cloud',
       user: 'deploy',
       host: ['go.qnap.com'],
       ref: 'origin/master',
@@ -31,8 +31,8 @@ module.exports = {
       'post-deploy' : 'cp ~/environment/goqnap/.env ./; cp ./server/helpers/email*.html dist/helpers/;sudo pm2 restart ecosystem.config.js --env production;sudo cp ../../../qnapusa/public/ . -a; sudo chown -R deploy:deploy node_modules',
     },
     staging: {
-      key: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
-      winkey: '~/.ssh/id_rsa',
+      winkey: '/c/Users/nate/.ssh/google_cloud_deploy_openSSH',
+      key: '~/.ssh/id_rsa',
       user: 'deploy',
       host: ['68.4.6.13', 'staging-go.natecheng.me', '192.168.86.25'],
       ref: 'origin/master',
