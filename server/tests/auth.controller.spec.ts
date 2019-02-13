@@ -70,7 +70,7 @@ describe('Authentication', () => {
         password: '123456'
       }
     });
-    return authController.login(request.body).then( (uResponse: UserLoginResponse) => {
+    return authController.login(request.body, null).then( (uResponse: UserLoginResponse) => {
       expect(uResponse).to.be.not.null('user exists');
       expect(uResponse.message).to.be.equal('You are logged in.');
       expect(uResponse.token).to.be.exist('token');
@@ -146,7 +146,7 @@ describe('Authentication', () => {
     return authController.login({
       email: 'test11@test.com',
       password: '12345689'
-    }).then( (uResponse: UserLoginResponse) => {
+    }, null).then( (uResponse: UserLoginResponse) => {
       // Expect not here
       assert(false, 'should not login');
     }).catch((e) => {
@@ -163,7 +163,7 @@ describe('Authentication', () => {
         password: '12345689'
       }
     });
-    return authController.login(request.body).then( (uResponse: UserLoginResponse) => {
+    return authController.login(request.body, null).then( (uResponse: UserLoginResponse) => {
       // Expect not here
       assert(false, 'should not login');
     }).catch((e) => {
