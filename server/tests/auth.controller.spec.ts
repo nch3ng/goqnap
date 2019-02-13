@@ -106,7 +106,7 @@ describe('Authentication', () => {
           password: '1234'
         }
       });
-      return authController.login(loginRequest.body).then( (loginResponse: UserLoginResponse) => {
+      return authController.login(loginRequest.body, null).then( (loginResponse: UserLoginResponse) => {
         expect(loginResponse).to.be.not.null('user exists');
         expect(loginResponse.message).to.be.equal('You are logged in.');
         expect(loginResponse.token).to.be.exist('token');
