@@ -10,7 +10,6 @@ import { Token } from '../../models/token';
 import * as ResponseCode from '../../codes/response';
 import Log from '../../models/log';
 import * as express from 'express';
-import { resolve } from 'dns';
 
 @Route('users')
 export class UsersController extends Controller {
@@ -247,6 +246,21 @@ export class UserController extends Controller {
     })
   }
 
+  @Security('JWT')
+  @Post('updateName')
+  public async updateName(@Body() requestBody: { firstName: string, lastName: string},@Request() req: express.Request): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      
+      if (req && req.user && req.user.decoded && req.user.decoded.userID) {
+        UserDB.findOne({_id: req.user.decoded.userID }).then(
+          (user) => {
+            console.log(user);
+          }
+        ).catch((e) => console.log(e));
+      }
+      resolve(new GeneralResponse(true, 'Successfully update name', ResponseCode.GENERAL_SUCCESS));
+    });
+  }
   @Security('JWT', ['10'])
   @Put('set_role/{id}')
   public async set_role(@Body() requestBody: { role: string }, @Path() id: string ): Promise<GeneralResponse> {

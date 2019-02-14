@@ -236,7 +236,7 @@ export class AuthController {
       FB.options({'appSecret': process.env.FB_APP_SECRET});
       FB.options({'scope': "public_profile,email,gender"});
       FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
-        // console.log(res);
+        console.log(res);
         if (res.error) {
           return reject(new ErrorResponse(false, 'Invalid Facebook Login', ResCode.GENERAL_ERROR));
         }
