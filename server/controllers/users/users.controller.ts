@@ -11,8 +11,6 @@ import * as ResponseCode from '../../codes/response';
 import Log from '../../models/log';
 import * as express from 'express';
 import CommentDB from '../../models/schemas/comments';
-import { JWT } from 'google-auth-library';
-import { pathMatch } from 'tough-cookie';
 
 @Route('users')
 export class UsersController extends Controller {
