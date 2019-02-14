@@ -10,6 +10,9 @@ import { Token } from '../../models/token';
 import * as ResponseCode from '../../codes/response';
 import Log from '../../models/log';
 import * as express from 'express';
+import CommentDB from '../../models/schemas/comments';
+import { JWT } from 'google-auth-library';
+import { pathMatch } from 'tough-cookie';
 
 @Route('users')
 export class UsersController extends Controller {
@@ -108,18 +111,53 @@ export class UserController extends Controller {
     });
   }
 
+  @Security('JWT')
+  @Delete('destroy')
+  public async destroy(@Request() req: express.Request): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      if (req && req.user && req.user.decoded && req.user.decoded.userID) {
+        const id = req.user.decoded.userID;
+      
+        CommentDB.deleteMany({owner_id: id}).then(
+          (result) => {
+            if (result) {
+              UserDB.findOneAndRemove({_id: req.user.decoded.userID }).then(
+                (user) => {
+                  if (user) {
+                    return resolve(new GeneralResponse(true, 'Successfully removed user', ResponseCode.GENERAL_SUCCESS));
+                  } else {
+                    return reject(new GeneralResponse(false, 'Something went wrong', ResponseCode.USER_NOT_MATCH));
+                  }
+                });
+            } else {
+              return reject(new GeneralResponse(false, 'Something went wrong', ResponseCode.COMMENT_DELETE_FAIL));
+            }
+          }
+        )
+      }
+    });
+  }
+
   @Security('JWT', ['10'])
   @Delete('{id}')
   public async delete(@Path() id: string): Promise<UserCreationResponse> {
     return new Promise<UserCreationResponse>((resolve, reject) => {
-      const promise = UserDB.findOneAndRemove({ _id: id});
-      promise.then(
-        (user: User) => {
-          resolve(new UserCreationResponse(true, 'Successfully deleted ' + user.email));
-        }
-      ).catch(
-        (error) => {
-          reject(new ErrorResponse(false, error, ResponseCode.USER_DELETION_FAIL));
+
+      CommentDB.remove({owner_id: id}).then(
+        (result) => {
+          if (result) {
+            const promise = UserDB.findOneAndRemove({ _id: id});
+            promise.then(
+              (user: User) => {
+                return resolve(new UserCreationResponse(true, 'Successfully deleted ' + user.email))
+              }
+            ).catch(
+              (error) => {
+                return reject(new ErrorResponse(false, error, ResponseCode.USER_DELETION_FAIL));
+            });
+          } else {
+            return reject(new GeneralResponse(false, 'Something went wrong', ResponseCode.COMMENT_DELETE_FAIL));
+          }
       });
     });
   }
@@ -248,17 +286,35 @@ export class UserController extends Controller {
 
   @Security('JWT')
   @Post('updateName')
-  public async updateName(@Body() requestBody: { firstName: string, lastName: string},@Request() req: express.Request): Promise<GeneralResponse> {
+  public async updateName(@Body() requestBody: { firstName: string, lastName: string}, @Request() req: express.Request): Promise<GeneralResponse> {
     return new Promise<GeneralResponse>((resolve, reject) => {
-      
+      if (!requestBody.firstName || !requestBody.lastName) {
+        return reject(new GeneralResponse(false, 'Please specify first name of last name', ResponseCode.EMPTY_NAME));
+      }
       if (req && req.user && req.user.decoded && req.user.decoded.userID) {
         UserDB.findOne({_id: req.user.decoded.userID }).then(
           (user) => {
-            console.log(user);
+            if (req.user.decoded.email === user.email) {
+              user.firstName = requestBody.firstName;
+              user.lastName = requestBody.lastName;
+              user.name = user.firstName + ' ' + user.lastName;
+              user.save((err, user) => {
+                if (err) {
+                  return reject(new GeneralResponse(false, err, ResponseCode.GENERAL_ERROR));
+                }
+
+                return resolve(new GeneralResponse(true, 'Successfully update name', ResponseCode.GENERAL_SUCCESS, user));
+              })
+            } else {
+              return reject(new GeneralResponse(false, "Something wrong", ResponseCode.GENERAL_ERROR));
+            }
           }
-        ).catch((e) => console.log(e));
+        ).catch((e) => {
+          console.log(e);
+          return reject(new GeneralResponse(false, e, ResponseCode.GENERAL_ERROR));
+        });
       }
-      resolve(new GeneralResponse(true, 'Successfully update name', ResponseCode.GENERAL_SUCCESS));
+      
     });
   }
   @Security('JWT', ['10'])
@@ -304,6 +360,14 @@ export class UserController extends Controller {
           name: user.name.split(" ").map((n)=>n[0]).join("")
         })
       })
+    })
+  }
+
+  @Security('JWT', ['9'])
+  @Get('{uid}/comments')
+  public async get_comments_by_user(@Path() uid: string): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      
     })
   }
 }

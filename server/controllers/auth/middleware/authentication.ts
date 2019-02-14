@@ -32,11 +32,6 @@ export function expressAuthentication(request: express.Request, securityName: st
                   valid = true;
               }
             } 
-            // for (const scope of scopes) {
-            //   if (decoded.scopes.includes(scope)) {
-            //     valid = true;
-            //   }
-            // }
             if (!valid)
               return reject(new AuthResponseError(false, 'You are not authorized.'));
           }
