@@ -17,7 +17,8 @@
     "deploy:staging": "pm2 deploy staging setup; pm2 deploy staging",
     "routes": "rm -rf ./server/routes; mkdir ./server/routes; ./node_modules/.bin/tsoa routes",
     "routes:win": "rm -rf ./server/routes && mkdir ./server/routes && ./node_modules/.bin/tsoa routes",
-    "swagger": "./node_modules/.bin/tsoa swagger"
+    "swagger": "./node_modules/.bin/tsoa swagger",
+    "hack": "sed -ie \"s/require: NodeRequire;/require: any;/g\" ./node_modules/@types/node/globals.d.ts"
   },
   "nyc": {
     "extension": [
