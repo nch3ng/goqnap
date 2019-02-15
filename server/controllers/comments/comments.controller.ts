@@ -1,6 +1,6 @@
 import { GeneralResponse } from './../../models/response.model';
 import { Comment } from './../../models/comment.model';
-import { Route, Controller, Get, Security, Request, Path, Post } from 'tsoa';
+import { Route, Controller, Get, Security, Request, Path, Post, Query } from 'tsoa';
 import * as express from 'express';
 import CommentDB from '../../models/schemas/comments';
 import * as ResponseCode from '../../codes/response';
@@ -28,6 +28,50 @@ export class CommentsController extends Controller {
           return resolve(comments);
         else 
           return resolve([]);
+      })
+    })
+  }
+
+  @Security('JWT')
+  @Get('user/{uid}/search')
+  searchCommentsOfUser(@Path() uid: string, @Query() query: string, @Request() req: express.Request): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+
+      if (uid !== req.user.decoded.userID && req.user.decoded.scopes.level < 9)
+        return reject(new GeneralResponse(false, "You are not authorized.", ResponseCode.GENERAL_ERROR))
+
+      const queryStr = query;
+      console.log('search ' + queryStr);
+      if (queryStr) {
+        const promise = CommentDB.find({owner_id: uid, $text: {$search: queryStr}});
+        promise.then(
+          searched_courses => resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, searched_courses))).catch(
+          err => {
+            // console.error(err);
+            resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, []));
+          });
+      } else {
+        resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, []));
+      }
+    });
+  }
+  @Security('JWT')
+  @Get('user/{uid}')
+  getCommentsByUserId(@Path() uid: string, @Request() req: express.Request, @Query() limit?: number, @Query() page?: number): Promise<GeneralResponse>{
+    
+    return new Promise<GeneralResponse>((resolve, reject) => {
+
+      if (uid !== req.user.decoded.userID && req.user.decoded.scopes.level < 9)
+        return reject(new GeneralResponse(false, "You are not authorized.", ResponseCode.GENERAL_ERROR))
+
+      CommentDB.paginate({owner_id: uid},
+        { 
+          page: page || 1,
+          limit: limit || 10
+        }).then((docs) => {
+        resolve(new GeneralResponse(true, "Successfully get comments", ResponseCode.GENERAL_SUCCESS, docs))
+      }).catch(e => {
+        reject(new GeneralResponse(false, e, ResponseCode.GENERAL_ERROR))
       })
     })
   }
