@@ -41,7 +41,6 @@ export class CommentsController extends Controller {
         return reject(new GeneralResponse(false, "You are not authorized.", ResponseCode.GENERAL_ERROR))
 
       const queryStr = query;
-      console.log('search ' + queryStr);
       if (queryStr) {
         const promise = CommentDB.find({owner_id: uid, $text: {$search: queryStr}});
         promise.then(
@@ -53,6 +52,27 @@ export class CommentsController extends Controller {
       } else {
         resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, []));
       }
+    });
+  }
+
+  @Security('JWT')
+  @Get('user/{uid}/count')
+  getCountOfCommentsOfUser(@Path() uid: string, @Request() req: express.Request): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+
+      if (uid !== req.user.decoded.userID && req.user.decoded.scopes.level < 9)
+        return reject(new GeneralResponse(false, "You are not authorized.", ResponseCode.GENERAL_ERROR))
+
+      const promise = CommentDB.count({owner_id: uid});
+      promise.then(
+        count => resolve(new GeneralResponse(true, "get count of comments", ResponseCode.GENERAL_SUCCESS, count))).catch(
+        err => {
+          // console.error(err);
+          if (err) {
+            return resolve(new GeneralResponse(false, err, ResponseCode.GENERAL_ERROR));
+          }
+          resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, 0));
+        });
     });
   }
   @Security('JWT')

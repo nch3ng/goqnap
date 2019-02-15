@@ -14,7 +14,7 @@ export function errorHandler(error, req, res, next) {
         error instanceof AuthResponseError) {
       res.status(500).json(error);
     } else {
-      // console.log(error);
+      console.log(error);
       res.status(500).json(new ErrorResponse(false, error.message, ResponseCode.GENERAL_ERROR));
     }
   }

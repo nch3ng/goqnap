@@ -1,6 +1,6 @@
 import { GeneralResponse } from './../../models/response.model';
 import { Course } from './../../models/course.model';
-import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete } from 'tsoa';
+import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete, Request } from 'tsoa';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses.schema';
 // import { YouTube } from 'youtube-node';
@@ -10,6 +10,8 @@ import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
 import * as nodeExcel from 'excel-export';
 import * as ResCode from '../../codes/response';
+import * as express from 'express';
+
 // import UserDB from '../../models/schemas/users.schema';
 
 const YouTube = require('youtube-node');
@@ -357,6 +359,17 @@ export class CoursesController extends Controller {
         }
       ).catch((error1) => reject(new ErrorResponse(false, 'The youtube reference does not exist.', ResCode.GENERAL_ERROR)));
     });
+  }
+
+  @Security('JWT')
+  @Get('code_name/{cid}')
+  public async getCodenameByCourseId(@Path() cid, @Request() req: express.Request): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse> ((resolve, reject) => {
+      CourseDB.findOne({_id: cid}).select('code_name slug').then((course) => {
+        return resolve(new GeneralResponse(true, "got course", ResCode.GENERAL_SUCCESS, course));
+      }).catch(
+        err => {});
+    })
   }
 
   @Security('JWT', ['9'])
