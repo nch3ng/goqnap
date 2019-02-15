@@ -2,6 +2,7 @@ import { roleSchema } from './roles.schema';
 import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
+import * as mongoosePaginate from 'mongoose-paginate';
 
 // const env = process.env.NODE_ENV || 'development';
 
@@ -69,6 +70,8 @@ userSchema.methods.generateJwt = function() {
     exp: Math.trunc(expiry.getTime() / 1000),
   }, process.env.secret); // DO NOT KEEP YOUR SECRET IN THE CODE!
 };
+
+userSchema.plugin(mongoosePaginate);
 
 const UserDB = mongoose.model('User', userSchema);
 

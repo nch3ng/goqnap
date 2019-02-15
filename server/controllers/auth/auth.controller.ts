@@ -234,7 +234,7 @@ export class AuthController {
       // console.log("[FacebookLogin]", requestBody);
       // console.log("[FacebookLogin]", process.env.FB_APP_SECRET);
       FB.options({'appSecret': process.env.FB_APP_SECRET});
-      FB.options({'scope': "public_profile,email,gender"});
+      FB.options({'scope': "public_profile,email,user_gender"});
       FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
         console.log(res);
         if (res.error) {

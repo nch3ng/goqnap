@@ -16,6 +16,9 @@ export class User {
   lastLoginAt: Date;
   isVerified: boolean;
   hasPasswordBeenSet: boolean;
+  picture: {
+    regular: string;
+  }
 
   isPasswordCreated(): boolean {
     if (this.salt && this.hash) {

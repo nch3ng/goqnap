@@ -17,18 +17,29 @@ export class UsersController extends Controller {
 
   @Security('JWT', ['9'])
   @Get()
-  public async all(@Request() req: express.Request): Promise<User []> {
+  public async all(@Request() req: express.Request, @Query() limit?: number, @Query() page?: number): Promise<User []> {
     // console.log('get all users');
     const level = req.user.decoded.scopes.level;
     // console.log(req.user.decoded.scopes);
     return new Promise<User []>((resolve, reject) => {
-      const promise = UserDB.find({ 'role.level': { $lte: level } }).select('-salt -hash');
+      let promise = UserDB.find({ 'role.level': { $lte: level } }).select('-salt -hash');
+      promise = UserDB.paginate(
+        { 'role.level': 
+          { $lte: level }
+        }, 
+        { 
+          page: page || 1,
+          limit: limit || 10,
+          select: '-salt -hash'
+        });
+  
       promise.then(
         (users: User []) => {
+          console.log(users)
           if (!users) {
-            resolve([]);
+            return resolve([]);
           }
-          resolve(users);
+          return resolve(users);
         }
       ).catch( (e) => {
       });
@@ -46,12 +57,14 @@ export class UserController extends Controller {
         return reject(new ErrorResponse(false, 'Email can not be empty', ResponseCode.USER_CREATION_FAIL));
       }
 
-      if (!requestBody.name) {
+      if (!requestBody.firstName || !requestBody.lastName) {
         return reject(new ErrorResponse(false, 'Name can not be empty', ResponseCode.USER_CREATION_FAIL));
       }
       UserDB.create({ 
         email: requestBody.email, 
-        name: requestBody.name, 
+        name: requestBody.firstName + ' ' + requestBody.lastName, 
+        firstName: requestBody.firstName,
+        lastName: requestBody.lastName,
         isVerified: false, 
         hasPasswordBeenSet: false,
         role: {
