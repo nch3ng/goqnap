@@ -27,7 +27,7 @@ module.exports = {
       'pre-setup': 'sudo rm -rf /var/www/goqnap/production/source',
       'post-setup': 'npm install --unsafe-perm',
       'pre-deploy-local' : '',
-      'pre-deploy' : 'npm run routes; sed -i \'s/require: NodeRequire;/require: any;/g\' ./node_modules/@types/node/globals.d.ts ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES6',
+      'pre-deploy' : 'npm run routes; sed -i \'s/require: NodeRequire;/require: any;/g\' ./node_modules/@types/node/globals.d.ts; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES6',
       'post-deploy' : 'cp ~/environment/goqnap/.env ./; cp ./server/helpers/email*.html dist/helpers/;sudo pm2 restart ecosystem.config.js --env production;sudo cp ../../../qnapusa/public/ . -a; sudo chown -R deploy:deploy node_modules',
     },
     staging: {
