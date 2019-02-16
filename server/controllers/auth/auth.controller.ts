@@ -179,7 +179,7 @@ export class AuthController {
   }
 
   @Post('register')
-  public register(@Body() requestBody: UserRegisterRequest): Promise<UserRegisterResponse> {
+  public register(@Body() requestBody: UserRegisterRequest): Promise<GeneralResponse | UserRegisterResponse> {
     const user = new UserDB();
     // console.log('Register: ');
     // console.log(requestBody);
@@ -197,12 +197,12 @@ export class AuthController {
       level: 1
     }
     const token = user.generateJwt();
-    return new Promise<UserRegisterResponse> ((resolve, reject) => {
+    return new Promise<GeneralResponse | UserRegisterResponse> ((resolve, reject) => {
       user.save((err) => {
         // console.log('register');
         if (err) {
           console.log(err);
-          return resolve(new UserRegisterResponse(false, 'Email exists'));
+          return resolve(new GeneralResponse(false, err, ResCode.DUPLICATE_RECORD));
         }
         // console.log(token);
         const decoded = jwt.verify(token, process.env.secret);
