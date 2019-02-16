@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-const user_expiry = process.env.user_expiry | 30;
+const user_expiry = +process.env.user_expiry | 30;
 export const tokenSchema = new mongoose.Schema({
   _userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
   token: { type: String, required: true },

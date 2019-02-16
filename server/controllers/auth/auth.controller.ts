@@ -62,7 +62,7 @@ export class AuthController {
                     return;
                   }
         
-                  if (!process.env.secret || !process.env.expiry ) {
+                  if (!process.env.secret || !+process.env.expiry ) {
                     reject(new UserLoginResponse(false, 'Something went wrong, please contact site administrator'));
                     return;
                   }
@@ -78,7 +78,7 @@ export class AuthController {
                     name: user.name,
                     scopes: user.role
                   }, process.env.secret, {
-                    expiresIn : 60 * 60 * process.env.expiry
+                    expiresIn : 60 * 60 * +process.env.expiry
                   });
                   Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
                     // console.log(res);
@@ -134,7 +134,7 @@ export class AuthController {
               return;
             }
   
-            if (!process.env.secret || !process.env.expiry ) {
+            if (!process.env.secret || !+process.env.expiry ) {
               reject(new UserLoginResponse(false, 'Something went wrong, please contact site administrator'));
               return;
             }
@@ -150,7 +150,7 @@ export class AuthController {
               name: user.name,
               scopes: user.role
             }, process.env.secret, {
-              expiresIn : 60 * 60 * process.env.expiry
+              expiresIn : 60 * 60 * +process.env.expiry
             });
             Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
               // console.log(res);
@@ -293,7 +293,7 @@ export class AuthController {
             name: user.name,
             scopes: user.role
           }, process.env.secret, {
-            expiresIn : 60 * 60 * process.env.expiry
+            expiresIn : 60 * 60 * +process.env.expiry
           });
 
           Log.create({message: `${user.name} is logged in via Facebook.`, userId: user._id, action: 'login'}).then((res) => {
@@ -393,7 +393,7 @@ export class AuthController {
             name: user.name,
             scopes: user.role
           }, process.env.secret, {
-            expiresIn : 60 * 60 * process.env.expiry
+            expiresIn : 60 * 60 * +process.env.expiry
           });
 
           Log.create({message: `${user.name} is logged in via Google.`, userId: user._id, action: 'login'}).then((res) => {
