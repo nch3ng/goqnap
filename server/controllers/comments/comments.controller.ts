@@ -6,16 +6,25 @@ import CommentDB from '../../models/schemas/comments';
 import * as ResponseCode from '../../codes/response';
 import CourseDB from '../../models/schemas/courses.schema';
 import UserDB from '../../models/schemas/users.schema';
+import { CoursesController } from '../courses/courses.controller';
+import { Course } from '../../models/course.model';
 
 @Route('comments')
 export class CommentsController extends Controller {
 
   @Security('JWT')
   @Get()
-  all(@Request() req: express.Request): Promise<Comment []> {
-    return new Promise<Comment []>((resolve, reject) => {
-      resolve([]);
-    })
+  all(@Request() req: express.Request): Promise<GeneralResponse> {
+    return new Promise<GeneralResponse>((resolve, reject) => {
+      CommentDB.find({}, (err, comments) => {
+        if (err) return reject(new GeneralResponse(false, 'Somoething went wrong', ResponseCode.GENERAL_ERROR));
+
+        if (comments)
+          return resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, comments));
+        else 
+          return resolve(new GeneralResponse(true, "get comments", ResponseCode.GENERAL_SUCCESS, []));
+      });
+    });
   }
 
   @Get('course/{courseId}')
