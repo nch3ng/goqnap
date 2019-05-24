@@ -7,9 +7,12 @@
 /server/routes/routes.ts
 /coverage
 /public
-.env
 .nyc_output
 # static
+
+# secret
+.env
+keyfile
 
 # dependencies
 /node_modules

@@ -25,9 +25,10 @@ else {
   password = process.env.DB_PASSWORD;
   address = process.env.DB_ADDRESS;
   // extra = '?authSource=admin';
-  extra = '';
+  extra = '?authSource=admin';
 }
 
 export const global = {
   dbURI: 'mongodb://' + username + ':' + password + '@' + address + '/' + db + extra,
+  // dbURI: 'mongodb://' + address + '/' + db
 };

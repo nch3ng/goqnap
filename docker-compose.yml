@@ -7,15 +7,17 @@ services:
     volumes:
       - "${PWD}/:/usr/src/app"
     depends_on: 
-      - db
+      - router
     links:
-      - db
+      - router
     environment:
       NODE_ENV: development
       SSL_PORT: 8089
       DB_USERNAME: root
       DB_PASSWORD: example
-      DB_ADDRESS: db:27017
+      # DB_USERNAME: replicaAdmin
+      # DB_PASSWORD: replicaAdminPassword2017
+      DB_ADDRESS: router:27017
       DB: qnapcollege-dev
       YOUTUBE_KEY: AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic
       secret: mdjaFKWUfykLFpslTeSdbzT3CBwF68wKEZ1deTBmAHL3YtLqqIAAbn8Ti45Ywbn
@@ -25,14 +27,7 @@ services:
       FB_APP_SECRET: f49c8c6a12028b46ea8d47ea27b223ec
       GOOGLE_CLIENT_ID: 230327847455-22t14dhl2qde7n6c48c0r7c1keqengqb.apps.googleusercontent.com
       reCAPTCHA_SECRET: 6LeVt3cUAAAAADBRRa1C5yB33J99N_NwtIbXxnMK
-  db:
-    image: mongo:latest
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    ports:
-      - 27015:27017
+  
   mongo-expressdb-web:
     image: mongo-express
     restart: always
@@ -41,47 +36,56 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_SERVER: db
+      ME_CONFIG_MONGODB_SERVER: router
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: example
     depends_on: 
-      - db
+      - router
     links:
-      - db
+      - router
+  # db:
+  #   image: mongo:latest
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   ports:
+  #     - 27015:27017
+  # goqnap_test:
+  #   build: .
+  #   ports:
+  #     - 4000:4000
+  #   volumes:
+  #     - "${PWD}/:/usr/src/app"
+  #   depends_on: 
+  #     - test_db
+  #   links:
+  #     - test_db
+  #   command: [ 'npm', 'run', 'test']
 
-  goqnap_test:
-    build: .
-    ports:
-      - 4000:4000
-    volumes:
-      - "${PWD}/:/usr/src/app"
-    depends_on: 
-      - test_db
-    links:
-      - test_db
-    command: [ 'npm', 'run', 'test']
-
-    environment:
-      NODE_ENV: development
-      SSL_PORT: 8089
-      DB_TEST_USERNAME: root
-      DB_TEST_PASSWORD: example
-      DB_TEST_ADDRESS: test_db:27017
-      DB_TEST: qnapcollege-test
-      YOUTUBE_KEY: AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic
-      secret: mdjaFKWUfykLFpslTeSdbzT3CBwF68wKEZ1deTBmAHL3YtLqqIAAbn8Ti45Ywbn
-      expiry: 1
-      user_expiry: 120
-      HOST: http://localhost:4200
-      FB_APP_SECRET: f49c8c6a12028b46ea8d47ea27b223ec
-      GOOGLE_CLIENT_ID: 230327847455-22t14dhl2qde7n6c48c0r7c1keqengqb.apps.googleusercontent.com
-      reCAPTCHA_SECRET: 6LeVt3cUAAAAADBRRa1C5yB33J99N_NwtIbXxnMK
-  test_db:
-    image: mongo:latest
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    ports:
-      - 27018:27017
+  #   environment:
+  #     NODE_ENV: development
+  #     SSL_PORT: 8089
+  #     DB_TEST_USERNAME: root
+  #     DB_TEST_PASSWORD: example
+  #     DB_TEST_ADDRESS: test_db:27017
+  #     DB_TEST: qnapcollege-test
+  #     YOUTUBE_KEY: AIzaSyCAgrmyG2Z01Zls0wqlaG772rmEKwHnkic
+  #     secret: mdjaFKWUfykLFpslTeSdbzT3CBwF68wKEZ1deTBmAHL3YtLqqIAAbn8Ti45Ywbn
+  #     expiry: 1
+  #     user_expiry: 120
+  #     HOST: http://localhost:4200
+  #     FB_APP_SECRET: f49c8c6a12028b46ea8d47ea27b223ec
+  #     GOOGLE_CLIENT_ID: 230327847455-22t14dhl2qde7n6c48c0r7c1keqengqb.apps.googleusercontent.com
+  #     reCAPTCHA_SECRET: 6LeVt3cUAAAAADBRRa1C5yB33J99N_NwtIbXxnMK
+  # test_db:
+  #   image: mongo:latest
+  #   restart: always
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   ports:
+  #     - 27018:27017
 # ongo-express
 # Name                            | Default         | Description
 # --------------------------------|-----------------|------------
@@ -100,3 +104,79 @@ services:
 # ME_CONFIG_SITE_SSL_ENABLED      | 'false'         | Enable SSL.
 # ME_CONFIG_SITE_SSL_CRT_PATH     | ''              | SSL certificate file.
 # ME_CONFIG_SITE_SSL_KEY_PATH     | ''              | SSL key file.
+
+  ## Router
+  router:
+    image: mongo:latest
+    command: mongos --port 27017 --configdb configserver/config01:27017,config02:27017,config03:27017 --bind_ip_all --keyFile /data/keyfile/mongo-keyfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+    depends_on:
+      - config01
+      - config02
+      - config03
+      - shard01a
+      - shard01b
+      - shard02a
+      - shard02b
+      - shard03a
+      - shard03b
+  ## Config Servers
+  config01:
+    image: mongo:latest
+    command: mongod --port 27017 --configsvr --replSet configserver --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  config02:
+    image: mongo:latest
+    command: mongod --port 27017 --configsvr --replSet configserver --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  config03:
+    image: mongo:latest
+    command: mongod --port 27017 --configsvr --replSet configserver --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  ## Shards
+  shard01a:
+    image: mongo:latest
+    command: mongod --port 27018 --shardsvr --replSet shard01 --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  shard01b:
+    image: mongo:latest
+    command: mongod --port 27018 --shardsvr --replSet shard01 --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  shard02a:
+    image: mongo:latest
+    command: mongod --port 27019 --shardsvr --replSet shard02 --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  shard02b:
+    image: mongo:latest
+    command: mongod --port 27019 --shardsvr --replSet shard02 --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  shard03a:
+    image: mongo:latest
+    command: mongod --port 27020 --shardsvr --replSet shard03 --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
+  shard03b:
+    image: mongo:latest
+    command: mongod --port 27020 --shardsvr --replSet shard03 --noprealloc --smallfiles --oplogSize 16 --keyFile /data/keyfile/mongo-keyfile
+    volumes:
+      - ./scripts:/scripts
+      - ./keyfile:/data/keyfile
