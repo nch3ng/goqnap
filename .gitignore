@@ -11,6 +11,7 @@
 .nyc_output
 # static
 
+/keyfile
 # dependencies
 /node_modules
 /server/node_modules
