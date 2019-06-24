@@ -44,7 +44,7 @@ module.exports = {
       'pre-setup': 'rm -rf /var/www/goqnap/staging/source',
       'post-setup': 'npm install --unsafe-perm',
       'pre-deploy-local' : '',
-      'pre-deploy' : 'npm run routes; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5',
+      'pre-deploy' : 'npm run routes; sed -i \'s/require: NodeRequire;/require: any;/g\' ./node_modules/@types/node/index.d.ts; ./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES6',
       'post-deploy' : 'cp ~/environment/goqnap/staging/.env ./; cp ./server/helpers/email*.html dist/helpers/;pm2 restart ecosystem.config.js --env staging;cp ~/qnapusa/public/ . -a;',
     }
   }
