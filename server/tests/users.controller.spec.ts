@@ -25,7 +25,7 @@ describe('Users', () => {
     };
 
     (<any>mongoose).Promise = Bluebird;
-    connection = mongoose.connect(global.dbURI, {useMongoClient: true});
+    connection = mongoose.connect(global.dbURI, {useNewUrlParser: true});
     connection.on('error', console.error.bind(console, 'connection error'));
     connection.once('open', function() {
       done();

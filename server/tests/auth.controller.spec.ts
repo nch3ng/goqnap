@@ -21,7 +21,7 @@ const authController = new AuthController();
 let connection: mongoose.connection;
 describe('Authentication', () => {
   before((done) => {
-    connection = mongoose.connect(global.dbURI, {useMongoClient: true});
+    connection = mongoose.connect(global.dbURI, {useNewUrlParser: true});
     connection.on('error', console.error.bind(console, 'connection error'));
     connection.once('open', function() {
       setTimeout( () => done(), 0);

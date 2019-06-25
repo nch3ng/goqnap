@@ -11,7 +11,7 @@ const env = process.env.NODE_ENV || 'development';
 let gracefulShutdown;
 
 console.log(global.dbURI);
-mongoose.connect(global.dbURI, { useMongoClient: true });
+mongoose.connect(global.dbURI, {useNewUrlParser: true});
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', function() {
