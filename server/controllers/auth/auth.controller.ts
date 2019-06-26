@@ -166,9 +166,6 @@ export class AuthController {
   @Post('register')
   public register(@Body() requestBody: UserRegisterRequest): Promise<GeneralResponse | UserRegisterResponse> {
     const user = new UserDB();
-    // console.log('Register: ');
-    // console.log(requestBody);
-
     user.name = requestBody.firstName + ' ' + requestBody.lastName; 
     user.firstName = requestBody.firstName;
     user.lastName = requestBody.lastName;
@@ -177,35 +174,23 @@ export class AuthController {
     user.setPassword(requestBody.password);
     user.hasPasswordBeenSet = true;
     user.isVerified = false;
-    user.role = {
-      name: 'normal',
-      level: 1
-    }
+    user.role = { name: 'normal', level: 1
+  }
     const token = user.generateJwt();
     return new Promise<GeneralResponse | UserRegisterResponse> ((resolve, reject) => {
       user.save((err) => {
         // console.log('register');
         if (err) {
-          console.log(err);
           return resolve(new GeneralResponse(false, err, ResCode.DUPLICATE_RECORD));
         }
-        // console.log(token);
         const decoded = jwt.verify(token, process.env.secret);
-
         const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
         email_token.save((err) => {
           if (err) return reject(new ErrorResponse(false, err, ResCode.USER_CREATION_FAIL));
-          // saved!
-
           const mail = new Mail();
           mail.sendConfirmation(user.email, email_token._userId, email_token.token, 'validation');
         });
-
-        Log.create({message: `${user.name} registered in.`, userId: user._id, action: 'login'}).then((res) => {
-          // console.log(res);
-        }, (reason) => {
-          console.log(reason);
-        })
+        Log.create({message: `${user.name} registered in.`, userId: user._id, action: 'login'}).then((res) => {}, (reason) => { console.log(reason); });
 
         resolve(new UserRegisterResponse(true, 'Successfully registered', token, user, decoded));
       });
@@ -215,9 +200,6 @@ export class AuthController {
   @Post('fbLogin')
   public fbLogin(@Body() requestBody: any):Promise<any> {
     return new Promise<any> ((resolve, reject) => {
-      // console.log("[FacebookLogin]");
-      // console.log("[FacebookLogin]", requestBody);
-      // console.log("[FacebookLogin]", process.env.FB_APP_SECRET);
       FB.options({'appSecret': process.env.FB_APP_SECRET});
       FB.options({'scope': "public_profile,email,user_gender"});
       FB.api('me', { fields: 'id,name,email,gender,timezone,picture', access_token: requestBody.accessToken }, function (res) {
@@ -231,18 +213,14 @@ export class AuthController {
           if (error) {
             return reject(new UserLoginResponse(false, error));
           }
-  
-          // console.log(user);
           if (!user) {
             UserDB.create({ email: res.email, name: res.name, isVerified: true, hasPasswordBeenSet: false, role: {name: 'normal', level: 1} }, (error, user) => {
               if (error) {
-                // console.log(error);
                 return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
               }
 
               TokenDB.create({_userId: user._id, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
                 if (error) {
-                  // console.log(error);
                  return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
                 }
                 return resolve(new UserLoginResponse(true, "Need to create password", null, {
@@ -258,7 +236,6 @@ export class AuthController {
           if (!user.hasPasswordBeenSet) {
             TokenDB.create({_userId: user._id, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
               if (error) {
-                // console.log(error);
                return reject(new ErrorResponse(false, error.message, ResCode.USER_CREATION_FAIL));
               }
               resolve(new UserLoginResponse(true, "Need to create password", null, {
@@ -274,9 +251,7 @@ export class AuthController {
           const token = authHelper.getJWTToken(user._id, user.email, user.name, user.role, +process.env.expiry);
 
           Log.create({message: `${user.name} is logged in via Facebook.`, userId: user._id, action: 'login'}).then((res) => {
-            // console.log(res);
           }, (reason) => {
-            // console.log(reason);
           });
 
           resolve(
@@ -301,20 +276,15 @@ export class AuthController {
   @Post('googleLogin')
   public googleLogin(@Body() requestBody: any): Promise<any> {
     return new Promise<any> ((resolve, reject) => {
-      // console.log("[googleLogin]");
-      // console.log("[googleLogin]", requestBody);
       const token = requestBody.accessToken;
       const google_client_id = process.env.GOOGLE_CLIENT_ID;
       const client = new OAuth2Client(google_client_id);
       async function verify() {
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: google_client_id,  // Specify the CLIENT_ID of the app that accesses the backend
-            // Or, if multiple clients access the backend:
-            //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+            audience: google_client_id,
         });
         const payload = ticket.getPayload();
-        // console.log(payload)
         const userid = payload['sub'];
 
         const email = payload['email'];
