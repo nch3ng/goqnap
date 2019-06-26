@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "node dist/server.js",
     "build": "./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5 && npm run routes && npm run swagger",
-    "test": "export NODE_ENV=testing; mocha -r ts-node/register server/**/*.spec.ts --timeout 15000 --exit",
+    "test": "export NODE_ENV=testing; mocha -r ts-node/register server/**/**/*.spec.ts server/**/*.spec.ts --timeout 15000 --exit",
     "test:local": "export NODE_ENV=test; mocha -r ts-node/register server/**/**/*.spec.ts server/**/*.spec.ts --timeout 15000 --exit",
     "test:win": "set NODE_ENV=test && mocha -r ts-node/register server/**/**/*.spec.ts server/**/*.spec.ts --timeout 15000 --exit",
     "lint": "ng lint",
