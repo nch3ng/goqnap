@@ -25,12 +25,75 @@ let mongoose = require('mongoose');
 @Route('')
 export class AuthController {
 
+  private findUser(requestBody: UserLoginRequest, resolve, reject) {
+    UserDB.findOne({'email' : requestBody.email}, (error, user) => {
+      if (error) {
+        return reject(new UserLoginResponse(false, error));
+      }
+
+      // console.log(user);
+      if (!user) {
+        reject(new UserLoginResponse(false, 'User does not exist'));
+        return;
+      } else {
+        if (!user.isVerified) {
+          return reject(new UserLoginResponse(false, 'This email hasn\'t been verified.', null, {
+            code: ResCode.EMAIL_IS_NOT_VERIFIED,
+            uid: user._id
+          }));
+        }
+        if (!user.hasPasswordBeenSet) {
+          return reject(new UserLoginResponse(false, 'Password has not set yet'));
+        }
+        if (!user.validPassword(requestBody.password)) {
+          reject(new UserLoginResponse(false, 'Incorrect password'));
+          return;
+        }
+
+        if (!process.env.secret || !+process.env.expiry ) {
+          reject(new UserLoginResponse(false, 'Something went wrong, please contact site administrator'));
+          return;
+        }
+
+        user.salt = '';
+        user.hash = '';
+        const role = [];
+        role.push(user.role);
+        // console.log(user.role);
+        const token = jwt.sign({
+          userID: user._id,
+          email: user.email,
+          name: user.name,
+          scopes: user.role
+        }, process.env.secret, {
+          expiresIn : 60 * 60 * +process.env.expiry
+        });
+        Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
+          // console.log(res);
+        }, (reason) => {
+          console.log(reason);
+        })
+        resolve(new UserLoginResponse(true, 
+          'You are logged in.', 
+          token, 
+          { 
+            _id: user._id,
+            name: user.name, 
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            isVerified: user.isVerified,
+            hasPasswordBeenSet: user.hasPasswordBeenSet
+          }));
+      }
+    });
+  }
   @Post('login')
   public async login(@Body() requestBody: UserLoginRequest, @Request() req: express.Request): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse>((resolve, reject) => {
 
       const recaptchaToken = requestBody['recaptchaToken'];
-
       if (recaptchaToken) {
         Recaptcha.verify(recaptchaToken, req.connection.remoteAddress).then(
           (res) => {
@@ -38,68 +101,7 @@ export class AuthController {
             // console.log(response);
             // console.log(response['score']);
             if(response && response['score'] && +response['score'] > 0.5) {
-              UserDB.findOne({'email' : requestBody.email}, (error, user) => {
-                if (error) {
-                  return reject(new UserLoginResponse(false, error));
-                }
-        
-                // console.log(user);
-                if (!user) {
-                  reject(new UserLoginResponse(false, 'User does not exist'));
-                  return;
-                } else {
-                  if (!user.isVerified) {
-                    return reject(new UserLoginResponse(false, 'This email hasn\'t been verified.', null, {
-                      code: ResCode.EMAIL_IS_NOT_VERIFIED,
-                      uid: user._id
-                    }));
-                  }
-                  if (!user.hasPasswordBeenSet) {
-                    return reject(new UserLoginResponse(false, 'Password has not set yet'));
-                  }
-                  if (!user.validPassword(requestBody.password)) {
-                    reject(new UserLoginResponse(false, 'Incorrect password'));
-                    return;
-                  }
-        
-                  if (!process.env.secret || !+process.env.expiry ) {
-                    reject(new UserLoginResponse(false, 'Something went wrong, please contact site administrator'));
-                    return;
-                  }
-        
-                  user.salt = '';
-                  user.hash = '';
-                  const role = [];
-                  role.push(user.role);
-                  // console.log(user.role);
-                  const token = jwt.sign({
-                    userID: user._id,
-                    email: user.email,
-                    name: user.name,
-                    scopes: user.role
-                  }, process.env.secret, {
-                    expiresIn : 60 * 60 * +process.env.expiry
-                  });
-                  Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
-                    // console.log(res);
-                  }, (reason) => {
-                    console.log(reason);
-                  })
-                  resolve(new UserLoginResponse(true, 
-                                                'You are logged in.', 
-                                                token, 
-                                                { 
-                                                  _id: user._id,
-                                                  name: user.name, 
-                                                  firstName: user.firstName,
-                                                  lastName: user.lastName,
-                                                  email: user.email,
-                                                  role: user.role,
-                                                  isVerified: user.isVerified,
-                                                  hasPasswordBeenSet: user.hasPasswordBeenSet
-                                                }));
-                }
-              });
+              this.findUser(requestBody, resolve, reject);
             }
             else {
               return reject(new GeneralResponse(false, 'Please come back later', ResCode.GENERAL_ERROR))
@@ -109,7 +111,10 @@ export class AuthController {
           return reject(new GeneralResponse(false, err, ResCode.GENERAL_ERROR))
         })
 
-      } else {
+      } else if (process.env.NODE_ENV === 'testing' || process.env.NODE_ENV === 'test') {
+        this.findUser(requestBody, resolve, reject);
+      }
+      else {
         UserDB.findOne({'email' : requestBody.email}, (error, user) => {
           if (error) {
             return reject(new UserLoginResponse(false, error));

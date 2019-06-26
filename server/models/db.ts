@@ -11,7 +11,15 @@ const env = process.env.NODE_ENV || 'development';
 let gracefulShutdown;
 
 console.log(global.dbURI);
-mongoose.connect(global.dbURI, {useNewUrlParser: true});
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.connect(global.dbURI, { 
+  useNewUrlParser: true,
+  useFindAndModify: false 
+});
+
+
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', function() {

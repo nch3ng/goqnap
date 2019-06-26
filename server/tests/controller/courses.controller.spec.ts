@@ -1,19 +1,15 @@
-import { UserCourseResponse } from './../models/response.model';
+import { UserCourseResponse } from '../../models/response.model';
 import 'mocha';
 import { expect } from 'chai';
 import * as chai from 'chai';
 
-import { CoursesController } from '../controllers/courses/courses.controller';
-import { Course } from '../models/course.model';
 import * as mongoose from 'mongoose';
-import * as Bluebird from 'bluebird';
-import * as fs from 'fs';
-import CourseDB from '../models/schemas/courses.schema';
-import { global } from '../global.available';
+
+import { CoursesController } from '../../controllers/courses/courses.controller';
+import { Course } from '../../models/course.model';
+import CourseDB from '../../models/schemas/courses.schema';
 import * as httpMocks from 'node-mocks-http';
 
-// Global variables
-let connection: mongoose.connection;
 let courseController;
 let aCourseId;
 let youtubeRef;
@@ -25,7 +21,7 @@ chai.use(require('dirty-chai'));
 const prepareData = (done) => {
   // console.log('Preparing testing');
   const items: Course [] = require('./courses.json');
-  CourseDB.collection.insert(items, () => {
+  CourseDB.collection.insertMany(items, () => {
     // console.log('inserted');
     CourseDB.collection.createIndex({desc: 'text', title: 'text', code_name: 'text', category: 'text'})
     CourseDB.findOne().limit(1).then(
@@ -46,31 +42,16 @@ const prepareData = (done) => {
 describe('Courses', () => {
   before((done) => {
     courseController = new CoursesController();
-    // User Bluebird promise for global promise
-    (<any>mongoose).Promise = Bluebird;
-    connection = mongoose.connect(global.dbURI, {useNewUrlParser: true});
-    connection.on('error', console.error.bind(console, 'connection error'));
-    connection.once('open', function() {
+    mongoose.connection.collections.courses.drop(() => {
+      //this function runs after the drop is completed
       prepareData(done);
-    });
-    process.on('unhandledRejection', error => {
-      // Won't execute
-      console.log('Unhandled Rejection, try to fix this', error);
-      // done();
-    });
+      //go ahead everything is done now.
+    }); 
   });
 
-  after( () => {
-    return new Promise( (resolve) => {
-      connection.db.dropDatabase( () => {
-        connection.close(() => {
-          setTimeout( () => {
-            // console.log('drop db');
-            resolve();
-          }, 0);
-        });
-      });
-    });
+  beforeEach((done) => {
+    // console.log('Before Each in Authentication: drop user database');
+    done();
   });
 
   it('should get all courses', () => {

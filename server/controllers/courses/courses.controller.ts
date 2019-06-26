@@ -429,7 +429,9 @@ export class CoursesController extends Controller {
           publishedDate: item.snippet.publishedAt
         }
       },
-      { new: true});
+      { 
+        new: true
+      });
   }
 
   private getFindAndUpdatePromise(course: Course, youtube_info: YoutubeInfo): Promise<Course> {
@@ -449,7 +451,9 @@ export class CoursesController extends Controller {
       like: +youtube_info.like,
       watched: +youtube_info.watched,
       slide_link: course.slide_link
-    }}, { new: true});
+    }}, { 
+      new: true
+    });
   }
 
   private getOrder(): string {

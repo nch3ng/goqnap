@@ -13,10 +13,10 @@ if (process.env.NODE_ENV === 'testing') {
   extra = '';
 } else if (process.env.NODE_ENV === 'test') {
   // for local
-  db = process.env.DB_TEST;
-  username = process.env.DB_TEST_USERNAME;
-  password = process.env.DB_TEST_PASSWORD;
-  address = process.env.DB_TEST_ADDRESS;
+  db = process.env.DB_LOCAL_TEST;
+  username = process.env.DB_LOCAL_TEST_USERNAME;
+  password = process.env.DB_LOCAL_TEST_PASSWORD;
+  address = process.env.DB_LOCAL_TEST_ADDRESS;
   extra = '?authSource=admin';
 }
 else {
