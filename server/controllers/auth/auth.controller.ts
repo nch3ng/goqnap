@@ -1,12 +1,8 @@
-// import { PASSWORD_HAS_NOT_BEEN_CREATED } from './../../codes/response';
 import { UserRegisterRequest, UserRegisterResponse, UserChangePasswordRequest, UserChangePasswordResponse } from './../../models/user.model';
 import UserDB from '../../models/schemas/users.schema';
 import TokenDB from '../../models/schemas/token.schema';
 import * as ResCode from '../../codes/response';
 import * as crypto from 'crypto';
-
-// const env = process.env.NODE_ENV || 'development';
-// logger = require('../../logger');
 import * as jwt from 'jsonwebtoken';
 import { Route, Post, Body, Get, Security, Query, Path, Request } from 'tsoa';
 import { UserLoginRequest, UserLoginResponse } from '../../models/user.model';
@@ -17,8 +13,8 @@ import FB, { FacebookApiException } from 'fb';
 import Log from '../../models/log';
 import { OAuth2Client } from 'google-auth-library';
 import * as express from 'express';
-import Recaptha from '../../helpers/recaptcha/recaptcha';
 import Recaptcha from '../../helpers/recaptcha/recaptcha';
+import * as authHelper from '../../helpers/auth_helper';
 
 
 let mongoose = require('mongoose');
@@ -55,19 +51,10 @@ export class AuthController {
           return;
         }
 
-        user.salt = '';
-        user.hash = '';
+        user.salt = ''; user.hash = '';
         const role = [];
-        role.push(user.role);
-        // console.log(user.role);
-        const token = jwt.sign({
-          userID: user._id,
-          email: user.email,
-          name: user.name,
-          scopes: user.role
-        }, process.env.secret, {
-          expiresIn : 60 * 60 * +process.env.expiry
-        });
+        role.push(user.role);        
+        const token = authHelper.getJWTToken(user._id, user.email, user.name, user.role, +process.env.expiry);
         Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
           // console.log(res);
         }, (reason) => {
@@ -149,14 +136,7 @@ export class AuthController {
             const role = [];
             role.push(user.role);
             // console.log(user.role);
-            const token = jwt.sign({
-              userID: user._id,
-              email: user.email,
-              name: user.name,
-              scopes: user.role
-            }, process.env.secret, {
-              expiresIn : 60 * 60 * +process.env.expiry
-            });
+            const token = authHelper.getJWTToken(user._id, user.email, user.name, user.role, +process.env.expiry);
             Log.create({message: `${user.name} has logged in.`, userId: user._id, action: 'login'}).then((res) => {
               // console.log(res);
             }, (reason) => {
@@ -289,17 +269,9 @@ export class AuthController {
             });
             return;
           }
-
           user.salt = '';
           user.hash = '';
-          const token = jwt.sign({
-            userID: user._id,
-            email: user.email,
-            name: user.name,
-            scopes: user.role
-          }, process.env.secret, {
-            expiresIn : 60 * 60 * +process.env.expiry
-          });
+          const token = authHelper.getJWTToken(user._id, user.email, user.name, user.role, +process.env.expiry);
 
           Log.create({message: `${user.name} is logged in via Facebook.`, userId: user._id, action: 'login'}).then((res) => {
             // console.log(res);
@@ -392,25 +364,12 @@ export class AuthController {
 
           user.salt = '';
           user.hash = '';
-          const token = jwt.sign({
-            userID: user._id,
-            email: user.email,
-            name: user.name,
-            scopes: user.role
-          }, process.env.secret, {
-            expiresIn : 60 * 60 * +process.env.expiry
-          });
+          const token = authHelper.getJWTToken(user._id, user.email, user.name, user.role, +process.env.expiry);
 
-          Log.create({message: `${user.name} is logged in via Google.`, userId: user._id, action: 'login'}).then((res) => {
-            // console.log(res);
-          }, (reason) => {
-            // console.log(reason);
-          });
+          Log.create({message: `${user.name} is logged in via Google.`, userId: user._id, action: 'login'}).then((res) => {}, (reason) => {});
 
           resolve(
-            new UserLoginResponse(true, 
-                                    'You are logged in.', 
-                                    token, 
+            new UserLoginResponse(true,'You are logged in.', token, 
                                     { 
                                       _id: user._id,
                                       name: user.name, 
@@ -423,14 +382,10 @@ export class AuthController {
                                     }));
         });
         // If request specified a G Suite domain:
-        //const domain = payload['hd'];
+        // const domain = payload['hd'];
       }
 
-      verify().catch(
-        (error) => {
-          console.log('Catch Error!');
-          console.log(error);
-        });
+      verify().catch((error) => console.error(error));
     });
   }
 
@@ -458,11 +413,9 @@ export class AuthController {
 
           user.save((err) => {
             Log.create({message: `${user.name} has changed passwoord`, userId: user._id, action: 'change password'}).then((res) => {
-              // console.log(res);
             }, (reason) => {
               console.log(reason);
             })
-            // console.log(token);
             resolve(new UserChangePasswordResponse(true, 'Successfully changed password'));
           });
         }
@@ -485,19 +438,15 @@ export class AuthController {
             const email_token = new TokenDB({_userId: user._id, token: crypto.randomBytes(16).toString('hex')});
             email_token.save((err) => {
               if (err) return reject(new ErrorResponse(false, err, ResCode.USER_CREATION_FAIL));
-              // saved!
 
               const mail = new Mail();
               mail.sendConfirmation(user.email, email_token._userId, email_token.token, 'reset');
 
               Log.create({message: `${user.name} reset email has been sent`, userId: user._id, action: 'reset password'}).then((res) => {
-                // console.log(res);
               }, (reason) => {
                 console.log(reason);
               })
             });
-            
-            // console.log(token);
             resolve(new GeneralResponse(true, 'Successfully reset the password', ResCode.GENERAL_SUCCESS));
           });
         }
@@ -514,7 +463,6 @@ export class AuthController {
       const t_uid = mongoose.Types.ObjectId();
       TokenDB.create({_userId: t_uid, token: crypto.randomBytes(16).toString('hex')}, (error, token) => {
         if (error) {
-          // console.log(error);
          return reject(new ErrorResponse(false, error.message, ResCode.GENERAL_ERROR));
         }
         return resolve(new GeneralResponse(true, "Two minutes to retrieve the reset link", ResCode.GENERAL_SUCCESS, {
@@ -578,7 +526,6 @@ export class AuthController {
     return new Promise<UserLoginResponse> ((resolve, reject) => {
       TokenDB.findOne({ token: token }).then(
         (token: Token) => {
-          // console.log(token)
           if(token) { 
             return resolve(new GeneralResponse(true, 'You are temporarily authorized.', ResCode.GENERAL_SUCCESS));
           }
