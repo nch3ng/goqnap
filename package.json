@@ -8,7 +8,7 @@
     "build": "./node_modules/.bin/tsc -p tsconfig.json --module commonjs --sourceMap --target ES5 && npm run routes && npm run swagger",
     "test": "export NODE_ENV=testing; mocha -r ts-node/register server/**/*.spec.ts --timeout 15000 --exit",
     "test:local": "export NODE_ENV=test; mocha -r ts-node/register server/**/**/*.spec.ts server/**/*.spec.ts --timeout 15000 --exit",
-    "test:win": "set NODE_ENV=test && mocha -r ts-node/register server/**/*.spec.ts --timeout 15000 --exit",
+    "test:win": "set NODE_ENV=test && mocha -r ts-node/register server/**/**/*.spec.ts server/**/*.spec.ts --timeout 15000 --exit",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:dev": "npm run routes;export NODE_ENV=development; nodemon --exec ts-node -- ./server/server.ts",
