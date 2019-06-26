@@ -12,7 +12,7 @@ mongoose.set('useCreateIndex', true);
   mongoose.connect(globalSetting.dbURI, { useNewUrlParser: true, useFindAndModify: false }); 
   mongoose.connection
     .once('open', () => {
-      console.log('Connected!');
+      // console.log('Connected!');
     })
     .on('error', (error) => {
         console.warn('Error : ',error);

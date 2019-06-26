@@ -1,14 +1,13 @@
-import { UserLoginResponse, UserRegisterResponse, AuthResponseError } from '../../models/user.model';
-import { AuthController } from '../../controllers/auth/auth.controller';
+import { UserLoginResponse, UserRegisterResponse, AuthResponseError } from '../models/user.model';
+import { AuthController } from '../controllers/auth/auth.controller';
 import * as mongoose from 'mongoose';
 import * as httpMocks from 'node-mocks-http';
 import 'mocha';
 import { expect, assert } from 'chai';
 import * as chai from 'chai';
-import { expressAuthentication } from '../../controllers/auth/middleware/authentication';
-import UserDB from '../../models/schemas/users.schema';
+import { expressAuthentication } from '../controllers/auth/middleware/authentication';
+import UserDB from '../models/schemas/users.schema';
 const mongoose = require('mongoose');
-import { global as globalSetting } from '../../global.available';
 
 chai.use(require('dirty-chai'));
 // require('dotenv').config();
@@ -19,13 +18,13 @@ const authController = new AuthController();
 describe('Authentication', () => {
 
   before((done) =>  {
-    // console.log('*** top-level before()');
+    // console.log('Top-level before()');
     setTimeout(done, 2000);
   });
 
   beforeEach((done) => {
     // console.log('Before Each in Authentication: drop user database');
-    
+    // console.log('Top-level beforeEach()');
     mongoose.connection.collections.users.drop(() => {
       //this function runs after the drop is completed
       done(); //go ahead everything is done now.

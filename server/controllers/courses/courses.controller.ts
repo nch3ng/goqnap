@@ -1,3 +1,4 @@
+import * as ResCode from '../../codes/response';
 import { GeneralResponse } from './../../models/response.model';
 import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete, Request } from 'tsoa';
@@ -9,7 +10,7 @@ import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
 import * as nodeExcel from 'excel-export';
-import * as ResCode from '../../codes/response';
+
 import * as express from 'express';
 
 // import UserDB from '../../models/schemas/users.schema';
@@ -156,25 +157,25 @@ export class CoursesController extends Controller {
       })
     });
   }
-  @Security('JWT')
-  @Get('export')
-  public async exportExcel(){
-    return new Promise<GeneralResponse>((resolve, reject) => {
-      let conf;
-      conf.cols = [{
-        caption: 'Sl.',
-        type: 'number',
-        width: 3
-      }];
-      let arr = [];
-      arr.push([1]);
-      conf.rows = arr;
 
-      const result = nodeExcel.execute(conf);
-      resolve(result)
-    });
-  }
+  // @Security('JWT')
+  // @Get('export')
+  // public async exportExcel(){
+  //   return new Promise<GeneralResponse>((resolve, reject) => {
+  //     let conf;
+  //     conf.cols = [{
+  //       caption: 'Sl.',
+  //       type: 'number',
+  //       width: 3
+  //     }];
+  //     let arr = [];
+  //     arr.push([1]);
+  //     conf.rows = arr;
 
+  //     const result = nodeExcel.execute(conf);
+  //     resolve(result)
+  //   });
+  // }
 
   @Post('{id}/clicked')
   public async courseClicked(@Path() id: string): Promise<GeneralResponse> {

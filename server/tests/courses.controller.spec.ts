@@ -1,13 +1,13 @@
-import { UserCourseResponse } from '../../models/response.model';
+import { UserCourseResponse } from './../models/response.model';
 import 'mocha';
 import { expect } from 'chai';
 import * as chai from 'chai';
 
 import * as mongoose from 'mongoose';
 
-import { CoursesController } from '../../controllers/courses/courses.controller';
-import { Course } from '../../models/course.model';
-import CourseDB from '../../models/schemas/courses.schema';
+import { CoursesController } from './../controllers/courses/courses.controller';
+import { Course } from './../models/course.model';
+import CourseDB from './../models/schemas/courses.schema';
 import * as httpMocks from 'node-mocks-http';
 
 let courseController;
