@@ -368,7 +368,7 @@ export class UserController extends Controller {
           name = user.name;
 
         return resolve({
-          name: user.name.split(" ").map((n)=>n[0]).join("")
+          name: name.split(" ").map((n)=>n[0]).join("")
         })
       })
     })

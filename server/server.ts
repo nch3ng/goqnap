@@ -19,7 +19,8 @@ import './controllers/keywords.controller';
 import './controllers/roles/roles.controller';
 import './controllers/tags/tag.controller';
 import './controllers/comments/comment.controller';
-import './controllers/comments/comments.controller'
+import './controllers/comments/comments.controller';
+import './controllers/favorites/favorites.controller';
 // End of Controllers
 import { RegisterRoutes } from './routes/routes';
 import { errorHandler } from './helpers/error.handler';
