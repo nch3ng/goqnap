@@ -63,16 +63,7 @@ export class AuthController {
         resolve(new UserLoginResponse(true, 
           'You are logged in.', 
           token, 
-          { 
-            _id: user._id,
-            name: user.name, 
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-            isVerified: user.isVerified,
-            hasPasswordBeenSet: user.hasPasswordBeenSet
-          }));
+          this.constructPayload(user)));
       }
     });
   }
@@ -142,19 +133,7 @@ export class AuthController {
             }, (reason) => {
               console.log(reason);
             })
-            resolve(new UserLoginResponse(true, 
-                                          'You are logged in.', 
-                                          token, 
-                                          { 
-                                            _id: user._id,
-                                            name: user.name, 
-                                            firstName: user.firstName,
-                                            lastName: user.lastName,
-                                            email: user.email,
-                                            role: user.role,
-                                            isVerified: user.isVerified,
-                                            hasPasswordBeenSet: user.hasPasswordBeenSet
-                                          }));
+            resolve(new UserLoginResponse(true, 'You are logged in.', token,this.constructPayload(user)));
           }
         });
       }
@@ -258,16 +237,7 @@ export class AuthController {
             new UserLoginResponse(true, 
                                     'You are logged in.', 
                                     token, 
-                                    { 
-                                      _id: user._id,
-                                      name: user.name, 
-                                      email: user.email,
-                                      role: user.role,
-                                      firstName: user.firstName,
-                                      lastName: user.lastName,
-                                      isVerified: user.isVerified,
-                                      hasPasswordBeenSet: user.hasPasswordBeenSet
-                                    }));
+                                    this.constructPayload(user)));
         });
       });
     });
@@ -339,17 +309,7 @@ export class AuthController {
           Log.create({message: `${user.name} is logged in via Google.`, userId: user._id, action: 'login'}).then((res) => {}, (reason) => {});
 
           resolve(
-            new UserLoginResponse(true,'You are logged in.', token, 
-                                    { 
-                                      _id: user._id,
-                                      name: user.name, 
-                                      email: user.email,
-                                      firstName: user.firstName,
-                                      lastName: user.lastName,
-                                      role: user.role,
-                                      isVerified: user.isVerified,
-                                      hasPasswordBeenSet: user.hasPasswordBeenSet
-                                    }));
+            new UserLoginResponse(true,'You are logged in.', token, this.constructPayload(user)));
         });
         // If request specified a G Suite domain:
         // const domain = payload['hd'];
@@ -505,5 +465,19 @@ export class AuthController {
         return reject(new ErrorResponse(false, "No token provided", ResCode.TOKEN_IS_NOT_PROVIDED));
       });
     });
+  }
+
+  private constructPayload(user) {
+    return { 
+      _id: user._id,
+      name: user.name, 
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isVerified: user.isVerified,
+      hasPasswordBeenSet: user.hasPasswordBeenSet,
+      favorites: user.favorites
+    };
   }
 }
