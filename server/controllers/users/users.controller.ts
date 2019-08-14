@@ -360,7 +360,7 @@ export class UserController extends Controller {
   @Get('abvn/{id}')
   public async get_abvn(@Path() id: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      console.log(id)
+      // console.log(id)
       UserDB.findOne({_id: id}, (err, user) => {
         if (err) return reject(new GeneralResponse(false, 'error', ResponseCode.GENERAL_ERROR))
         let name = 'John Doe';
@@ -368,7 +368,7 @@ export class UserController extends Controller {
           name = user.name;
 
         return resolve({
-          name: user.name.split(" ").map((n)=>n[0]).join("")
+          name: name.split(" ").map((n)=>n[0]).join("")
         })
       })
     })
