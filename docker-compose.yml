@@ -4,8 +4,8 @@ services:
     build: .
     ports:
       - 3000:3000
-    volumes:
-      - "${PWD}/:/usr/src/app"
+    # volumes:
+    #   - "${PWD}/:/usr/src/app"
     depends_on: 
       - db
     links:
@@ -32,7 +32,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
-      - 27015:27017
+      - 27017:27017
   mongo-expressdb-web:
     image: mongo-express
     restart: always

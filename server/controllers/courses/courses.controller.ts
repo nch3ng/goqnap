@@ -4,19 +4,15 @@ import { Course } from './../../models/course.model';
 import { Route, Get, Query, Controller, Body, Post, Header, Security, Path, Put, Delete, Request } from 'tsoa';
 import { UserCourseRequest, YoutubeInfo } from '../../models/course.model';
 import CourseDB from '../../models/schemas/courses.schema';
-// import { YouTube } from 'youtube-node';
 import { ErrorResponse, UserCourseResponse } from '../../models/response.model';
 import KeywordDB from '../../models/schemas/keywords';
 import CourseClickDB from '../../models/schemas/course.click.schema';
 import * as moment from 'moment';
-import * as nodeExcel from 'excel-export';
-
+import * as mongoose from 'mongoose';
 import * as express from 'express';
-
-// import UserDB from '../../models/schemas/users.schema';
+import UserDB from '../../models/schemas/users.schema';
 
 const YouTube = require('youtube-node');
-// const propertyOf = <TObj>(name: keyof TObj) => name;
 
 @Route('courses')
 export class CoursesController extends Controller {
@@ -55,6 +51,49 @@ export class CoursesController extends Controller {
         reject(new ErrorResponse(false, error, ResCode.GENERAL_ERROR));
       });
     });
+  }
+  
+  @Security('JWT')
+  @Get("favorites")
+  public async getFavoritedCourses(@Request() req: express.Request, @Query() limit: number = 6, @Query() page: number = 1): Promise<Course []> {
+    return new Promise<Course []>((resolve, reject) => {
+      const id = req.user.decoded.userID;
+      const promise = UserDB.findOne({ _id: id }).select('favorites');
+
+      this.setLimit(limit);
+      this.setPage(page);
+      return promise.then(
+        (user) => {
+          if (user && user['favorites'] && user['favorites'] != []) {
+            const favIds = this.constructObjectIds(user['favorites']);
+            return CourseDB.paginate({
+              '_id': { $in: favIds }}, {
+                page: this.page, limit: this.limit
+              }).then(
+                (courses => {
+                  resolve(courses);
+                })
+              ).catch(error => {
+                resolve([]);
+              });
+          } else {
+            resolve([]);
+          }
+        }).catch((error) => {
+          resolve([]);
+        });
+    });
+  }
+
+  private constructObjectIds(favIds: string []): mongoose.Types.ObjectId [] {
+    let objIds: mongoose.Types.ObjectId = []
+
+    for (let id of favIds) {
+      objIds.push(new mongoose.Types.ObjectId(id))
+    }
+
+    // console.log(objIds);
+    return objIds;
   }
 
   // Must place this before get by id

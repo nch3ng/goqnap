@@ -16,6 +16,7 @@ export class User {
   lastLoginAt: Date;
   isVerified: boolean;
   hasPasswordBeenSet: boolean;
+  favorites: string [];
   picture: {
     regular: string;
   }

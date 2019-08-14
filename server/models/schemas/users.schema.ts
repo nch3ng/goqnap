@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'John Doe'
   },
+  favorites: {
+    type: [String],
+    default: []
+  },
   hash: String,
   salt: String,
   lastLoginAt: Date,
@@ -45,9 +49,7 @@ const userSchema = new mongoose.Schema({
       }
     }
   }
-  
-
-});
+}, { usePushEach: true });
 
 userSchema.methods.setPassword = function(password){
   this.salt = crypto.randomBytes(16).toString('hex');

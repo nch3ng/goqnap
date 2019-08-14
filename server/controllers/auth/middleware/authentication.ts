@@ -11,6 +11,7 @@ export function expressAuthentication(request: express.Request, securityName: st
       // console.log('[expressAuthentication]: ', scopes);
       if (!token) {
           reject(new AuthResponseError(false, 'No token provided'));
+          return;
       }
       jwt.verify(token, process.env.secret, (err: any, decoded: any) => {
         // console.log('[expressAuthentication]: ', decoded);
