@@ -22,6 +22,8 @@
   "exclude":[
     "src/**",
     "ecosystem.config.js",
-    "dist"
+    "dist",
+    "gulpfile.js",
+    "public"
   ] 
 }
