@@ -67,6 +67,19 @@ export class AuthController {
       }
     });
   }
+  private constructPayload(user: any) {
+    return { 
+      _id: user._id,
+      name: user.name, 
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isVerified: user.isVerified,
+      hasPasswordBeenSet: user.hasPasswordBeenSet,
+      favorites: user.favorites
+    };
+  }
   @Post('login')
   public async login(@Body() requestBody: UserLoginRequest, @Request() req: express.Request): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse>((resolve, reject) => {
@@ -475,19 +488,5 @@ export class AuthController {
         return reject(new ErrorResponse(false, "No token provided", ResCode.TOKEN_IS_NOT_PROVIDED));
       });
     });
-  }
-
-  private constructPayload(user) {
-    return { 
-      _id: user._id,
-      name: user.name, 
-      email: user.email,
-      role: user.role,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isVerified: user.isVerified,
-      hasPasswordBeenSet: user.hasPasswordBeenSet,
-      favorites: user.favorites
-    };
   }
 }
