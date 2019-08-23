@@ -237,7 +237,17 @@ export class AuthController {
             new UserLoginResponse(true, 
                                     'You are logged in.', 
                                     token, 
-                                    this.constructPayload(user)));
+                                    { 
+                                      _id: user._id,
+                                      name: user.name, 
+                                      email: user.email,
+                                      role: user.role,
+                                      firstName: user.firstName,
+                                      lastName: user.lastName,
+                                      isVerified: user.isVerified,
+                                      hasPasswordBeenSet: user.hasPasswordBeenSet,
+                                      favorites: user.favorites
+                                    }));
         });
       });
     });
