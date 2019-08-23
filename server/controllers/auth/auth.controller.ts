@@ -177,7 +177,7 @@ export class AuthController {
   }
 
   @Post('fbLogin')
-  public fbLogin(@Body() requestBody: any):Promise<any> {
+  public async fbLogin(@Body() requestBody: any):Promise<any> {
     return new Promise<any> ((resolve, reject) => {
       FB.options({'appSecret': process.env.FB_APP_SECRET});
       FB.options({'scope': "public_profile,email,user_gender"});
@@ -244,7 +244,7 @@ export class AuthController {
   }
 
   @Post('googleLogin')
-  public googleLogin(@Body() requestBody: any): Promise<any> {
+  public async googleLogin(@Body() requestBody: any): Promise<any> {
     return new Promise<any> ((resolve, reject) => {
       const token = requestBody.accessToken;
       const google_client_id = process.env.GOOGLE_CLIENT_ID;
@@ -321,7 +321,7 @@ export class AuthController {
 
   @Security('JWT')
   @Get('check-state')
-  public checkState(): Promise<UserLoginResponse> {
+  public async checkState(): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve) => {
       resolve(new UserLoginResponse(true, 'You are authorized.'));
     });
@@ -329,7 +329,7 @@ export class AuthController {
 
   @Security('JWT')
   @Post('change-password')
-  public changePassword(@Body() requestBody: UserChangePasswordRequest): Promise<UserChangePasswordResponse> {
+  public async changePassword(@Body() requestBody: UserChangePasswordRequest): Promise<UserChangePasswordResponse> {
     return new Promise<UserChangePasswordResponse> ((resolve, reject) => {
       UserDB.findOne({'email' : requestBody.email}, (error, user) => {
         if (error) {
@@ -355,7 +355,7 @@ export class AuthController {
 
   @Security('JWT', ['9'])
   @Post('reset-password-admin/{id}')
-  public reset_password_admin(@Path() id: string): Promise<UserChangePasswordResponse> {
+  public async reset_password_admin(@Path() id: string): Promise<UserChangePasswordResponse> {
     return new Promise<UserChangePasswordResponse> ((resolve, reject) => {
       UserDB.findOne({'_id' : id}, (error, user) => {
         if (error) {
@@ -385,7 +385,7 @@ export class AuthController {
   }
 
   @Get('forget-password/{seed}')
-  public forget_password_get(@Path() seed: string): Promise<GeneralResponse> {
+  public async forget_password_get(@Path() seed: string): Promise<GeneralResponse> {
     return new Promise<GeneralResponse>((resolve, reject) => {
       if (!seed) {
         return reject(new ErrorResponse(false, 'Please specify a seed', ResCode.GENERAL_ERROR));
@@ -405,7 +405,7 @@ export class AuthController {
     });
   }
   @Post('forget-password/{t_uid}')
-  public forget_password(@Path() t_uid: string, @Body() requestBody): Promise<GeneralResponse> {
+  public async forget_password(@Path() t_uid: string, @Body() requestBody): Promise<GeneralResponse> {
     return new Promise<GeneralResponse>((resolve, reject) => {
       const email = requestBody.email;
       const token = requestBody.token;
@@ -452,7 +452,7 @@ export class AuthController {
   }
 
   @Get('check-tmp-state')
-  public checkTmpState(@Query() token?: string): Promise<UserLoginResponse> {
+  public async checkTmpState(@Query() token?: string): Promise<UserLoginResponse> {
     return new Promise<UserLoginResponse> ((resolve, reject) => {
       TokenDB.findOne({ token: token }).then(
         (token: Token) => {
