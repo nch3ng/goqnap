@@ -63,7 +63,17 @@ export class AuthController {
         resolve(new UserLoginResponse(true, 
           'You are logged in.', 
           token, 
-          this.constructPayload(user)));
+          { 
+            _id: user._id,
+            name: user.name, 
+            email: user.email,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            isVerified: user.isVerified,
+            hasPasswordBeenSet: user.hasPasswordBeenSet,
+            favorites: user.favorites
+          }));
       }
     });
   }
@@ -146,7 +156,17 @@ export class AuthController {
             }, (reason) => {
               console.log(reason);
             })
-            resolve(new UserLoginResponse(true, 'You are logged in.', token,this.constructPayload(user)));
+            resolve(new UserLoginResponse(true, 'You are logged in.', token,{ 
+              _id: user._id,
+              name: user.name, 
+              email: user.email,
+              role: user.role,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              isVerified: user.isVerified,
+              hasPasswordBeenSet: user.hasPasswordBeenSet,
+              favorites: user.favorites
+            }));
           }
         });
       }
@@ -332,7 +352,17 @@ export class AuthController {
           Log.create({message: `${user.name} is logged in via Google.`, userId: user._id, action: 'login'}).then((res) => {}, (reason) => {});
 
           resolve(
-            new UserLoginResponse(true,'You are logged in.', token, this.constructPayload(user)));
+            new UserLoginResponse(true,'You are logged in.', token, { 
+              _id: user._id,
+              name: user.name, 
+              email: user.email,
+              role: user.role,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              isVerified: user.isVerified,
+              hasPasswordBeenSet: user.hasPasswordBeenSet,
+              favorites: user.favorites
+            }));
         });
         // If request specified a G Suite domain:
         // const domain = payload['hd'];
