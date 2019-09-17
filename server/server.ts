@@ -33,7 +33,15 @@ console.log("STARTING....");
 
 require('./models/db');
 
-const whitelist = ['https://college.qnap.com'];
+const whitelist = []
+if (env === 'development')  {
+  whitelist.push('http://localhost:4200');
+  whitelist.push('https://localhost:4200');
+  whitelist.push('http://localhost:4000');
+} else if( env === 'production') {
+  whitelist.push('https://college.qnap.com');
+}
+// const whitelist = ['https://college.qnap.com', 'http://localhost:4200', 'https://localhost:4200'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {

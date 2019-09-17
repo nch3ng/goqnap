@@ -368,7 +368,10 @@ export class AuthController {
         // const domain = payload['hd'];
       }
 
-      verify().catch((error) => console.error(error));
+      verify().catch((error) =>   { 
+        console.error(error);
+        reject(new ErrorResponse(false, error, ResCode.USER_CREATION_FAIL));
+      });
     });
   }
 

@@ -39,7 +39,7 @@ export class CoursesController extends Controller {
       }
 
       if (this.limit === 0) {
-        promise = CourseDB.find(this.dbQuery).sort(sort);
+        promise = CourseDB.paginate(this.dbQuery, { sort: sort, limit: 2000 });
       } else {
         promise = CourseDB.paginate(this.dbQuery, { sort: sort, page: this.page, limit: this.limit});
         // promise = CourseDB.find(this.dbQuery).sort(sort).limit(this.limit);
