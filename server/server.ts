@@ -38,6 +38,7 @@ if (env === 'development')  {
   whitelist.push('http://localhost:4200');
   whitelist.push('https://localhost:4200');
   whitelist.push('http://localhost:4000');
+  whitelist.push('https://localhost:4000');
 } else if( env === 'production') {
   whitelist.push('https://college.qnap.com');
 }

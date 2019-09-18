@@ -18,8 +18,13 @@ if (process.env.NODE_ENV === 'testing') {
   password = process.env.DB_LOCAL_TEST_PASSWORD;
   address = process.env.DB_LOCAL_TEST_ADDRESS;
   extra = '?authSource=admin';
-}
-else {
+} else if (process.env.NODE_ENV === 'development') {
+  db = process.env.DB;
+  username = process.env.DB_USERNAME;
+  password = process.env.DB_PASSWORD;
+  address = process.env.DB_ADDRESS;
+  extra = '?authSource=admin';
+} else {
   db = process.env.DB;
   username = process.env.DB_USERNAME;
   password = process.env.DB_PASSWORD;
