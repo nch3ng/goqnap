@@ -39,6 +39,14 @@ if (env === 'development')  {
   whitelist.push('https://localhost:4200');
   whitelist.push('http://localhost:4000');
   whitelist.push('https://localhost:4000');
+} else if( env === 'staging') {
+  whitelist.push('http://localhost:4200');
+  whitelist.push('https://localhost:4200');
+  whitelist.push('http://localhost:4000');
+  whitelist.push('https://localhost:4000');
+  whitelist.push('http://localhost:9090');
+  whitelist.push('https://localhost:9090');
+  whitelist.push('https://college.qnap.com');
 } else if( env === 'production') {
   whitelist.push('https://college.qnap.com');
 }
@@ -85,7 +93,8 @@ const httpServer = http.createServer(app);
 logger.info('CORS-enabled for all origins.  Listen: ' + port);
 httpServer.listen(port);
 
-if (process.env.ssl_enable) {
+// console.log(process.env.ssl_enable);
+if (process.env.ssl_enable === 'true') {
   let ssl_port = process.env.ssl_port || 9000;
   let credentials;
   if (env == 'production') {

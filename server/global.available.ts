@@ -1,4 +1,5 @@
 require('dotenv').config();
+const secrets = require('./run/secrets');
 let db;
 let username;
 let password;
@@ -24,6 +25,12 @@ if (process.env.NODE_ENV === 'testing') {
   password = process.env.DB_PASSWORD;
   address = process.env.DB_ADDRESS;
   extra = '?authSource=admin';
+} else if (process.env.NODE_ENV === 'staging') {
+    db = process.env.DB;
+    username = process.env.DB_USERNAME;
+    password = process.env.DB_PASSWORD;
+    address = process.env.DB_ADDRESS;
+    extra = '?authSource=admin';
 } else {
   db = process.env.DB;
   username = process.env.DB_USERNAME;

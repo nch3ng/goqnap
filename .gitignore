@@ -49,3 +49,5 @@ testem.log
 .DS_Store
 Thumbs.db
 server/routes/
+
+prod.env
