@@ -41,5 +41,5 @@ if (process.env.NODE_ENV === 'testing') {
 }
 
 export const global = {
-  dbURI: 'mongodb://' + username + ':' + password + '@' + address + '/' + db + extra,
+  dbURI: 'mongodb+srv://' + username + ':' + password + '@' + address + '/' + db + extra,
 };
