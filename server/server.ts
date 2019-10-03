@@ -30,7 +30,7 @@ const app = express();
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.port || 3000;
 console.log("STARTING....");
-
+console.log(process.env.NODE_ENV)
 require('./models/db');
 
 const whitelist = []
@@ -50,17 +50,17 @@ if (env === 'development')  {
 } else if( env === 'production') {
   whitelist.push('https://college.qnap.com');
 }
-// const whitelist = ['https://college.qnap.com', 'http://localhost:4200', 'https://localhost:4200'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
+      console.log(origin);
       callback(new Error('Not allowed by CORS'))
     }
-  }
+  },
   // credentials: true,
-  // optionsSuccessStatus: 200
+  optionsSuccessStatus: 200
 }
 
 app.use(bodyParser.json());
@@ -83,6 +83,7 @@ app.use('/', goqnap);
 const static_dist = express.static(path.join(__dirname, '../dist'));
 app.use(static_dist);
 
+app.use('/stat', (req, res) => res.send('Healthy'));
 // Auto-generated routes by tsoa
 RegisterRoutes(app);
 // REGISTER OUR ROUTES -------------------------------
