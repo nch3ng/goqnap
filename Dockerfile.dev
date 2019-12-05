@@ -12,4 +12,6 @@ RUN npm i npm@latest -g && \
 
 COPY . .
 
+RUN ls ./node_modules/.bin/
+
 CMD [ "npm", "run", "start:dev" ]
