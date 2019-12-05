@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'testing') {
   username = process.env.DB_USERNAME;
   password = process.env.DB_PASSWORD;
   address = process.env.DB_ADDRESS;
-  extra = '?authSource=admin';
+  // extra = '?authSource=admin';
   // extra = '';
 }
 
