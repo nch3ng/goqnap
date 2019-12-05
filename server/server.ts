@@ -51,21 +51,21 @@ if (env === 'development')  {
   whitelist.push('https://college.qnap.com');
 }
 const corsOptions = {
-  origin: function (origin, callback) {
+
+  origin:  function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
-      console.log(origin);
       callback(new Error('Not allowed by CORS'))
     }
   },
-  // credentials: true,
   optionsSuccessStatus: 200
 }
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(cors(corsOptions));
+app.use( '^/api/:params*', cors(corsOptions));
+app.options('*', cors());
 
 if (process.env.NODE_ENV !== 'testing') {
   app.use(morgan('combined'));
