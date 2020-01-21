@@ -49,7 +49,7 @@ if (env === 'development')  {
   whitelist.push('https://college.qnap.com');
 } else if( env === 'production') {
   whitelist.push('https://college.qnap.com');
-  whitelist.push('http://qcollege.qnap.com');
+  whitelist.push('http://qcollege.qnap.com:8080');
 }
 const corsOptions = {
 
