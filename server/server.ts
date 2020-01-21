@@ -49,7 +49,7 @@ if (env === 'development')  {
   whitelist.push('https://college.qnap.com');
 } else if( env === 'production') {
   whitelist.push('https://college.qnap.com');
-  whitelist.push('http://qcollege.qnap.com:8080');
+  whitelist.push('http://qcollege.natecheng.me:8080');
 }
 const corsOptions = {
 
@@ -57,7 +57,7 @@ const corsOptions = {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
-      callback(new Error('Not allowed by CORS'))
+      callback(new Error(origin + 'Not allowed by CORS'))
     }
   },
   optionsSuccessStatus: 200
