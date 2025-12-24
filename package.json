@@ -51,7 +51,7 @@
     "express-jwt": "^5.3.1",
     "fb": "^2.0.0",
     "firebase": "^4.13.1",
-    "firebase-admin": "^5.12.1",
+    "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^8.2.1",
     "lcov-parse": "^1.0.0",
     "mongoose": "^5.6.0",
